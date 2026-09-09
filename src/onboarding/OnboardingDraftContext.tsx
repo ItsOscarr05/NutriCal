@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { ActivityLevel, Goal, Sex } from '../types/profile';
+import { ActivityLevel, Goal, Sex, UserProfile } from '../types/profile';
 
 /**
  * In-memory draft of the profile being built across the onboarding wizard
@@ -25,6 +25,13 @@ interface OnboardingDraftContextValue {
   setHeightCm: (heightCm: number) => void;
   setWeightKg: (weightKg: number) => void;
   setActivityLevel: (activityLevel: ActivityLevel) => void;
+  /**
+   * Seeds the entire draft from an existing saved profile in one go. Used
+   * by the "Edit profile" flow (PRD §8.1 — "the profile should be editable
+   * at any time") so re-running the onboarding wizard prefills every
+   * screen with the user's current answers instead of starting blank.
+   */
+  hydrateFromProfile: (profile: UserProfile) => void;
   reset: () => void;
 }
 
@@ -43,6 +50,15 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
       setHeightCm: (heightCm) => setDraft((d) => ({ ...d, heightCm })),
       setWeightKg: (weightKg) => setDraft((d) => ({ ...d, weightKg })),
       setActivityLevel: (activityLevel) => setDraft((d) => ({ ...d, activityLevel })),
+      hydrateFromProfile: (profile) =>
+        setDraft({
+          sex: profile.sex,
+          age: profile.age,
+          heightCm: profile.heightCm,
+          weightKg: profile.weightKg,
+          activityLevel: profile.activityLevel,
+          goal: profile.goal,
+        }),
       reset: () => setDraft(EMPTY_DRAFT),
     }),
     [draft]

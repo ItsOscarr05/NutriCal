@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { NUTRIENT_INFO, NUTRIENT_KEYS } from '../data/dri';
 import { calculateNutrientTargets } from '../engine';
 import { RootStackParamList } from '../navigation/types';
+import { useOnboardingDraft } from '../onboarding/OnboardingDraftContext';
 import { useProfile } from '../profile/ProfileContext';
 import { radii, spacing, useTheme } from '../theme';
 
@@ -23,7 +24,8 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Results'>;
 export function ResultsScreen() {
   const navigation = useNavigation<Nav>();
   const theme = useTheme();
-  const { profile, clearProfile } = useProfile();
+  const { profile } = useProfile();
+  const { hydrateFromProfile } = useOnboardingDraft();
 
   if (!profile) {
     // Shouldn't normally happen — RootNavigator only routes here once a
@@ -37,9 +39,17 @@ export function ResultsScreen() {
 
   const targets = calculateNutrientTargets(profile);
 
+  /**
+   * Re-enters the onboarding wizard prefilled with the current profile's
+   * answers (PRD §8.1 — "the profile should be editable at any time"),
+   * rather than clearing the saved profile and starting from a blank
+   * Welcome screen. The saved profile isn't touched until the user
+   * actually finishes the wizard again (`GoalScreen` overwrites it) —
+   * backing out partway through leaves the original profile intact.
+   */
   const handleEditProfile = () => {
-    clearProfile();
-    navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
+    hydrateFromProfile(profile);
+    navigation.navigate('Sex');
   };
 
   return (

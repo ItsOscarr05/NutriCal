@@ -28,9 +28,14 @@ const OPTIONS: { value: Goal; label: string; description: string }[] = [
 export function GoalScreen() {
   const navigation = useNavigation<Nav>();
   const { draft, reset } = useOnboardingDraft();
-  const { saveProfile } = useProfile();
+  const { profile, saveProfile } = useProfile();
   const [selected, setSelected] = useState<Goal | undefined>(draft.goal);
   const [saving, setSaving] = useState(false);
+
+  // A non-null profile here means we arrived via "Edit profile" on the
+  // results screen (which hydrates the draft but never clears the saved
+  // profile), not first-time onboarding — see ResultsScreen.handleEditProfile.
+  const isEditing = profile !== null;
 
   const canFinish =
     !!selected && !!draft.sex && !!draft.age && !!draft.heightCm && !!draft.weightKg && !!draft.activityLevel;
@@ -40,7 +45,7 @@ export function GoalScreen() {
       return;
     }
     setSaving(true);
-    const profile: UserProfile = {
+    const updatedProfile: UserProfile = {
       sex: draft.sex,
       age: draft.age,
       heightCm: draft.heightCm,
@@ -49,7 +54,7 @@ export function GoalScreen() {
       goal: selected,
       updatedAt: new Date().toISOString(),
     };
-    await saveProfile(profile);
+    await saveProfile(updatedProfile);
     reset();
     navigation.reset({ index: 0, routes: [{ name: 'Results' }] });
   };
@@ -58,7 +63,11 @@ export function GoalScreen() {
     <OnboardingScreenLayout
       title="What's your goal?"
       footer={
-        <PrimaryButton label={saving ? 'Saving…' : 'See my numbers'} disabled={!canFinish || saving} onPress={handleFinish} />
+        <PrimaryButton
+          label={saving ? 'Saving…' : isEditing ? 'Save changes' : 'See my numbers'}
+          disabled={!canFinish || saving}
+          onPress={handleFinish}
+        />
       }
     >
       <ScrollView showsVerticalScrollIndicator={false}>
