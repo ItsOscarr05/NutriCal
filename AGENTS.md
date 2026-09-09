@@ -10,7 +10,9 @@ Key constraints to respect when working in this repo:
 - **Tone/design:** plain-language, non-judgmental, no red/green alarm framing (PRD §11.1). Light mode = white + green accent; dark mode = navy + green accent (PRD §11.2) — colors in `src/theme/colors.ts` are WCAG AA-validated (see the audit comment at the top of that file); don't change a hex value without re-running `src/theme/__tests__/contrast.test.ts`.
 - **Freemium boundary:** macros are always free; micronutrients are premium-gated and shown to free users as a locked, name-only teaser (PRD §7, §8.4) — don't leak micronutrient values to free users in UI work.
 - **Profile persistence goes through `src/storage/profileStorage.ts` only** — screens/state should call `saveProfile`/`loadProfile`/`clearProfile` rather than touching `AsyncStorage` directly, so the storage format changes in one place.
-- **Units:** onboarding height/weight input is imperial-first (ft/in, lb) with a metric toggle. Internal storage (`UserProfile.heightCm`/`weightKg`) is always metric — convert at the UI edge, not in the engine or storage layer.
+- **Units:** onboarding height/weight input is imperial-first (ft/in, lb) with a metric toggle. Internal storage (`UserProfile.heightCm`/`weightKg`) is always metric — convert at the UI edge (`src/onboarding/unitConversion.ts`), not in the engine or storage layer.
+- **Two separate state layers, don't conflate them:** `OnboardingDraftContext` (in-memory only) holds in-progress answers *during* the onboarding wizard; `ProfileContext` (backed by `profileStorage`) holds the one real, saved `UserProfile` the rest of the app reads. Only the final onboarding screen (`GoalScreen`) should ever call `saveProfile` to turn a draft into a real profile.
+- **`RootNavigator`'s initial route depends on `ProfileContext.isLoading`/`profile`** — don't add new "first screen" logic elsewhere; that's the one place that decides Welcome vs. Results on launch.
 
 # Expo HAS CHANGED
 

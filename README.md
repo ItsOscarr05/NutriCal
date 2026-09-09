@@ -19,15 +19,19 @@ No backend. All reference data (DRI/RDA/AI/UL tables) is bundled with the app ra
 
 ```
 src/
-  engine/       BMR/TDEE + macro calculation engine (PRD §10) — pure, unit-tested functions
-  data/dri/     DRI/RDA/AI/UL micronutrient reference tables, keyed by age/sex bracket (PRD §8.3, §10)
-  theme/        Color tokens + light/dark theme (PRD §11.2) and shared spacing/radii
-  types/        Shared domain types (UserProfile, etc.)
-  storage/      Local on-device profile persistence (AsyncStorage), with validation (PRD §8.1, §12)
-  navigation/   React Navigation root stack
-  screens/      App screens
+  engine/               BMR/TDEE + macro calculation engine (PRD §10) — pure, unit-tested functions
+  data/dri/             DRI/RDA/AI/UL micronutrient reference tables, keyed by age/sex bracket (PRD §8.3, §10)
+  theme/                Color tokens + light/dark theme (PRD §11.2) and shared spacing/radii
+  types/                Shared domain types (UserProfile, etc.)
+  storage/              Local on-device profile persistence (AsyncStorage), with validation (PRD §8.1, §12)
+  profile/              App-level "current saved profile" state (ProfileContext) — decides Welcome vs. Results on launch
+  onboarding/           Onboarding wizard state (draft context), unit conversion, and input validation — all pure/tested
+  components/           Shared UI building blocks (PrimaryButton, OptionCard, UnitToggle, OnboardingScreenLayout)
+  navigation/           React Navigation root stack + param types
+  screens/              App screens (Welcome, Results)
+  screens/onboarding/   The six onboarding step screens (sex, age, height, weight, activity, goal)
 project-docs/
-  PRD.md        The full product requirements document
+  PRD.md                The full product requirements document
 ```
 
 ## Getting started
@@ -59,8 +63,9 @@ Early scaffold. Following the milestones in PRD §17:
 - [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`. The bright brand green and the original secondary-text gray both failed AA on light backgrounds and have been fixed (`greenDark` for icons/large text, `sage` for secondary text on light mode). Icon set and motion style still to come for the rest of milestone 2.
 - [ ] **Core UI (in progress):** onboarding flow, results dashboard, nutrient detail / education screens, paywall screen.
   - [x] Local profile persistence (`src/storage/profileStorage.ts`) — save/load/clear against AsyncStorage, with a runtime type guard so corrupted or stale-schema data never crashes the app (falls back to "no profile" / re-onboard instead).
-  - [ ] Onboarding screens (sex → age → height/weight → activity → goal), imperial-first with a metric toggle.
-  - [ ] Wire onboarding completion → save profile → navigate to results.
+  - [x] Onboarding flow: Welcome → Sex → Age → Height → Weight → Activity → Goal (PRD §9), imperial-first with a metric toggle on height/weight. Draft answers live in `OnboardingDraftContext` until the final (Goal) screen, which builds the real `UserProfile`, saves it, and routes to Results. `ProfileContext` decides on launch whether to show Welcome (no profile) or Results (existing profile) — the "come back anytime" flow.
+  - [x] v1 results screen (`src/screens/ResultsScreen.tsx`): full calorie/macro targets from the engine, plus every vitamin/mineral listed by name with a lock icon (everyone currently sees the locked view — there's no subscription/entitlement system yet, see milestone 5). A basic "Edit profile" link clears the profile and restarts onboarding (not yet pre-filled with existing answers — see below).
+  - [ ] **Not yet done / known gaps to revisit:** pre-filled profile editing (currently a full reset), tapping a macro to see its plain-language explanation, the animated "reveal your numbers" treatment + illustrated icons (PRD §11.3), the 30-day "has anything changed?" nudge (PRD §8.1), and keyboard-avoiding behavior on the input screens.
 - [ ] Education layer content (plain-language explanations per nutrient)
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12)
 - [ ] Accessibility + edge-case testing pass
