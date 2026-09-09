@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 import { useProfile } from '../profile/ProfileContext';
+import { MacroDetailScreen } from '../screens/MacroDetailScreen';
 import { ResultsScreen } from '../screens/ResultsScreen';
 import { ActivityScreen } from '../screens/onboarding/ActivityScreen';
 import { AgeScreen } from '../screens/onboarding/AgeScreen';
@@ -46,6 +47,7 @@ export function RootNavigator() {
         <Stack.Screen name="Activity" component={ActivityScreen} />
         <Stack.Screen name="Goal" component={GoalScreen} />
         <Stack.Screen name="Results" component={ResultsScreen} />
+        <Stack.Screen name="MacroDetail" component={MacroDetailScreen} options={{ presentation: 'modal' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
