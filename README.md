@@ -24,11 +24,12 @@ src/
   data/education/       Plain-language macro explanation copy (PRD §8.4, §8.5) — pure content, unit-tested for completeness
   theme/                Color tokens + light/dark theme (PRD §11.2) and shared spacing/radii
   types/                Shared domain types (UserProfile, etc.)
-  storage/              Local on-device profile persistence (AsyncStorage), with validation (PRD §8.1, §12)
-  profile/              App-level "current saved profile" state (ProfileContext) — decides Welcome vs. Results on launch
+  storage/              Local on-device persistence (AsyncStorage): profile (`profileStorage`), nudge dismissal (`nudgeStorage`)
+  profile/              App-level "current saved profile" state (ProfileContext) — decides Welcome vs. Results on launch;
+                        also the "has anything changed?" nudge logic (`nudge.ts`, pure + tested) and its hook (`useChangeNudge`)
   onboarding/           Onboarding wizard state (draft context), unit conversion, and input validation — all pure/tested
   components/           Shared UI building blocks (PrimaryButton, OptionCard, UnitToggle, OnboardingScreenLayout,
-                        AnimatedNumber, AnimatedFillBar, FadeInView, CelebrationBanner)
+                        AnimatedNumber, AnimatedFillBar, FadeInView, CelebrationBanner, ChangeNudgeCard)
   navigation/           React Navigation root stack + param types
   screens/              App screens (Welcome, Results, MacroDetail modal)
   screens/onboarding/   The six onboarding step screens (sex, age, height, weight, activity, goal)
@@ -70,7 +71,8 @@ Early scaffold. Following the milestones in PRD §17:
   - [x] v1 results screen (`src/screens/ResultsScreen.tsx`): full calorie/macro targets from the engine, plus every vitamin/mineral listed by name with a lock icon (everyone currently sees the locked view — there's no subscription/entitlement system yet, see milestone 5). "Edit profile" re-enters the same onboarding wizard prefilled with the current answers (via `hydrateFromProfile` on `OnboardingDraftContext`) instead of clearing the profile and starting over; the saved profile isn't touched until the wizard is completed again, so backing out mid-edit leaves it intact. The Goal screen's button reads "Save changes" instead of "See my numbers" when editing.
   - [x] Macro explanations (PRD §8.4): tapping a macro card opens `MacroDetailScreen` as a modal — what it does, why *this* user's number is what it is (personalized per goal), and what happens with too little/too much. Content lives in `src/data/education/macroExplanations.ts`, kept as reviewable copy separate from the calculation engine, with tests only checking completeness (every macro × every goal has non-empty text), not wording.
   - [x] Animations & illustrations (PRD §11.3): illustrated, rounded macro icons (protein/carbs/fat, `assets/illustrations/`) and a welcome-screen hero illustration, all generated in a consistent friendly-cartoon style. Calorie/macro numbers count up on mount (`AnimatedNumber`), each macro card has a fill-in progress bar tinted to match its icon (`AnimatedFillBar`), macro cards and the welcome hero fade/slide in on mount (`FadeInView`), and finishing (or re-finishing, via edit) the onboarding wizard shows a one-time celebratory banner on Results (`CelebrationBanner`, driven by a `justCompleted` nav param — never replayed on a routine app open). All built on React Native's built-in `Animated` API (no new dependency) and respect the OS "reduce motion" accessibility setting. Micronutrient icons are deferred until that section has real (unlocked) UI beyond a name + lock (milestone 5).
-  - [ ] **Not yet done / known gaps to revisit:** the 30-day "has anything changed?" nudge (PRD §8.1), and keyboard-avoiding behavior on the input screens.
+  - [x] "Has anything changed?" nudge (PRD §8.1): a soft, dismissible card on Results — "Update my info" or "Not now," never a push notification or alarm-colored banner — appears once the saved profile is ~30 days old. The day-math (`src/profile/nudge.ts`, `NUDGE_THRESHOLD_DAYS = 30`) and dismissal persistence (`src/storage/nudgeStorage.ts`) are pure/tested separately from the `useChangeNudge` hook that wires them together for `ResultsScreen`. Dismissal is keyed to the profile's exact `updatedAt`, so editing the profile (which changes `updatedAt`) automatically un-dismisses it and restarts its own 30-day clock — no extra bookkeeping needed.
+  - [ ] **Not yet done / known gaps to revisit:** keyboard-avoiding behavior on the input screens.
 - [x] Education layer content — macros done (see above); micronutrient explanations are blocked on the premium/entitlement system (milestone 5) since that content is gated
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12)
 - [ ] Accessibility + edge-case testing pass

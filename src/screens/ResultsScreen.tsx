@@ -5,6 +5,7 @@ import { Image, ImageSourcePropType, Pressable, ScrollView, StyleSheet, Text, Vi
 import { AnimatedFillBar } from '../components/AnimatedFillBar';
 import { AnimatedNumber } from '../components/AnimatedNumber';
 import { CelebrationBanner } from '../components/CelebrationBanner';
+import { ChangeNudgeCard } from '../components/ChangeNudgeCard';
 import { FadeInView } from '../components/FadeInView';
 import { NUTRIENT_INFO, NUTRIENT_KEYS } from '../data/dri';
 import { MacroKey } from '../data/education/macroExplanations';
@@ -12,6 +13,7 @@ import { calculateNutrientTargets } from '../engine';
 import { RootStackParamList } from '../navigation/types';
 import { useOnboardingDraft } from '../onboarding/OnboardingDraftContext';
 import { useProfile } from '../profile/ProfileContext';
+import { useChangeNudge } from '../profile/useChangeNudge';
 import { radii, spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Results'>;
@@ -38,8 +40,9 @@ const MACRO_VISUALS: Record<MacroKey, { icon: ImageSourcePropType; accentColor: 
  * plus every micronutrient listed by name with a lock — but not yet real
  * per-nutrient gating (there's no subscription/entitlement system wired up
  * yet per PRD §12/milestone 5, so every install currently sees the locked
- * view). The "has anything changed?" 30-day nudge (PRD §8.1) is still
- * follow-up work, not implemented here yet.
+ * view). Also shows the "has anything changed?" 30-day nudge (PRD §8.1)
+ * once the saved profile is old enough and hasn't already been dismissed
+ * for this exact version of it — see `useChangeNudge`.
  */
 export function ResultsScreen() {
   const navigation = useNavigation<Nav>();
@@ -47,6 +50,9 @@ export function ResultsScreen() {
   const theme = useTheme();
   const { profile } = useProfile();
   const { hydrateFromProfile } = useOnboardingDraft();
+  // Called unconditionally (before the `!profile` guard below) since hooks
+  // can't be called conditionally — `useChangeNudge` is null-safe.
+  const { visible: showChangeNudge, dismiss: dismissChangeNudge } = useChangeNudge(profile);
   // Only true right after GoalScreen finishes the wizard (first time or via
   // edit) — never on a routine app open — see RootStackParamList.Results.
   const [showCelebration, setShowCelebration] = useState(!!params?.justCompleted);
@@ -119,6 +125,8 @@ export function ResultsScreen() {
             />
           </FadeInView>
         </View>
+
+        {showChangeNudge && <ChangeNudgeCard onUpdate={handleEditProfile} onDismiss={dismissChangeNudge} />}
 
         <Text style={[styles.sectionTitle, { color: theme.textPrimary }]}>Vitamins & minerals</Text>
         <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
