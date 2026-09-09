@@ -1,5 +1,5 @@
 import { UserProfile } from '../../../types/profile';
-import { findBracketForProfile, getAllMicronutrientTargets, getMicronutrientTarget } from '../index';
+import { findBracketForProfile, getAllMicronutrientTargets, getMicronutrientTarget, MIN_SUPPORTED_AGE } from '../index';
 
 const baseProfile: UserProfile = {
   sex: 'male',
@@ -23,6 +23,11 @@ describe('DRI bracket lookup', () => {
   });
 
   it.each([
+    [9, 9, 13],
+    [13, 9, 13],
+    [14, 14, 18],
+    [18, 14, 18],
+    [19, 19, 30],
     [30, 19, 30],
     [31, 31, 50],
     [50, 31, 50],
@@ -36,8 +41,26 @@ describe('DRI bracket lookup', () => {
     expect(bracket?.bracket.maxAge).toBe(expectedMax);
   });
 
-  it('returns null below the youngest seeded bracket', () => {
-    expect(findBracketForProfile({ ...baseProfile, age: 10 })).toBeNull();
+  it('exposes MIN_SUPPORTED_AGE as 9, matching the youngest seeded bracket', () => {
+    expect(MIN_SUPPORTED_AGE).toBe(9);
+  });
+
+  it('returns null below MIN_SUPPORTED_AGE', () => {
+    expect(findBracketForProfile({ ...baseProfile, age: MIN_SUPPORTED_AGE - 1 })).toBeNull();
+    expect(findBracketForProfile({ ...baseProfile, age: 5 })).toBeNull();
+  });
+
+  it('raises iron RDA sharply for females at 14-18 (menstruation) vs 9-13', () => {
+    const female12 = getMicronutrientTarget({ ...baseProfile, sex: 'female', age: 12 }, 'iron');
+    const female15 = getMicronutrientTarget({ ...baseProfile, sex: 'female', age: 15 }, 'iron');
+    expect(female12?.amount).toBe(8);
+    expect(female15?.amount).toBe(15);
+  });
+
+  it('gives males and females the same iron RDA at 9-13 (pre-adolescent)', () => {
+    const male12 = getMicronutrientTarget({ ...baseProfile, sex: 'male', age: 12 }, 'iron');
+    const female12 = getMicronutrientTarget({ ...baseProfile, sex: 'female', age: 12 }, 'iron');
+    expect(male12?.amount).toBe(female12?.amount);
   });
 
   it('returns the correct iron RDA for the female bracket (higher than male, pre-menopause)', () => {
