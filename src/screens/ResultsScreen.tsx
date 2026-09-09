@@ -1,6 +1,11 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Image, ImageSourcePropType, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { AnimatedFillBar } from '../components/AnimatedFillBar';
+import { AnimatedNumber } from '../components/AnimatedNumber';
+import { CelebrationBanner } from '../components/CelebrationBanner';
+import { FadeInView } from '../components/FadeInView';
 import { NUTRIENT_INFO, NUTRIENT_KEYS } from '../data/dri';
 import { MacroKey } from '../data/education/macroExplanations';
 import { calculateNutrientTargets } from '../engine';
@@ -10,13 +15,27 @@ import { useProfile } from '../profile/ProfileContext';
 import { radii, spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Results'>;
+type Route = RouteProp<RootStackParamList, 'Results'>;
 
 /**
- * v1 results dashboard (PRD §8.4). This covers the functional core — full
- * macro targets (tappable for a plain-language explanation, see
- * `MacroDetailScreen`), plus every micronutrient listed by name with a
- * lock — but not yet the animated "reveal" treatment or illustrated icons
- * from PRD §11.3 (milestone 2 visual polish), and not yet real
+ * Illustrated, rounded macro icons (PRD §11.3 — "friendly, rounded,
+ * illustrated icon, not a literal medical/molecular icon") plus a matching
+ * accent color per macro, reused for that macro's progress-fill bar so the
+ * icon badge and bar read as one visual language. Micronutrient icons are
+ * deferred until the micronutrient section has real (unlocked) UI to put
+ * them in — right now it's just a name + lock, see the section below.
+ */
+const MACRO_VISUALS: Record<MacroKey, { icon: ImageSourcePropType; accentColor: string }> = {
+  protein: { icon: require('../../assets/illustrations/macro-protein.png'), accentColor: '#2ECC71' },
+  carbs: { icon: require('../../assets/illustrations/macro-carbs.png'), accentColor: '#F2B705' },
+  fat: { icon: require('../../assets/illustrations/macro-fat.png'), accentColor: '#5BC8D6' },
+};
+
+/**
+ * v1 results dashboard (PRD §8.4). Full macro targets (tappable for a
+ * plain-language explanation, see `MacroDetailScreen`) with illustrated
+ * icons, animated count-up numbers, and fill-in progress bars (PRD §11.3),
+ * plus every micronutrient listed by name with a lock — but not yet real
  * per-nutrient gating (there's no subscription/entitlement system wired up
  * yet per PRD §12/milestone 5, so every install currently sees the locked
  * view). The "has anything changed?" 30-day nudge (PRD §8.1) is still
@@ -24,9 +43,13 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Results'>;
  */
 export function ResultsScreen() {
   const navigation = useNavigation<Nav>();
+  const { params } = useRoute<Route>();
   const theme = useTheme();
   const { profile } = useProfile();
   const { hydrateFromProfile } = useOnboardingDraft();
+  // Only true right after GoalScreen finishes the wizard (first time or via
+  // edit) — never on a routine app open — see RootStackParamList.Results.
+  const [showCelebration, setShowCelebration] = useState(!!params?.justCompleted);
 
   if (!profile) {
     // Shouldn't normally happen — RootNavigator only routes here once a
@@ -62,63 +85,80 @@ export function ResultsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
-      <Text style={[styles.calorieValue, { color: theme.textPrimary }]}>{targets.calorieTarget}</Text>
-      <Text style={[styles.calorieLabel, { color: theme.textSecondary }]}>calories / day</Text>
+    <View style={styles.root}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+        <AnimatedNumber value={targets.calorieTarget} style={[styles.calorieValue, { color: theme.textPrimary }]} />
+        <Text style={[styles.calorieLabel, { color: theme.textSecondary }]}>calories / day</Text>
 
-      <View style={styles.macroRow}>
-        <MacroCard
-          label="Protein"
-          grams={targets.macros.protein.grams}
-          percent={targets.macros.protein.percentOfCalories}
-          onPress={() => handleMacroPress('protein', targets.macros.protein.grams, targets.macros.protein.percentOfCalories)}
-        />
-        <MacroCard
-          label="Carbs"
-          grams={targets.macros.carbs.grams}
-          percent={targets.macros.carbs.percentOfCalories}
-          onPress={() => handleMacroPress('carbs', targets.macros.carbs.grams, targets.macros.carbs.percentOfCalories)}
-        />
-        <MacroCard
-          label="Fat"
-          grams={targets.macros.fat.grams}
-          percent={targets.macros.fat.percentOfCalories}
-          onPress={() => handleMacroPress('fat', targets.macros.fat.grams, targets.macros.fat.percentOfCalories)}
-        />
-      </View>
+        <View style={styles.macroRow}>
+          <FadeInView delay={0} style={styles.macroCardWrapper}>
+            <MacroCard
+              macro="protein"
+              label="Protein"
+              grams={targets.macros.protein.grams}
+              percent={targets.macros.protein.percentOfCalories}
+              onPress={() => handleMacroPress('protein', targets.macros.protein.grams, targets.macros.protein.percentOfCalories)}
+            />
+          </FadeInView>
+          <FadeInView delay={100} style={styles.macroCardWrapper}>
+            <MacroCard
+              macro="carbs"
+              label="Carbs"
+              grams={targets.macros.carbs.grams}
+              percent={targets.macros.carbs.percentOfCalories}
+              onPress={() => handleMacroPress('carbs', targets.macros.carbs.grams, targets.macros.carbs.percentOfCalories)}
+            />
+          </FadeInView>
+          <FadeInView delay={200} style={styles.macroCardWrapper}>
+            <MacroCard
+              macro="fat"
+              label="Fat"
+              grams={targets.macros.fat.grams}
+              percent={targets.macros.fat.percentOfCalories}
+              onPress={() => handleMacroPress('fat', targets.macros.fat.grams, targets.macros.fat.percentOfCalories)}
+            />
+          </FadeInView>
+        </View>
 
-      <Text style={[styles.sectionTitle, { color: theme.textPrimary }]}>Vitamins & minerals</Text>
-      <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
-        Unlock your personalized targets for every vitamin and mineral with NutriCal Premium.
-      </Text>
-      <View style={[styles.microCard, { backgroundColor: theme.surface }]}>
-        {NUTRIENT_KEYS.map((key) => (
-          <View key={key} style={[styles.microRow, { borderBottomColor: theme.border }]}>
-            <Text style={[styles.microLabel, { color: theme.textPrimary }]}>{NUTRIENT_INFO[key].displayName}</Text>
-            <Text style={styles.lockIcon}>🔒</Text>
-          </View>
-        ))}
-      </View>
+        <Text style={[styles.sectionTitle, { color: theme.textPrimary }]}>Vitamins & minerals</Text>
+        <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+          Unlock your personalized targets for every vitamin and mineral with NutriCal Premium.
+        </Text>
+        <View style={[styles.microCard, { backgroundColor: theme.surface }]}>
+          {NUTRIENT_KEYS.map((key) => (
+            <View key={key} style={[styles.microRow, { borderBottomColor: theme.border }]}>
+              <Text style={[styles.microLabel, { color: theme.textPrimary }]}>{NUTRIENT_INFO[key].displayName}</Text>
+              <Text style={styles.lockIcon}>🔒</Text>
+            </View>
+          ))}
+        </View>
 
-      <Text onPress={handleEditProfile} style={[styles.editLink, { color: theme.accentDeep }]}>
-        Edit profile
-      </Text>
-    </ScrollView>
+        <Text onPress={handleEditProfile} style={[styles.editLink, { color: theme.accentDeep }]}>
+          Edit profile
+        </Text>
+      </ScrollView>
+      {showCelebration && (
+        <CelebrationBanner message="Here are your numbers!" onDone={() => setShowCelebration(false)} />
+      )}
+    </View>
   );
 }
 
 function MacroCard({
+  macro,
   label,
   grams,
   percent,
   onPress,
 }: {
+  macro: MacroKey;
   label: string;
   grams: number;
   percent: number;
   onPress: () => void;
 }) {
   const theme = useTheme();
+  const { icon, accentColor } = MACRO_VISUALS[macro];
   return (
     <Pressable
       onPress={onPress}
@@ -126,25 +166,30 @@ function MacroCard({
       accessibilityLabel={`${label}, ${grams} grams, ${percent}% of your calories. Tap to learn more.`}
       style={({ pressed }) => [styles.macroCard, { backgroundColor: theme.surface }, pressed && styles.macroCardPressed]}
     >
-      <Text style={[styles.macroGrams, { color: theme.textPrimary }]}>{grams}g</Text>
+      <Image source={icon} style={styles.macroIcon} resizeMode="contain" accessibilityIgnoresInvertColors />
+      <AnimatedNumber value={grams} suffix="g" style={[styles.macroGrams, { color: theme.textPrimary }]} />
       <Text style={[styles.macroLabel, { color: theme.textSecondary }]}>{label}</Text>
       <Text style={[styles.macroPercent, { color: theme.textSecondary }]}>{percent}%</Text>
+      <AnimatedFillBar percent={percent} fillColor={accentColor} trackColor={theme.border} />
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
   container: { flex: 1 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   content: { padding: spacing.lg, alignItems: 'center' },
   calorieValue: { fontSize: 56, fontWeight: '800', marginTop: spacing.lg },
   calorieLabel: { fontSize: 15, marginBottom: spacing.lg },
   macroRow: { flexDirection: 'row', gap: spacing.sm, width: '100%' },
+  macroCardWrapper: { flex: 1 },
   macroCard: { flex: 1, borderRadius: radii.md, padding: spacing.md, alignItems: 'center' },
   macroCardPressed: { opacity: 0.7 },
+  macroIcon: { width: 40, height: 40, marginBottom: spacing.xs },
   macroGrams: { fontSize: 20, fontWeight: '700' },
   macroLabel: { fontSize: 13, marginTop: 2 },
-  macroPercent: { fontSize: 12, marginTop: 2 },
+  macroPercent: { fontSize: 12, marginTop: 2, marginBottom: spacing.xs },
   sectionTitle: { fontSize: 20, fontWeight: '700', marginTop: spacing.xl, alignSelf: 'flex-start' },
   sectionSubtitle: { fontSize: 13, marginTop: spacing.xs, marginBottom: spacing.md, alignSelf: 'flex-start' },
   microCard: { width: '100%', borderRadius: radii.md, padding: spacing.md },

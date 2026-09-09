@@ -56,7 +56,9 @@ export function GoalScreen() {
     };
     await saveProfile(updatedProfile);
     reset();
-    navigation.reset({ index: 0, routes: [{ name: 'Results' }] });
+    // `justCompleted` triggers the one-time celebratory reveal on
+    // ResultsScreen (PRD §11.3) — not shown on routine app opens.
+    navigation.reset({ index: 0, routes: [{ name: 'Results', params: { justCompleted: true } }] });
   };
 
   return (
