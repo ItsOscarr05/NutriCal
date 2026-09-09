@@ -23,6 +23,7 @@ src/
   data/dri/     DRI/RDA/AI/UL micronutrient reference tables, keyed by age/sex bracket (PRD §8.3, §10)
   theme/        Color tokens + light/dark theme (PRD §11.2) and shared spacing/radii
   types/        Shared domain types (UserProfile, etc.)
+  storage/      Local on-device profile persistence (AsyncStorage), with validation (PRD §8.1, §12)
   navigation/   React Navigation root stack
   screens/      App screens
 project-docs/
@@ -54,9 +55,12 @@ Early scaffold. Following the milestones in PRD §17:
 
 - [x] Project scaffold (Expo + TypeScript, navigation, theming, testing)
 - [x] Calculation engine v1: BMR/TDEE (Mifflin-St Jeor) + goal-adjusted macro splits, with unit tests
-- [ ] **Data foundation (in progress):** DRI/RDA/AI/UL reference tables. All four standard **adult** brackets (19-30, 31-50, 51-70, 71+) plus the **adolescent** brackets (9-13, 14-18) × both sexes are now seeded (`src/data/dri/adultBrackets.ts`, `adolescentBrackets.ts`), with tests covering the boundary shifts (vitamin D, B6, calcium, iron, magnesium, phosphorus UL, sodium AI, and the 9-13 → 14-18 iron jump for females). `MIN_SUPPORTED_AGE` (9) is exported from `src/data/dri/index.ts` for onboarding to enforce once an age input step exists — ages below it intentionally return no data (infant/toddler DRI is caregiver-administered, a different UX problem). Still outstanding: (1) cross-checking every value against the [NIH Office of Dietary Supplements DRI tables](https://ods.od.nih.gov/HealthInformation/Dietary_Reference_Intakes.aspx) — the adolescent sodium AI/CDRR figures are flagged as the least confident, (2) a decision on pregnancy/lactation life stages — see the TODO comments at the top of both bracket files.
+- [x] **Data foundation:** DRI/RDA/AI/UL reference tables. All four standard **adult** brackets (19-30, 31-50, 51-70, 71+) plus the **adolescent** brackets (9-13, 14-18) × both sexes are seeded (`src/data/dri/adultBrackets.ts`, `adolescentBrackets.ts`), with tests covering the boundary shifts (vitamin D, B6, calcium, iron, magnesium, phosphorus UL, sodium AI, and the 9-13 → 14-18 iron jump for females). `MIN_SUPPORTED_AGE` (9) is exported from `src/data/dri/index.ts` for onboarding to enforce once an age input step exists — ages below it intentionally return no data (infant/toddler DRI is caregiver-administered, a different UX problem). Pregnancy/lactation life stages are a deliberate **v1 non-goal** (revisit post-v1 — the schema already supports it via `lifeStage`). Still outstanding: cross-checking every value against the [NIH Office of Dietary Supplements DRI tables](https://ods.od.nih.gov/HealthInformation/Dietary_Reference_Intakes.aspx) — the adolescent sodium AI/CDRR figures are flagged as the least confident.
 - [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`. The bright brand green and the original secondary-text gray both failed AA on light backgrounds and have been fixed (`greenDark` for icons/large text, `sage` for secondary text on light mode). Icon set and motion style still to come for the rest of milestone 2.
-- [ ] Core UI: onboarding flow, results dashboard, nutrient detail / education screens, paywall screen
+- [ ] **Core UI (in progress):** onboarding flow, results dashboard, nutrient detail / education screens, paywall screen.
+  - [x] Local profile persistence (`src/storage/profileStorage.ts`) — save/load/clear against AsyncStorage, with a runtime type guard so corrupted or stale-schema data never crashes the app (falls back to "no profile" / re-onboard instead).
+  - [ ] Onboarding screens (sex → age → height/weight → activity → goal), imperial-first with a metric toggle.
+  - [ ] Wire onboarding completion → save profile → navigate to results.
 - [ ] Education layer content (plain-language explanations per nutrient)
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12)
 - [ ] Accessibility + edge-case testing pass
