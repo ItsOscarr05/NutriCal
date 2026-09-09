@@ -55,7 +55,7 @@ Early scaffold. Following the milestones in PRD §17:
 - [x] Project scaffold (Expo + TypeScript, navigation, theming, testing)
 - [x] Calculation engine v1: BMR/TDEE (Mifflin-St Jeor) + goal-adjusted macro splits, with unit tests
 - [ ] **Data foundation (in progress):** DRI/RDA/AI/UL reference tables. All four standard **adult** brackets (19-30, 31-50, 51-70, 71+) × both sexes are now seeded in `src/data/dri/adultBrackets.ts`, with tests covering the boundary shifts (vitamin D, B6, calcium, iron, magnesium, phosphorus UL, sodium AI). Still outstanding: (1) cross-checking every value against the [NIH Office of Dietary Supplements DRI tables](https://ods.od.nih.gov/HealthInformation/Dietary_Reference_Intakes.aspx), (2) child/adolescent brackets + a min-age gate in onboarding, (3) a decision on pregnancy/lactation life stages — see the TODO comment at the top of that file.
-- [ ] Visual design system: color tokens are drafted in `src/theme/colors.ts` but **not yet WCAG-AA validated** (PRD §11.2) — icon set and motion style still to come.
+- [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`. The bright brand green and the original secondary-text gray both failed AA on light backgrounds and have been fixed (`greenDark` for icons/large text, `sage` for secondary text on light mode). Icon set and motion style still to come for the rest of milestone 2.
 - [ ] Core UI: onboarding flow, results dashboard, nutrient detail / education screens, paywall screen
 - [ ] Education layer content (plain-language explanations per nutrient)
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12)
