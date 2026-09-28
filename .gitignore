@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# scratch reference material (e.g. downloaded Stitch mockup HTML/exports) — not part of the app
+.stitch-html/
+.stitch-export/
+.expo-export-check*/
