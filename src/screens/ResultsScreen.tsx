@@ -1,4 +1,5 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { CompositeNavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Image, ImageSourcePropType, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -12,14 +13,22 @@ import { GearButton } from '../components/GearButton';
 import { NUTRIENT_INFO, NUTRIENT_KEYS } from '../data/dri';
 import { MacroKey } from '../data/education/macroExplanations';
 import { calculateNutrientTargets } from '../engine';
-import { RootStackParamList } from '../navigation/types';
+import { MainTabParamList, RootStackParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
 import { useChangeNudge } from '../profile/useChangeNudge';
 import { useEditProfileNavigation } from '../profile/useEditProfileNavigation';
 import { radii, spacing, useTheme } from '../theme';
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'Results'>;
-type Route = RouteProp<RootStackParamList, 'Results'>;
+// This screen now renders as the `Targets` tab inside `MainTabs`, but still
+// navigates to root-stack-only routes (`Settings`, `MacroDetail`) — hence
+// the composite type combining both navigators, the standard React
+// Navigation pattern for a screen nested in a child navigator that needs
+// to act on an ancestor navigator.
+type Nav = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Targets'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
+type Route = RouteProp<MainTabParamList, 'Targets'>;
 
 /**
  * Illustrated, rounded macro icons (PRD §11.3 — "friendly, rounded,
