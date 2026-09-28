@@ -24,14 +24,20 @@ src/
   data/education/       Plain-language macro explanation copy (PRD §8.4, §8.5) — pure content, unit-tested for completeness
   theme/                Color tokens + light/dark theme (PRD §11.2) and shared spacing/radii
   types/                Shared domain types (UserProfile, etc.)
-  storage/              Local on-device persistence (AsyncStorage): profile (`profileStorage`), nudge dismissal (`nudgeStorage`)
+  storage/              Local on-device persistence (AsyncStorage): profile (`profileStorage`), nudge dismissal
+                        (`nudgeStorage`), app-level units/appearance preferences (`appSettingsStorage`)
   profile/              App-level "current saved profile" state (ProfileContext) — decides Welcome vs. Results on launch;
-                        also the "has anything changed?" nudge logic (`nudge.ts`, pure + tested) and its hook (`useChangeNudge`)
+                        also the "has anything changed?" nudge logic (`nudge.ts`, pure + tested) and its hook (`useChangeNudge`);
+                        `useEditProfileNavigation` — the shared "re-enter onboarding prefilled" action used by both
+                        Results' "Edit profile" link and the Settings screen's "Edit profile" row
+  settings/             App-level preferences (units, appearance) — pure types/defaults (`appSettings.ts`) + a thin
+                        React context (`AppSettingsContext`), the third top-level context alongside ProfileContext
+                        and OnboardingDraftContext
   onboarding/           Onboarding wizard state (draft context), unit conversion, and input validation — all pure/tested
   components/           Shared UI building blocks (PrimaryButton, OptionCard, UnitToggle, OnboardingScreenLayout,
-                        AnimatedNumber, AnimatedFillBar, FadeInView, CelebrationBanner, ChangeNudgeCard)
+                        AnimatedNumber, AnimatedFillBar, FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton)
   navigation/           React Navigation root stack + param types
-  screens/              App screens (Welcome, Results, MacroDetail modal)
+  screens/              App screens (Welcome, Results, MacroDetail modal, Settings modal)
   screens/onboarding/   The six onboarding step screens (sex, age, height, weight, activity, goal)
 assets/illustrations/   Generated illustration assets (PRD §11.3) — welcome hero + macro icons
 project-docs/
@@ -73,6 +79,7 @@ Early scaffold. Following the milestones in PRD §17:
   - [x] Animations & illustrations (PRD §11.3): illustrated, rounded macro icons (protein/carbs/fat, `assets/illustrations/`) and a welcome-screen hero illustration, all generated in a consistent friendly-cartoon style. Calorie/macro numbers count up on mount (`AnimatedNumber`), each macro card has a fill-in progress bar tinted to match its icon (`AnimatedFillBar`), macro cards and the welcome hero fade/slide in on mount (`FadeInView`), and finishing (or re-finishing, via edit) the onboarding wizard shows a one-time celebratory banner on Results (`CelebrationBanner`, driven by a `justCompleted` nav param — never replayed on a routine app open). All built on React Native's built-in `Animated` API (no new dependency) and respect the OS "reduce motion" accessibility setting. Micronutrient icons are deferred until that section has real (unlocked) UI beyond a name + lock (milestone 5).
   - [x] "Has anything changed?" nudge (PRD §8.1): a soft, dismissible card on Results — "Update my info" or "Not now," never a push notification or alarm-colored banner — appears once the saved profile is ~30 days old. The day-math (`src/profile/nudge.ts`, `NUDGE_THRESHOLD_DAYS = 30`) and dismissal persistence (`src/storage/nudgeStorage.ts`) are pure/tested separately from the `useChangeNudge` hook that wires them together for `ResultsScreen`. Dismissal is keyed to the profile's exact `updatedAt`, so editing the profile (which changes `updatedAt`) automatically un-dismisses it and restarts its own 30-day clock — no extra bookkeeping needed.
   - [x] Keyboard-avoiding input screens: `OnboardingScreenLayout` (shared by all six onboarding steps, including the three with `TextInput`s — Age, Height, Weight) is wrapped in `KeyboardAvoidingView` (`padding` on iOS, `height` on Android) so the footer's Continue button and the focused input stay above the on-screen keyboard. Applied on Android too, not just iOS — Expo's own docs flag that the default `androidStatusBar.translucent: true` + `android.softwareKeyboardLayoutMode: "resize"` combination needs explicit `KeyboardAvoidingView` handling.
+  - [x] v1 Settings screen: an outlined gear icon (`GearButton`, `Ionicons` `"settings-outline"` via `@expo/vector-icons`) sits top-right on Results, safe-area-offset (`react-native-safe-area-context`, previously installed but unused), and opens `SettingsScreen` as a modal. Covers **Preferences** (Units and Appearance — Light/Dark/System — via the existing generic `UnitToggle`, persisted through the new `AppSettingsContext`/`appSettingsStorage`), **Profile** (an "Edit profile" row sharing `useEditProfileNavigation` with Results), **Data & Privacy** (an on-device-only explanation plus an irreversible "Delete my data" action, confirmed via a native alert, that clears the profile and nudge-dismissal state — deliberately *not* the units/appearance preferences), and **About** (version read from `app.json`, plus disabled "Coming soon" Privacy Policy/Terms rows since no real documents exist yet). The Height/Weight onboarding screens now seed their unit toggle from — and write back to — this same shared preference instead of hardcoding imperial. `useTheme()` now also respects an explicit Light/Dark override here, falling back to the OS scheme when set to "System" (the default, so no existing user sees a behavior change until they visit Settings). Excluded from v1: a restore-purchases stub and a contact/feedback link (no subscription or support system exists yet).
 - [x] Education layer content — macros done (see above); micronutrient explanations are blocked on the premium/entitlement system (milestone 5) since that content is gated
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12)
 - [ ] Accessibility + edge-case testing pass
