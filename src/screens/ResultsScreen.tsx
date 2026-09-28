@@ -2,11 +2,13 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Image, ImageSourcePropType, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedFillBar } from '../components/AnimatedFillBar';
 import { AnimatedNumber } from '../components/AnimatedNumber';
 import { CelebrationBanner } from '../components/CelebrationBanner';
 import { ChangeNudgeCard } from '../components/ChangeNudgeCard';
 import { FadeInView } from '../components/FadeInView';
+import { GearButton } from '../components/GearButton';
 import { NUTRIENT_INFO, NUTRIENT_KEYS } from '../data/dri';
 import { MacroKey } from '../data/education/macroExplanations';
 import { calculateNutrientTargets } from '../engine';
@@ -48,6 +50,7 @@ export function ResultsScreen() {
   const navigation = useNavigation<Nav>();
   const { params } = useRoute<Route>();
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { profile } = useProfile();
   const { hydrateFromProfile } = useOnboardingDraft();
   // Called unconditionally (before the `!profile` guard below) since hooks
@@ -82,6 +85,11 @@ export function ResultsScreen() {
     navigation.navigate('Sex');
   };
 
+  // TODO(navigation todo): wire this to `navigation.navigate('Settings')`
+  // once the `Settings` route exists in `RootStackParamList`/`RootNavigator`
+  // (this screen and its route are added together in the next todo).
+  const handleOpenSettings = () => {};
+
   // PRD §8.4: "Tapping an unlocked macro nutrient opens a plain-language
   // explanation of what it does and why the user's specific number is
   // what it is." Passes the already-calculated grams/percent through so
@@ -92,6 +100,7 @@ export function ResultsScreen() {
 
   return (
     <View style={styles.root}>
+      <GearButton onPress={handleOpenSettings} topInset={insets.top} />
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
         <AnimatedNumber value={targets.calorieTarget} style={[styles.calorieValue, { color: theme.textPrimary }]} />
         <Text style={[styles.calorieLabel, { color: theme.textSecondary }]}>calories / day</Text>
