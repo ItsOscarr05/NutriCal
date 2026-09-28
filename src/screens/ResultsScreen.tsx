@@ -78,10 +78,7 @@ export function ResultsScreen() {
   // `SettingsScreen`'s "Edit profile" row).
   const handleEditProfile = () => editProfile(profile);
 
-  // TODO(navigation todo): wire this to `navigation.navigate('Settings')`
-  // once the `Settings` route exists in `RootStackParamList`/`RootNavigator`
-  // (this screen and its route are added together in the next todo).
-  const handleOpenSettings = () => {};
+  const handleOpenSettings = () => navigation.navigate('Settings');
 
   // PRD §8.4: "Tapping an unlocked macro nutrient opens a plain-language
   // explanation of what it does and why the user's specific number is

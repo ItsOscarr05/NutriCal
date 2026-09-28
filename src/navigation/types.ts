@@ -8,12 +8,12 @@ import { Goal } from '../types/profile';
  *
  * Mirrors the v1 user flow (PRD §9):
  * Welcome -> Sex -> Age -> Height -> Weight -> Activity -> Goal -> Results.
- * `MacroDetail` is a modal reached from Results (PRD §8.4 — tapping an
- * unlocked macro opens its plain-language explanation), not a wizard step.
- * `Results`'s `justCompleted` param is set only by `GoalScreen` right after
- * finishing (or re-finishing, via edit) the wizard, so `ResultsScreen` can
- * show a one-time celebratory reveal (PRD §11.3) instead of on every
- * routine app open.
+ * `MacroDetail` and `Settings` are both modals reached from Results
+ * (PRD §8.4 for `MacroDetail`; the gear icon for `Settings`), not wizard
+ * steps. `Results`'s `justCompleted` param is set only by `GoalScreen`
+ * right after finishing (or re-finishing, via edit) the wizard, so
+ * `ResultsScreen` can show a one-time celebratory reveal (PRD §11.3)
+ * instead of on every routine app open.
  */
 export type RootStackParamList = {
   Welcome: undefined;
@@ -25,4 +25,5 @@ export type RootStackParamList = {
   Goal: undefined;
   Results: { justCompleted?: boolean } | undefined;
   MacroDetail: { macro: MacroKey; grams: number; percent: number; goal: Goal };
+  Settings: undefined;
 };
