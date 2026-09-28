@@ -9,16 +9,25 @@ import { RootStackParamList } from '../../navigation/types';
 import { useOnboardingDraft } from '../../onboarding/OnboardingDraftContext';
 import { cmToFeetInches, feetInchesToCm } from '../../onboarding/unitConversion';
 import { isValidHeightCm } from '../../onboarding/validation';
+import { useAppSettings } from '../../settings/AppSettingsContext';
+import { Units } from '../../settings/appSettings';
 import { spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Height'>;
-type Unit = 'imperial' | 'metric';
 
 export function HeightScreen() {
   const navigation = useNavigation<Nav>();
   const theme = useTheme();
   const { draft, setHeightCm } = useOnboardingDraft();
-  const [unit, setUnit] = useState<Unit>('imperial');
+  // Seeded from (and kept in sync with) the shared units preference — see
+  // AGENTS.md's units-sync note: onboarding no longer hardcodes 'imperial'.
+  const { settings, setUnits } = useAppSettings();
+  const [unit, setUnit] = useState<Units>(settings.units);
+
+  const handleUnitChange = (next: Units) => {
+    setUnit(next);
+    setUnits(next);
+  };
 
   const initialImperial = draft.heightCm ? cmToFeetInches(draft.heightCm) : undefined;
   const [feet, setFeet] = useState(initialImperial ? String(initialImperial.feet) : '');
@@ -48,13 +57,13 @@ export function HeightScreen() {
         />
       }
     >
-      <UnitToggle<Unit>
+      <UnitToggle<Units>
         options={[
           { value: 'imperial', label: 'ft/in' },
           { value: 'metric', label: 'cm' },
         ]}
         value={unit}
-        onChange={setUnit}
+        onChange={handleUnitChange}
       />
       {unit === 'imperial' ? (
         <View style={styles.row}>

@@ -9,16 +9,25 @@ import { RootStackParamList } from '../../navigation/types';
 import { useOnboardingDraft } from '../../onboarding/OnboardingDraftContext';
 import { kgToLb, lbToKg } from '../../onboarding/unitConversion';
 import { isValidWeightKg } from '../../onboarding/validation';
+import { useAppSettings } from '../../settings/AppSettingsContext';
+import { Units } from '../../settings/appSettings';
 import { spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Weight'>;
-type Unit = 'imperial' | 'metric';
 
 export function WeightScreen() {
   const navigation = useNavigation<Nav>();
   const theme = useTheme();
   const { draft, setWeightKg } = useOnboardingDraft();
-  const [unit, setUnit] = useState<Unit>('imperial');
+  // Seeded from (and kept in sync with) the shared units preference — see
+  // AGENTS.md's units-sync note: onboarding no longer hardcodes 'imperial'.
+  const { settings, setUnits } = useAppSettings();
+  const [unit, setUnit] = useState<Units>(settings.units);
+
+  const handleUnitChange = (next: Units) => {
+    setUnit(next);
+    setUnits(next);
+  };
 
   const [lb, setLb] = useState(draft.weightKg ? String(kgToLb(draft.weightKg)) : '');
   const [kg, setKg] = useState(draft.weightKg ? String(draft.weightKg) : '');
@@ -41,13 +50,13 @@ export function WeightScreen() {
         />
       }
     >
-      <UnitToggle<Unit>
+      <UnitToggle<Units>
         options={[
           { value: 'imperial', label: 'lb' },
           { value: 'metric', label: 'kg' },
         ]}
         value={unit}
-        onChange={setUnit}
+        onChange={handleUnitChange}
       />
       {unit === 'imperial' ? (
         <TextInput
