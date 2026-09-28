@@ -9,7 +9,10 @@ Full product spec: [`project-docs/PRD.md`](./project-docs/PRD.md).
 ## Stack
 
 - **Expo (React Native) + TypeScript** — cross-platform mobile from one codebase.
-- **React Navigation** (native-stack) — screen flow.
+- **React Navigation** — a native-stack root (`Welcome` → `QuickAssessment` → `Main`, plus `MacroDetail`/`Settings` modals) wrapping a persistent bottom-tab shell (`@react-navigation/bottom-tabs`: Targets / Assess / Micros / Science).
+- **`react-native-svg`** — the `CircularProgress` progress ring and the `Mascot` illustration.
+- **`@react-native-community/slider`** — the Quick Assessment screen's age/height/weight sliders.
+- **`@expo-google-fonts/plus-jakarta-sans` + `expo-font`** — the app's display typeface, matching the Stitch design system.
 - **AsyncStorage** — local, on-device profile storage (v1 is no-account / local-only by design — see PRD §8.1, §12).
 - **Jest** (`jest-expo` preset) — unit testing, especially for the calculation engine.
 
@@ -22,27 +25,40 @@ src/
   engine/               BMR/TDEE + macro calculation engine (PRD §10) — pure, unit-tested functions
   data/dri/             DRI/RDA/AI/UL micronutrient reference tables, keyed by age/sex bracket (PRD §8.3, §10)
   data/education/       Plain-language macro explanation copy (PRD §8.4, §8.5) — pure content, unit-tested for completeness
-  theme/                Color tokens + light/dark theme (PRD §11.2) and shared spacing/radii
+  theme/                Color tokens (rebuilt from the Stitch design system, PRD §11.2) + light/dark theme and shared
+                        spacing/radii; contrast-validated in `__tests__/contrast.test.ts`
   types/                Shared domain types (UserProfile, etc.)
   storage/              Local on-device persistence (AsyncStorage): profile (`profileStorage`), nudge dismissal
                         (`nudgeStorage`), app-level units/appearance preferences (`appSettingsStorage`)
-  profile/              App-level "current saved profile" state (ProfileContext) — decides Welcome vs. Results on launch;
-                        also the "has anything changed?" nudge logic (`nudge.ts`, pure + tested) and its hook (`useChangeNudge`);
-                        `useEditProfileNavigation` — the shared "re-enter onboarding prefilled" action used by both
-                        Results' "Edit profile" link and the Settings screen's "Edit profile" row
+  profile/              App-level "current saved profile" state (ProfileContext) — decides Welcome vs. the tab
+                        shell on launch; also the "has anything changed?" nudge logic (`nudge.ts`, pure + tested)
+                        and its hook (`useChangeNudge`)
   settings/             App-level preferences (units, appearance) — pure types/defaults (`appSettings.ts`) + a thin
-                        React context (`AppSettingsContext`), the third top-level context alongside ProfileContext
-                        and OnboardingDraftContext
-  onboarding/           Onboarding wizard state (draft context), unit conversion, and input validation — all pure/tested
-  components/           Shared UI building blocks (PrimaryButton, OptionCard, UnitToggle, OnboardingScreenLayout,
-                        AnimatedNumber, AnimatedFillBar, FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton)
-  navigation/           React Navigation root stack + param types
-  screens/              App screens (Welcome, Results, MacroDetail modal, Settings modal)
-  screens/onboarding/   The six onboarding step screens (sex, age, height, weight, activity, goal)
-assets/illustrations/   Generated illustration assets (PRD §11.3) — welcome hero + macro icons
+                        React context (`AppSettingsContext`), the second top-level context alongside ProfileContext
+  onboarding/           Imperial/metric unit conversion + input validation helpers used by the Quick Assessment
+                        screen — pure/tested
+  components/           Shared UI building blocks (PrimaryButton, UnitToggle, AnimatedNumber, AnimatedFillBar,
+                        FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton, CircularProgress, Mascot)
+  navigation/           Root native-stack (`RootNavigator`) + the bottom-tab shell (`MainTabs`) + shared param types
+  screens/              App screens: Welcome, QuickAssessment (single-screen onboarding *and* the Assess tab),
+                        ResultsScreen (the Targets tab), ScienceBreakdownScreen (the Science tab),
+                        MicronutrientExplorerScreen (the Micros tab), MacroDetail modal, Settings modal
+assets/illustrations/   Generated illustration assets (PRD §11.3) — currently just the welcome hero (macro icons
+                        are now `MaterialIcons` glyphs, and the mascot is a hand-ported `react-native-svg` illustration)
 project-docs/
   PRD.md                The full product requirements document
 ```
+
+## Navigation shape (v1.1)
+
+The app used to be one straight-line flow: a 6-step onboarding wizard ending on a single Results screen. It's now a persistent bottom-tab shell, matching a set of Stitch (Google Stitch) mockups the product's design was rebuilt from:
+
+- **Targets** (`ResultsScreen`) — the calorie/macro dashboard, reached after onboarding or on any return visit.
+- **Assess** (`QuickAssessmentScreen`) — a single scrolling screen (sliders + pills, live preview) that replaces the old 6-step wizard. It's also mounted directly on the root stack for first-time onboarding, before a profile exists.
+- **Micros** (`MicronutrientExplorerScreen`) — every vitamin/mineral by name, locked (no values/percentages) for free users — the freemium boundary (PRD §7, §8.4) is unchanged even though this screen's visual design comes from a mockup that showed real values to everyone.
+- **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, and a self-check checklist.
+
+`MacroDetail` (tap a macro card) and `Settings` (gear icon on Targets) remain modals reached from inside the tab shell rather than tabs themselves.
 
 ## Getting started
 
@@ -65,23 +81,21 @@ npm run test:watch
 
 ## Status
 
-Early scaffold. Following the milestones in PRD §17:
+Following the milestones in PRD §17:
 
 - [x] Project scaffold (Expo + TypeScript, navigation, theming, testing)
 - [x] Calculation engine v1: BMR/TDEE (Mifflin-St Jeor) + goal-adjusted macro splits, with unit tests
-- [x] **Data foundation:** DRI/RDA/AI/UL reference tables. All four standard **adult** brackets (19-30, 31-50, 51-70, 71+) plus the **adolescent** brackets (9-13, 14-18) × both sexes are seeded (`src/data/dri/adultBrackets.ts`, `adolescentBrackets.ts`), with tests covering the boundary shifts (vitamin D, B6, calcium, iron, magnesium, phosphorus UL, sodium AI, and the 9-13 → 14-18 iron jump for females). `MIN_SUPPORTED_AGE` (9) is exported from `src/data/dri/index.ts` for onboarding to enforce once an age input step exists — ages below it intentionally return no data (infant/toddler DRI is caregiver-administered, a different UX problem). Pregnancy/lactation life stages are a deliberate **v1 non-goal** (revisit post-v1 — the schema already supports it via `lifeStage`). Still outstanding: cross-checking every value against the [NIH Office of Dietary Supplements DRI tables](https://ods.od.nih.gov/HealthInformation/Dietary_Reference_Intakes.aspx) — the adolescent sodium AI/CDRR figures are flagged as the least confident.
-- [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`. The bright brand green and the original secondary-text gray both failed AA on light backgrounds and have been fixed (`greenDark` for icons/large text, `sage` for secondary text on light mode). Macro icon set and core motion style are done (see the animations/illustrations bullet under Core UI below); the full micronutrient icon set is deferred to when that section has real UI (milestone 5).
-- [ ] **Core UI (in progress):** onboarding flow, results dashboard, and macro education screens are done; the paywall screen (and any micronutrient-specific UI it unlocks) is still outstanding — see milestone 5.
-  - [x] Local profile persistence (`src/storage/profileStorage.ts`) — save/load/clear against AsyncStorage, with a runtime type guard so corrupted or stale-schema data never crashes the app (falls back to "no profile" / re-onboard instead).
-  - [x] Onboarding flow: Welcome → Sex → Age → Height → Weight → Activity → Goal (PRD §9), imperial-first with a metric toggle on height/weight. Draft answers live in `OnboardingDraftContext` until the final (Goal) screen, which builds the real `UserProfile`, saves it, and routes to Results. `ProfileContext` decides on launch whether to show Welcome (no profile) or Results (existing profile) — the "come back anytime" flow.
-  - [x] v1 results screen (`src/screens/ResultsScreen.tsx`): full calorie/macro targets from the engine, plus every vitamin/mineral listed by name with a lock icon (everyone currently sees the locked view — there's no subscription/entitlement system yet, see milestone 5). "Edit profile" re-enters the same onboarding wizard prefilled with the current answers (via `hydrateFromProfile` on `OnboardingDraftContext`) instead of clearing the profile and starting over; the saved profile isn't touched until the wizard is completed again, so backing out mid-edit leaves it intact. The Goal screen's button reads "Save changes" instead of "See my numbers" when editing.
-  - [x] Macro explanations (PRD §8.4): tapping a macro card opens `MacroDetailScreen` as a modal — what it does, why *this* user's number is what it is (personalized per goal), and what happens with too little/too much. Content lives in `src/data/education/macroExplanations.ts`, kept as reviewable copy separate from the calculation engine, with tests only checking completeness (every macro × every goal has non-empty text), not wording.
-  - [x] Animations & illustrations (PRD §11.3): illustrated, rounded macro icons (protein/carbs/fat, `assets/illustrations/`) and a welcome-screen hero illustration, all generated in a consistent friendly-cartoon style. Calorie/macro numbers count up on mount (`AnimatedNumber`), each macro card has a fill-in progress bar tinted to match its icon (`AnimatedFillBar`), macro cards and the welcome hero fade/slide in on mount (`FadeInView`), and finishing (or re-finishing, via edit) the onboarding wizard shows a one-time celebratory banner on Results (`CelebrationBanner`, driven by a `justCompleted` nav param — never replayed on a routine app open). All built on React Native's built-in `Animated` API (no new dependency) and respect the OS "reduce motion" accessibility setting. Micronutrient icons are deferred until that section has real (unlocked) UI beyond a name + lock (milestone 5).
-  - [x] "Has anything changed?" nudge (PRD §8.1): a soft, dismissible card on Results — "Update my info" or "Not now," never a push notification or alarm-colored banner — appears once the saved profile is ~30 days old. The day-math (`src/profile/nudge.ts`, `NUDGE_THRESHOLD_DAYS = 30`) and dismissal persistence (`src/storage/nudgeStorage.ts`) are pure/tested separately from the `useChangeNudge` hook that wires them together for `ResultsScreen`. Dismissal is keyed to the profile's exact `updatedAt`, so editing the profile (which changes `updatedAt`) automatically un-dismisses it and restarts its own 30-day clock — no extra bookkeeping needed.
-  - [x] Keyboard-avoiding input screens: `OnboardingScreenLayout` (shared by all six onboarding steps, including the three with `TextInput`s — Age, Height, Weight) is wrapped in `KeyboardAvoidingView` (`padding` on iOS, `height` on Android) so the footer's Continue button and the focused input stay above the on-screen keyboard. Applied on Android too, not just iOS — Expo's own docs flag that the default `androidStatusBar.translucent: true` + `android.softwareKeyboardLayoutMode: "resize"` combination needs explicit `KeyboardAvoidingView` handling.
-  - [x] v1 Settings screen: an outlined gear icon (`GearButton`, `Ionicons` `"settings-outline"` via `@expo/vector-icons`) sits top-right on Results, safe-area-offset (`react-native-safe-area-context`, previously installed but unused), and opens `SettingsScreen` as a modal. Covers **Preferences** (Units and Appearance — Light/Dark/System — via the existing generic `UnitToggle`, persisted through the new `AppSettingsContext`/`appSettingsStorage`), **Profile** (an "Edit profile" row sharing `useEditProfileNavigation` with Results), **Data & Privacy** (an on-device-only explanation plus an irreversible "Delete my data" action, confirmed via a native alert, that clears the profile and nudge-dismissal state — deliberately *not* the units/appearance preferences), and **About** (version read from `app.json`, plus disabled "Coming soon" Privacy Policy/Terms rows since no real documents exist yet). The Height/Weight onboarding screens now seed their unit toggle from — and write back to — this same shared preference instead of hardcoding imperial. `useTheme()` now also respects an explicit Light/Dark override here, falling back to the OS scheme when set to "System" (the default, so no existing user sees a behavior change until they visit Settings). Excluded from v1: a restore-purchases stub and a contact/feedback link (no subscription or support system exists yet).
-- [x] Education layer content — macros done (see above); micronutrient explanations are blocked on the premium/entitlement system (milestone 5) since that content is gated
-- [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12)
+- [x] **Data foundation:** DRI/RDA/AI/UL reference tables. All four standard **adult** brackets (19-30, 31-50, 51-70, 71+) plus the **adolescent** brackets (9-13, 14-18) × both sexes are seeded (`src/data/dri/adultBrackets.ts`, `adolescentBrackets.ts`), with tests covering the boundary shifts (vitamin D, B6, calcium, iron, magnesium, phosphorus UL, sodium AI, and the 9-13 → 14-18 iron jump for females). `MIN_SUPPORTED_AGE` (9) is exported from `src/data/dri/index.ts`. Pregnancy/lactation life stages are a deliberate **v1 non-goal** (revisit post-v1 — the schema already supports it via `lifeStage`). Still outstanding: cross-checking every value against the [NIH Office of Dietary Supplements DRI tables](https://ods.od.nih.gov/HealthInformation/Dietary_Reference_Intakes.aspx) — the adolescent sodium AI/CDRR figures are flagged as the least confident.
+- [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`.
+- [x] **v1.1 redesign — Stitch mockup-driven visual/IA overhaul.** Found and adopted a set of 4 Google Stitch mockups (Daily Targets Dashboard, Science Breakdown, Quick Assessment, Micronutrient Explorer) as the new design direction:
+  - [x] **New theme.** `src/theme/colors.ts` rebuilt from the Stitch design system's Material Design 3-style token set (`primary`/`primaryContainer`/`primaryFixed`, `secondary`/`tertiary` families, `surfaceContainer*` tiers, etc.), every pairing re-validated against WCAG AA.
+  - [x] **New navigation shell.** A persistent bottom tab bar (Targets/Assess/Micros/Science, `src/navigation/MainTabs.tsx`) replaces the old single-flow stack — see "Navigation shape" above.
+  - [x] **Quick Assessment.** The old 6-step onboarding wizard (Sex → Age → Height → Weight → Activity → Goal, one screen each, backed by an in-memory draft context) is gone, replaced by one scrolling screen (`QuickAssessmentScreen`) with sliders/pills and a live preview from the real calculation engine. It's reused for both first-time onboarding and editing an existing profile (`isEditing = profile !== null`), rather than a separate re-entry flow.
+  - [x] **Targets dashboard.** `ResultsScreen` redesigned around a mascot hero, a big animated `CircularProgress` calorie dial, per-macro cards with mini progress rings, a plain-language "why this works" banner, and a "Recalibrate My Targets" CTA. The old locked micronutrient list moved off this screen entirely.
+  - [x] **Science Breakdown.** New `Science` tab: an honest, presentational BMR/NEAT/Exercise/TEF energy-budget breakdown (BMR/TDEE/calorie-target numbers are real, from the engine; the NEAT/Exercise/TEF sub-split is a clearly-labeled illustrative estimate, not a new validated formula), a personalized-vs-crash-diets comparison, and a self-check checklist.
+  - [x] **Micronutrient Explorer.** New `Micros` tab: every vitamin/mineral by name with a lock affordance — deliberately *not* adopting the mockup's "show real values/percentages/food-sources to everyone," to preserve the existing freemium paywall rule (PRD §7, §8.4) since no entitlement system exists yet.
+  - [x] New primitives: `CircularProgress` (an SVG progress ring, `react-native-svg`) and `Mascot` (a ported Stitch character illustration), both reduce-motion-aware like the app's existing animation primitives.
+- [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12) — this remains the blocker for turning `Micros`' locked teaser into real personalized values, and for writing micronutrient education copy (the macro equivalent of `src/data/education/macroExplanations.ts`)
 - [ ] Accessibility + edge-case testing pass
 - [ ] v1 release to a small test group
 
