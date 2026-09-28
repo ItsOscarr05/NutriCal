@@ -17,8 +17,10 @@ interface CelebrationBannerProps {
  * never on a routine app open. Calls `onDone` once fully faded out so the
  * parent can unmount it.
  *
- * Uses the same bright-green-fill / dark-text pairing as `PrimaryButton`
- * (already WCAG AA-validated for that combination, see `src/theme/colors.ts`).
+ * Uses the pale-green "fixed" tint + dark-green "on" text pairing from the
+ * Stitch palette (`primaryFixed` / `onPrimaryFixed`, ~13.3:1, well past AA
+ * — see `src/theme/colors.ts`) for a pastel, celebratory-badge look
+ * distinct from `PrimaryButton`'s solid CTA fill.
  */
 export function CelebrationBanner({ message, onDone, visibleDuration = 1600 }: CelebrationBannerProps) {
   const opacity = useRef(new Animated.Value(0)).current;
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: palette.green,
+    backgroundColor: palette.primaryFixed,
     borderRadius: radii.pill,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
@@ -77,5 +79,5 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   emoji: { fontSize: 16, marginRight: spacing.xs },
-  message: { color: palette.textDarkPrimary, fontWeight: '700', fontSize: 14 },
+  message: { color: palette.onPrimaryFixed, fontWeight: '700', fontSize: 14 },
 });

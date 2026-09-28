@@ -1,9 +1,17 @@
 /**
  * NutriCal color tokens (PRD §11.2).
  *
- * Light mode: white background, green accent.
- * Dark mode: navy background (not pure black), same green accent for
- * cross-mode brand consistency.
+ * v1.1 UPDATE: this palette was adopted wholesale from a Stitch-generated
+ * design system ("NutriCal Nutrition Target Calculator" project) rather
+ * than hand-picked, per an explicit user decision to re-theme the app
+ * around it. Stitch only exported a LIGHT color scheme; the dark theme
+ * below keeps the app's original navy base (an established v1 decision,
+ * PRD §11.2) and re-accents it using the *-fixed-dim / on-*-fixed-variant
+ * tokens Stitch's own Material-3-style export already provides as that
+ * palette's dark-mode-safe counterparts — so the dark theme is still
+ * faithful to the new palette's hues, just anchored to the pre-existing
+ * navy neutral rather than a from-scratch M3 dark scheme (Stitch didn't
+ * export one).
  *
  * WCAG AA CONTRAST — VALIDATED (see `src/theme/__tests__/contrast.test.ts`,
  * which asserts every ratio below and will fail if a future hex edit
@@ -11,93 +19,195 @@
  * AA thresholds: normal text >= 4.5:1; large text (>=24px regular /
  * >=18.66px bold) and icons/UI components (WCAG 1.4.11) >= 3:1.
  *
- *   green (#2ECC71) on white/offWhite:      2.10 / 1.99  -> FAILS both AA
- *                                                            thresholds.
- *   green on navy/navyElevated:             8.29 / 6.97  -> passes everything.
- *   greenDark (#1E9E58) on white/offWhite:  3.45 / 3.26  -> passes large
- *                                                            text/icons only.
- *   greenDark on navy/navyElevated:         5.05 / 4.25  -> passes normal
- *                                                            text on navy;
- *                                                            large text/icons
- *                                                            only on navyElevated.
- *   textDarkPrimary on white/offWhite:      15.9 / 15.0  -> passes everything.
- *   textLightPrimary on navy/navyElevated:  16.2 / 13.6  -> passes everything.
- *   gray (#8A9A93) on white/offWhite:       2.95 / 2.79  -> FAILS both AA
- *                                                            thresholds.
- *   gray on navy/navyElevated:              5.91 / 4.97  -> passes normal text.
- *   sage (#5B6B64) on white/offWhite:       5.63 / 5.32  -> passes normal text.
+ * Light theme (all pass normal-text AA directly on both `background` and
+ * `surface` unless noted):
+ *   textPrimary (on-surface, #1a1b22):        16.32 / 17.16
+ *   textSecondary (on-surface-variant, #3e4a3d): 8.87 / 9.33
+ *   accent/primary (#006b2c):                  6.36 / 6.69  -> also safe
+ *                                                              as direct fg
+ *                                                              text/icon,
+ *                                                              unlike the
+ *                                                              old brand
+ *                                                              green.
+ *   secondary (#855300):                       6.17 / 6.49
+ *   tertiary (#a63047):                        6.37 / 6.70
+ *   error (unchanged from v1, muted/non-alarm, PRD §11.1): 4.61 on the new
+ *     background (was 4.85 on the old white bg) -> still passes.
+ *   onAccentFixed / onSecondaryFixed / onTertiaryFixed on their own
+ *     *Fixed pale-tint backgrounds:             7.21 / 7.26 / 7.25
+ *   onAccent (white) on accent/accentContainer: 6.69 / 4.64 (primaryContainer
+ *     passes but close to the 4.5 floor -> reserved for large/bold text
+ *     and icons, not small body copy)
+ *   onTertiary... white on tertiaryContainer:   4.65 (same caveat as above)
+ *   onAccentDeep (white) on accentDeep (#006b2c):        6.69
+ *   NOTE: white on secondaryContainer is only 1.97 (FAILS) -- that pale
+ *     orange container must always pair with a dark "on" color
+ *     (onSecondaryFixed), never white. Don't add a white-text usage
+ *     against `secondaryContainer` without re-running the contrast suite.
  *
- * Takeaways baked into the tokens below:
- *   1. The bright brand green (`green`) confirms the PRD's own suspicion —
- *      it fails AA on light backgrounds even at large-text/icon size. It
- *      must NOT be used as a foreground (icon/text/stroke) color directly
- *      on a light background. It's still great as a large fill/background
- *      block (progress bars, buttons, badges) as long as the content drawn
- *      on top of that fill is dark (see `textDarkPrimary` on `green`:
- *      that pairing is ~7.6:1, comfortably passing), and it's great as a
- *      direct foreground color in dark mode (8.29:1).
- *   2. `greenDark` is the AA-safe stand-in for "green icon or large text
- *      directly on the page background" in light mode (3.45:1) — this is
- *      the "darker green ... used for body copy" the PRD anticipated,
- *      though it should still be reserved for large text/icons, not small
- *      body copy (which uses `textPrimary`).
- *   3. The original single `gray` failed as light-mode secondary text, so
- *      light and dark mode now use different secondary-text grays: `sage`
- *      (light) and `gray` (dark) — both AA-safe on their respective
- *      backgrounds.
+ * Dark theme (navy base retained; new accents):
+ *   textPrimary (#F5F7F6) on navy/navyElevated: 16.19 / 13.62
+ *   accent/primaryDark (#62df7d) on navy/navyElevated (also normal-text
+ *     safe, so usable as small text too):        10.26 / 8.63
+ *   secondary/secondaryDark (#ffb95f):            10.25 / 8.62
+ *   tertiary/tertiaryDark (#ffb2b9):               10.22 / 8.60
+ *   textSecondary (#A9B3AD):                       8.08 / 6.80
+ *   onAccentDeep (dark green #002109) on accentDeep (#62df7d): 10.13
+ *     (accentDeep flips to a BRIGHT green in dark mode, so its "on" color
+ *     flips to dark green too — see `onAccentDeep`'s field doc.)
  */
 
 export const palette = {
-  green: '#2ECC71', // primary accent — dark-mode fg, or light-mode FILLS with dark content on top only (fails AA as light-mode fg, see above)
-  greenDark: '#1E9E58', // secondary green — shadows/pressed-state depth (PRD §11.2), AND the AA-safe green for icons/large text directly on a light background
-  navy: '#0B1B2B', // dark mode background
-  navyElevated: '#132A40', // dark mode surface/card background
-  white: '#FFFFFF',
-  offWhite: '#F7F9F8',
-  textDarkPrimary: '#12261D', // near-black-green, used for body copy on light bg (contrast-safe)
-  textLightPrimary: '#F5F7F6', // near-white, used for body copy on dark bg
-  gray: '#8A9A93', // AA-safe secondary text on dark backgrounds only — NOT light backgrounds (2.95:1, fails)
-  sage: '#5B6B64', // AA-safe secondary text on light backgrounds (muted, slightly green-tinted gray to match brand)
-  errorNeutral: '#8A6D3B', // reserved: NutriCal avoids red/green alarm language (PRD §11.1) — use sparingly, non-judgmental tone. AA-safe as text on light backgrounds (4.85:1); on dark backgrounds it only clears the large-text/icon bar (3.59:1), not normal body text.
+  // ---- Light-mode surfaces (Stitch: surface / surface-container-* tiers) ----
+  bgLight: '#fbf8ff',
+  surfaceLight: '#ffffff',
+  surfaceContainerLowLight: '#f4f2fd',
+  surfaceContainerLight: '#eeedf7',
+  surfaceContainerHighLight: '#e8e7f1',
+  onSurfaceLight: '#1a1b22',
+  onSurfaceVariantLight: '#3e4a3d',
+  outlineVariantLight: '#bdcaba',
+
+  // ---- Dark-mode surfaces (original navy base, PRD §11.2 — kept as-is) ----
+  navy: '#0B1B2B',
+  navyElevated: '#132A40',
+  navyContainer: '#1c3550',
+  navyContainerHigh: '#234163',
+  onNavy: '#F5F7F6',
+  onNavyVariant: '#A9B3AD',
+  navyOutline: '#2c4a63',
+
+  // ---- Primary (green) — Stitch's "primary" family ----
+  primary: '#006b2c',
+  primaryDark: '#62df7d', // primary-fixed-dim: Stitch's own dark-mode-safe counterpart
+  primaryContainer: '#00873a',
+  primaryFixed: '#7ffc97', // pale tint bg (e.g. the "fats" macro badge in light mode)
+  onPrimaryFixed: '#002109', // safe dark fg text/icon on primaryFixed
+  onPrimaryFixedVariant: '#005320', // also doubles as the dark-mode "fixed" tint bg (paired with primaryDark fg)
+
+  // ---- Secondary (amber/gold) — Stitch's "secondary" family ----
+  secondary: '#855300',
+  secondaryDark: '#ffb95f', // secondary-fixed-dim
+  secondaryContainer: '#fea619',
+  secondaryFixed: '#ffddb8', // pale tint bg (e.g. the "carbs" macro badge in light mode)
+  onSecondaryFixedVariant: '#653e00', // safe dark fg on secondaryFixed; also the dark-mode "fixed" tint bg
+
+  // ---- Tertiary (coral/berry) — Stitch's "tertiary" family ----
+  tertiary: '#a63047',
+  tertiaryDark: '#ffb2b9', // tertiary-fixed-dim
+  tertiaryContainer: '#c6495e',
+  tertiaryFixed: '#ffdadc', // pale tint bg (e.g. the "protein" macro badge in light mode)
+  onTertiaryFixedVariant: '#891933', // safe dark fg on tertiaryFixed; also the dark-mode "fixed" tint bg
+
+  white: '#ffffff',
+  // Deliberately UNCHANGED from the pre-Stitch palette: NutriCal avoids
+  // red/green alarm language (PRD §11.1), and Stitch's own "tertiary" is
+  // itself a vivid coral-red used for macro branding, not the safe choice
+  // for a destructive-action label. Keeps its original muted-brown value.
+  errorNeutral: '#8A6D3B',
 } as const;
 
 export interface ThemeColors {
   background: string;
   surface: string;
-  /**
-   * Primary brand green. Safe as a direct foreground (icon/text) color in
-   * dark mode. In light mode, only safe as a fill/background block with
-   * dark content drawn on top — do not use as small icon/text color
-   * directly against `background`/`surface` in light mode (fails AA).
-   */
+  /** One step tonal layer above `surface` — chips, filter pills, nav bars. */
+  surfaceContainerLow: string;
+  surfaceContainer: string;
+  surfaceContainerHigh: string;
+
+  /** Primary brand green. Safe as a *direct* fg text/icon color on `background`/`surface` in BOTH themes now (unlike the old brand green, which needed `accentDeep` for that role in light mode). */
   accent: string;
-  /**
-   * Deeper green. PRD-intended use: shadows/pressed states. Also the
-   * AA-safe choice for green icons/large text placed directly on
-   * `background`/`surface` in light mode (see module-level contrast notes).
-   */
+  /** Kept for backward compatibility with call sites written against the pre-Stitch palette; equal to `accent` in this generation (both are already AA-safe as direct fg). */
   accentDeep: string;
+  /** Safe fg text/icon color *on* a solid `accentDeep` fill specifically (e.g. `PrimaryButton`/`UnitToggle`'s selected segment). Needed as its own field because `accentDeep` flips from dark-in-light-mode to bright-in-dark-mode, so the correct "on" color flips too (white / dark-green respectively) — unlike `onAccent`, which is always white and is meant for `accentContainer`, a fill that stays mid-tone in both themes. */
+  onAccentDeep: string;
+  /** Mid-tone solid fill, e.g. a CTA button or an icon-badge background. Pair with `onAccent`, and only for large/bold text or icons (see contrast notes above). */
+  accentContainer: string;
+  /** Pale/muted tint background, e.g. a macro badge. Pair with `onAccentFixed`. */
+  accentFixed: string;
+  /** Safe fg text/icon color *on* `accentFixed`. */
+  onAccentFixed: string;
+  /** Safe fg text/icon color *on* `accent`/`accentContainer` (large/bold text or icons only for `accentContainer`, see contrast notes). */
+  onAccent: string;
+
+  secondary: string;
+  secondaryContainer: string;
+  secondaryFixed: string;
+  onSecondaryFixed: string;
+
+  tertiary: string;
+  tertiaryContainer: string;
+  tertiaryFixed: string;
+  onTertiaryFixed: string;
+
   textPrimary: string;
   textSecondary: string;
   border: string;
+  /** Muted, non-alarm-color destructive-action text (PRD §11.1). */
+  error: string;
 }
 
 export const lightTheme: ThemeColors = {
-  background: palette.white,
-  surface: palette.offWhite,
-  accent: palette.green,
-  accentDeep: palette.greenDark,
-  textPrimary: palette.textDarkPrimary,
-  textSecondary: palette.sage,
-  border: '#E3E8E6',
+  background: palette.bgLight,
+  surface: palette.surfaceLight,
+  surfaceContainerLow: palette.surfaceContainerLowLight,
+  surfaceContainer: palette.surfaceContainerLight,
+  surfaceContainerHigh: palette.surfaceContainerHighLight,
+
+  accent: palette.primary,
+  accentDeep: palette.primary,
+  onAccentDeep: palette.white,
+  accentContainer: palette.primaryContainer,
+  accentFixed: palette.primaryFixed,
+  onAccentFixed: palette.onPrimaryFixed,
+  onAccent: palette.white,
+
+  secondary: palette.secondary,
+  secondaryContainer: palette.secondaryContainer,
+  secondaryFixed: palette.secondaryFixed,
+  onSecondaryFixed: palette.onSecondaryFixedVariant,
+
+  tertiary: palette.tertiary,
+  tertiaryContainer: palette.tertiaryContainer,
+  tertiaryFixed: palette.tertiaryFixed,
+  onTertiaryFixed: palette.onTertiaryFixedVariant,
+
+  textPrimary: palette.onSurfaceLight,
+  textSecondary: palette.onSurfaceVariantLight,
+  border: palette.outlineVariantLight,
+  error: palette.errorNeutral,
 };
 
 export const darkTheme: ThemeColors = {
   background: palette.navy,
   surface: palette.navyElevated,
-  accent: palette.green,
-  accentDeep: palette.greenDark,
-  textPrimary: palette.textLightPrimary,
-  textSecondary: palette.gray,
-  border: '#1E3A52',
+  surfaceContainerLow: palette.navyElevated,
+  surfaceContainer: palette.navyContainer,
+  surfaceContainerHigh: palette.navyContainerHigh,
+
+  accent: palette.primaryDark,
+  accentDeep: palette.primaryDark,
+  onAccentDeep: palette.onPrimaryFixed,
+  accentContainer: palette.primaryContainer,
+  // Roles swap in dark mode: the "fixed" tint becomes a dark muted fill,
+  // with the bright family color as its "on" content (rather than a pale
+  // tint + dark text, as in light mode).
+  accentFixed: palette.onPrimaryFixedVariant,
+  onAccentFixed: palette.primaryDark,
+  onAccent: palette.white,
+
+  secondary: palette.secondaryDark,
+  secondaryContainer: palette.secondaryContainer,
+  secondaryFixed: palette.onSecondaryFixedVariant,
+  onSecondaryFixed: palette.secondaryDark,
+
+  tertiary: palette.tertiaryDark,
+  tertiaryContainer: palette.tertiaryContainer,
+  tertiaryFixed: palette.onTertiaryFixedVariant,
+  onTertiaryFixed: palette.tertiaryDark,
+
+  textPrimary: palette.onNavy,
+  textSecondary: palette.onNavyVariant,
+  border: palette.navyOutline,
+  error: palette.errorNeutral,
 };

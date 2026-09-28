@@ -8,10 +8,12 @@ interface PrimaryButtonProps {
 }
 
 /**
- * The bright-green filled CTA button. Label color is `textDarkPrimary`
- * (near-black-green) rather than white — per the WCAG audit in
- * `src/theme/colors.ts`, dark text on the bright brand green passes AA
- * (~7.6:1) while white text on it does not.
+ * The solid-green filled CTA button (Stitch palette, `primaryContainer`).
+ * Uses fixed literal palette values rather than `useTheme()`, same as
+ * before the Stitch re-theme — `primaryContainer`/`primary` are identical
+ * in both light and dark mode, so the button looks the same either way.
+ * Label color is white — per the WCAG audit in `src/theme/colors.ts`,
+ * white on `primaryContainer` passes AA (~4.64:1).
  */
 export function PrimaryButton({ label, onPress, disabled }: PrimaryButtonProps) {
   return (
@@ -29,20 +31,20 @@ export function PrimaryButton({ label, onPress, disabled }: PrimaryButtonProps) 
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: palette.green,
+    backgroundColor: palette.primaryContainer,
     borderRadius: radii.pill,
     paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   pressed: {
-    backgroundColor: palette.greenDark,
+    backgroundColor: palette.primary,
   },
   disabled: {
     opacity: 0.4,
   },
   label: {
-    color: palette.textDarkPrimary,
+    color: palette.white,
     fontSize: 17,
     fontWeight: '700',
   },

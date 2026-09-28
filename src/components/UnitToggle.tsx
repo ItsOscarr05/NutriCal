@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { palette, radii, spacing, useTheme } from '../theme';
+import { radii, spacing, useTheme } from '../theme';
 
 interface UnitToggleOption<T extends string> {
   value: T;
@@ -15,9 +15,11 @@ interface UnitToggleProps<T extends string> {
 /**
  * Small segmented control for the imperial/metric toggle on the height and
  * weight onboarding screens (AGENTS.md — imperial-first with a metric
- * toggle). The selected segment uses dark text on the `accentDeep` green
- * fill (~4.6:1, passes AA normal text per the contrast audit) rather than
- * white text, which would fail.
+ * toggle). The selected segment uses `theme.onAccentDeep` for its text —
+ * a dedicated theme field (not a literal palette value) because
+ * `accentDeep` flips from dark-green-in-light-mode to bright-green-in-dark-
+ * mode, so the correct "on" text color flips too. See `onAccentDeep`'s doc
+ * in `src/theme/colors.ts`.
  */
 export function UnitToggle<T extends string>({ options, value, onChange }: UnitToggleProps<T>) {
   const theme = useTheme();
@@ -33,7 +35,7 @@ export function UnitToggle<T extends string>({ options, value, onChange }: UnitT
             accessibilityState={{ selected }}
             style={[styles.option, selected && { backgroundColor: theme.accentDeep }]}
           >
-            <Text style={[styles.label, { color: selected ? palette.textDarkPrimary : theme.textSecondary }]}>
+            <Text style={[styles.label, { color: selected ? theme.onAccentDeep : theme.textSecondary }]}>
               {option.label}
             </Text>
           </Pressable>

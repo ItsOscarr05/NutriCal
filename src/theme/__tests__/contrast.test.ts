@@ -24,78 +24,112 @@ describe('contrastRatio / relativeLuminance', () => {
 });
 
 /**
- * These lock in the audit documented at the top of `colors.ts`. If any of
- * these fail, either a hex value changed without re-validating contrast, or
- * the documented comment in `colors.ts` is now stale — update both together.
+ * These lock in the audit documented at the top of `colors.ts` (the Stitch
+ * palette adopted in v1.1). If any of these fail, either a hex value
+ * changed without re-validating contrast, or the documented comment in
+ * `colors.ts` is now stale — update both together.
  */
 describe('NutriCal palette — WCAG AA audit (PRD §11.2, §14)', () => {
-  it('flags that the bright brand green fails AA as a foreground color on light backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.green, palette.white), 'large-text-or-ui')).toBe(false);
-    expect(meetsWcagAA(contrastRatio(palette.green, palette.offWhite), 'large-text-or-ui')).toBe(false);
+  it('confirms primary/secondary/tertiary are all AA-safe as direct fg text/icon on light surfaces', () => {
+    for (const fg of [palette.primary, palette.secondary, palette.tertiary]) {
+      expect(meetsWcagAA(contrastRatio(fg, palette.bgLight), 'normal-text')).toBe(true);
+      expect(meetsWcagAA(contrastRatio(fg, palette.surfaceLight), 'normal-text')).toBe(true);
+    }
   });
 
-  it('confirms the bright brand green passes AA as a foreground color on dark backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.green, palette.navy), 'normal-text')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.green, palette.navyElevated), 'normal-text')).toBe(true);
+  it('confirms primaryDark/secondaryDark/tertiaryDark are all AA-safe as direct fg text/icon on the navy dark surfaces', () => {
+    for (const fg of [palette.primaryDark, palette.secondaryDark, palette.tertiaryDark]) {
+      expect(meetsWcagAA(contrastRatio(fg, palette.navy), 'normal-text')).toBe(true);
+      expect(meetsWcagAA(contrastRatio(fg, palette.navyElevated), 'normal-text')).toBe(true);
+    }
   });
 
-  it('confirms dark near-black text passes AA directly on the bright green fill (safe button/badge pairing)', () => {
-    expect(meetsWcagAA(contrastRatio(palette.textDarkPrimary, palette.green), 'normal-text')).toBe(true);
+  it('confirms onSurface/onSurfaceVariant pass AA normal-text on the light background/surface', () => {
+    expect(meetsWcagAA(contrastRatio(palette.onSurfaceLight, palette.bgLight), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onSurfaceLight, palette.surfaceLight), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onSurfaceVariantLight, palette.bgLight), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onSurfaceVariantLight, palette.surfaceLight), 'normal-text')).toBe(true);
   });
 
-  it('confirms greenDark passes AA large-text/icon contrast on light backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.greenDark, palette.white), 'large-text-or-ui')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.greenDark, palette.offWhite), 'large-text-or-ui')).toBe(true);
+  it('confirms onNavy/onNavyVariant pass AA normal-text on the navy background/surface', () => {
+    expect(meetsWcagAA(contrastRatio(palette.onNavy, palette.navy), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onNavy, palette.navyElevated), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onNavyVariant, palette.navy), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onNavyVariant, palette.navyElevated), 'normal-text')).toBe(true);
   });
 
-  it('confirms greenDark passes AA large-text/icon contrast on dark backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.greenDark, palette.navy), 'large-text-or-ui')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.greenDark, palette.navyElevated), 'large-text-or-ui')).toBe(true);
+  it('confirms each *Fixed pale tint pairs with its dark on-fixed-variant text at normal-text AA', () => {
+    expect(meetsWcagAA(contrastRatio(palette.onPrimaryFixed, palette.primaryFixed), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onSecondaryFixedVariant, palette.secondaryFixed), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.onTertiaryFixedVariant, palette.tertiaryFixed), 'normal-text')).toBe(true);
   });
 
-  it('confirms body-copy text colors pass AA normal-text contrast on their own backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.textDarkPrimary, palette.white), 'normal-text')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.textDarkPrimary, palette.offWhite), 'normal-text')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.textLightPrimary, palette.navy), 'normal-text')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.textLightPrimary, palette.navyElevated), 'normal-text')).toBe(true);
+  it('confirms the reverse dark-mode "fixed" pairing (bright family color as fg on the dark muted tint) also passes AA', () => {
+    expect(meetsWcagAA(contrastRatio(palette.primaryDark, palette.onPrimaryFixedVariant), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.secondaryDark, palette.onSecondaryFixedVariant), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.tertiaryDark, palette.onTertiaryFixedVariant), 'normal-text')).toBe(true);
   });
 
-  it('flags that the original single gray fails AA as secondary text on light backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.gray, palette.white), 'large-text-or-ui')).toBe(false);
-    expect(meetsWcagAA(contrastRatio(palette.gray, palette.offWhite), 'large-text-or-ui')).toBe(false);
+  it('confirms white passes AA on primary/primaryContainer and tertiary/tertiaryContainer (large/bold text and icons)', () => {
+    expect(meetsWcagAA(contrastRatio(palette.white, palette.primary), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.white, palette.primaryContainer), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.white, palette.tertiary), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(palette.white, palette.tertiaryContainer), 'normal-text')).toBe(true);
   });
 
-  it('confirms gray passes AA as secondary text on dark backgrounds', () => {
-    expect(meetsWcagAA(contrastRatio(palette.gray, palette.navy), 'normal-text')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.gray, palette.navyElevated), 'normal-text')).toBe(true);
+  it('flags that white FAILS on secondaryContainer — that fill must always pair with a dark "on" color instead', () => {
+    expect(meetsWcagAA(contrastRatio(palette.white, palette.secondaryContainer), 'large-text-or-ui')).toBe(false);
   });
 
-  it('confirms sage passes AA as secondary text on light backgrounds (the gray fix)', () => {
-    expect(meetsWcagAA(contrastRatio(palette.sage, palette.white), 'normal-text')).toBe(true);
-    expect(meetsWcagAA(contrastRatio(palette.sage, palette.offWhite), 'normal-text')).toBe(true);
+  it('confirms onAccentDeep flips correctly and stays AA-safe against accentDeep in both themes', () => {
+    expect(meetsWcagAA(contrastRatio(lightTheme.onAccentDeep, lightTheme.accentDeep), 'normal-text')).toBe(true);
+    expect(meetsWcagAA(contrastRatio(darkTheme.onAccentDeep, darkTheme.accentDeep), 'normal-text')).toBe(true);
+  });
+
+  it('confirms the muted, non-alarm-color error text stays AA-safe on the light background (PRD §11.1)', () => {
+    expect(meetsWcagAA(contrastRatio(palette.errorNeutral, palette.bgLight), 'normal-text')).toBe(true);
   });
 });
 
 describe('lightTheme / darkTheme — resolved tokens stay AA-safe for their documented roles', () => {
-  it('lightTheme.textPrimary and textSecondary are AA-safe normal text on background and surface', () => {
-    for (const bg of [lightTheme.background, lightTheme.surface]) {
-      expect(meetsWcagAA(contrastRatio(lightTheme.textPrimary, bg), 'normal-text')).toBe(true);
-      expect(meetsWcagAA(contrastRatio(lightTheme.textSecondary, bg), 'normal-text')).toBe(true);
-    }
-  });
-
-  it('darkTheme.textPrimary and textSecondary are AA-safe normal text on background and surface', () => {
-    for (const bg of [darkTheme.background, darkTheme.surface]) {
-      expect(meetsWcagAA(contrastRatio(darkTheme.textPrimary, bg), 'normal-text')).toBe(true);
-      expect(meetsWcagAA(contrastRatio(darkTheme.textSecondary, bg), 'normal-text')).toBe(true);
-    }
-  });
-
-  it('accentDeep is at least large-text/icon AA-safe on both themes background and surface', () => {
+  it('textPrimary and textSecondary are AA-safe normal text on background and surface, in both themes', () => {
     for (const theme of [lightTheme, darkTheme]) {
       for (const bg of [theme.background, theme.surface]) {
-        expect(meetsWcagAA(contrastRatio(theme.accentDeep, bg), 'large-text-or-ui')).toBe(true);
+        expect(meetsWcagAA(contrastRatio(theme.textPrimary, bg), 'normal-text')).toBe(true);
+        expect(meetsWcagAA(contrastRatio(theme.textSecondary, bg), 'normal-text')).toBe(true);
       }
+    }
+  });
+
+  it('accent/accentDeep are AA-safe as direct fg text/icon on background and surface, in both themes', () => {
+    for (const theme of [lightTheme, darkTheme]) {
+      for (const bg of [theme.background, theme.surface]) {
+        expect(meetsWcagAA(contrastRatio(theme.accent, bg), 'normal-text')).toBe(true);
+        expect(meetsWcagAA(contrastRatio(theme.accentDeep, bg), 'normal-text')).toBe(true);
+      }
+    }
+  });
+
+  it('secondary and tertiary are AA-safe as direct fg text/icon on background and surface, in both themes', () => {
+    for (const theme of [lightTheme, darkTheme]) {
+      for (const bg of [theme.background, theme.surface]) {
+        expect(meetsWcagAA(contrastRatio(theme.secondary, bg), 'normal-text')).toBe(true);
+        expect(meetsWcagAA(contrastRatio(theme.tertiary, bg), 'normal-text')).toBe(true);
+      }
+    }
+  });
+
+  it('each *Fixed tint pairs with its own onXFixed text at normal-text AA, in both themes', () => {
+    for (const theme of [lightTheme, darkTheme]) {
+      expect(meetsWcagAA(contrastRatio(theme.onAccentFixed, theme.accentFixed), 'normal-text')).toBe(true);
+      expect(meetsWcagAA(contrastRatio(theme.onSecondaryFixed, theme.secondaryFixed), 'normal-text')).toBe(true);
+      expect(meetsWcagAA(contrastRatio(theme.onTertiaryFixed, theme.tertiaryFixed), 'normal-text')).toBe(true);
+    }
+  });
+
+  it('error stays a muted, AA-safe (non-alarm) color on background in both themes', () => {
+    for (const theme of [lightTheme, darkTheme]) {
+      expect(meetsWcagAA(contrastRatio(theme.error, theme.background), 'large-text-or-ui')).toBe(true);
     }
   });
 });
