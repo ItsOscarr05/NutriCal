@@ -5,7 +5,6 @@ import appJson from '../../app.json';
 import { UnitToggle } from '../components/UnitToggle';
 import { RootStackParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
-import { useEditProfileNavigation } from '../profile/useEditProfileNavigation';
 import { Appearance, Units } from '../settings/appSettings';
 import { useAppSettings } from '../settings/AppSettingsContext';
 import { clearDismissedNudgeTimestamp } from '../storage/nudgeStorage';
@@ -39,11 +38,14 @@ export function SettingsScreen() {
   const theme = useTheme();
   const { settings, setUnits, setAppearance } = useAppSettings();
   const { profile, clearProfile } = useProfile();
-  const editProfile = useEditProfileNavigation();
 
+  // Same destination as `ResultsScreen`'s "Edit profile" link — the
+  // `Assess` tab (single-screen Quick Assessment, reused for editing).
+  // Settings is a root-level modal, so this uses the nested-navigator
+  // params form rather than a plain sibling `navigate('Assess')`.
   const handleEditProfile = () => {
     if (!profile) return;
-    editProfile(profile);
+    navigation.navigate('Main', { screen: 'Assess' });
   };
 
   // Irreversible (no accounts/backend to recover from, PRD §13) — confirmed

@@ -16,7 +16,6 @@ import { calculateNutrientTargets } from '../engine';
 import { MainTabParamList, RootStackParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
 import { useChangeNudge } from '../profile/useChangeNudge';
-import { useEditProfileNavigation } from '../profile/useEditProfileNavigation';
 import { radii, spacing, useTheme } from '../theme';
 
 // This screen now renders as the `Targets` tab inside `MainTabs`, but still
@@ -61,12 +60,13 @@ export function ResultsScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { profile } = useProfile();
-  const editProfile = useEditProfileNavigation();
   // Called unconditionally (before the `!profile` guard below) since hooks
   // can't be called conditionally — `useChangeNudge` is null-safe.
   const { visible: showChangeNudge, dismiss: dismissChangeNudge } = useChangeNudge(profile);
-  // Only true right after GoalScreen finishes the wizard (first time or via
-  // edit) — never on a routine app open — see RootStackParamList.Results.
+  // Only true right after `QuickAssessmentScreen.handleFinish` completes
+  // first-time onboarding — never on a routine app open, and not on a
+  // profile *edit* either (that path navigates straight to this tab
+  // without the param) — see `MainTabParamList.Targets`.
   const [showCelebration, setShowCelebration] = useState(!!params?.justCompleted);
 
   if (!profile) {
@@ -81,11 +81,11 @@ export function ResultsScreen() {
 
   const targets = calculateNutrientTargets(profile);
 
-  // Re-enters the onboarding wizard prefilled with the current profile's
-  // answers (PRD §8.1 — "the profile should be editable at any time") — see
-  // `useEditProfileNavigation` for the shared implementation (also used by
-  // `SettingsScreen`'s "Edit profile" row).
-  const handleEditProfile = () => editProfile(profile);
+  // Jumps to the `Assess` tab — the single-screen Quick Assessment,
+  // reused for editing (PRD §8.1 — "the profile should be editable at any
+  // time"). It reads directly from `useProfile()` itself, so there's
+  // nothing to hydrate/pass here, unlike the old multi-step wizard.
+  const handleEditProfile = () => navigation.navigate('Assess');
 
   const handleOpenSettings = () => navigation.navigate('Settings');
 

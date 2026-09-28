@@ -3,10 +3,10 @@ import { loadAppSettings, saveAppSettings } from '../storage/appSettingsStorage'
 import { Appearance, AppSettings, DEFAULT_APP_SETTINGS, Units } from './appSettings';
 
 /**
- * App-level preferences (units, appearance) — a third top-level context
- * alongside `ProfileContext` (the saved profile) and `OnboardingDraftContext`
- * (the in-progress wizard draft). Reads from `appSettingsStorage` once on
- * mount, defaulting optimistically to `DEFAULT_APP_SETTINGS` in the
+ * App-level preferences (units, appearance) — a second top-level context
+ * alongside `ProfileContext` (the saved profile). Reads from
+ * `appSettingsStorage` once on mount, defaulting optimistically to
+ * `DEFAULT_APP_SETTINGS` in the
  * meantime (a one-frame "system theme" flash at worst if a user has
  * actually overridden appearance — an acceptable v1 tradeoff, unlike
  * `ProfileContext.isLoading`, which genuinely gates the first route).

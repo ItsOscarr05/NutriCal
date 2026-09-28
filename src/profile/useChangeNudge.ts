@@ -17,7 +17,7 @@ interface ChangeNudgeState {
  * component's other hooks, before any early-return for "no profile yet."
  *
  * Not unit-tested directly (it's a thin React/storage composition, same as
- * `ProfileContext`/`OnboardingDraftContext`) — the logic it depends on is
+ * `ProfileContext`) — the logic it depends on is
  * tested in `src/profile/__tests__/nudge.test.ts` and
  * `src/storage/__tests__/nudgeStorage.test.ts`.
  */

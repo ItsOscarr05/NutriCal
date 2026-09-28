@@ -23,20 +23,19 @@ export type MainTabParamList = {
  * RootNavigator.tsx) so screens can import the type without creating a
  * circular import with the navigator that renders them.
  *
- * Mirrors the v1 user flow (PRD §9):
- * Welcome -> Sex -> Age -> Height -> Weight -> Activity -> Goal -> Main.
+ * Mirrors the v1.1 user flow: Welcome -> QuickAssessment -> Main. The old
+ * 6-step wizard (Sex -> Age -> Height -> Weight -> Activity -> Goal) is
+ * gone, replaced by one screen (`QuickAssessmentScreen`) mounted here for
+ * first-time onboarding and reused as the `Assess` tab inside `Main` for
+ * editing an existing profile.
+ *
  * `MacroDetail` and `Settings` are both modals reached from the `Main`
  * tab shell (PRD §8.4 for `MacroDetail`; the gear icon for `Settings`),
- * not wizard steps or tabs themselves.
+ * not tabs themselves.
  */
 export type RootStackParamList = {
   Welcome: undefined;
-  Sex: undefined;
-  Age: undefined;
-  Height: undefined;
-  Weight: undefined;
-  Activity: undefined;
-  Goal: undefined;
+  QuickAssessment: undefined;
   Main: NavigatorScreenParams<MainTabParamList> | undefined;
   MacroDetail: { macro: MacroKey; grams: number; percent: number; goal: Goal };
   Settings: undefined;

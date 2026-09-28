@@ -3,13 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 import { useProfile } from '../profile/ProfileContext';
 import { MacroDetailScreen } from '../screens/MacroDetailScreen';
+import { QuickAssessmentScreen } from '../screens/QuickAssessmentScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
-import { ActivityScreen } from '../screens/onboarding/ActivityScreen';
-import { AgeScreen } from '../screens/onboarding/AgeScreen';
-import { GoalScreen } from '../screens/onboarding/GoalScreen';
-import { HeightScreen } from '../screens/onboarding/HeightScreen';
-import { SexScreen } from '../screens/onboarding/SexScreen';
-import { WeightScreen } from '../screens/onboarding/WeightScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { useTheme } from '../theme';
 import { MainTabs } from './MainTabs';
@@ -42,12 +37,7 @@ export function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={profile ? 'Main' : 'Welcome'} screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="Sex" component={SexScreen} />
-        <Stack.Screen name="Age" component={AgeScreen} />
-        <Stack.Screen name="Height" component={HeightScreen} />
-        <Stack.Screen name="Weight" component={WeightScreen} />
-        <Stack.Screen name="Activity" component={ActivityScreen} />
-        <Stack.Screen name="Goal" component={GoalScreen} />
+        <Stack.Screen name="QuickAssessment" component={QuickAssessmentScreen} />
         <Stack.Screen name="Main" component={MainTabs} />
         <Stack.Screen name="MacroDetail" component={MacroDetailScreen} options={{ presentation: 'modal' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ presentation: 'modal' }} />
