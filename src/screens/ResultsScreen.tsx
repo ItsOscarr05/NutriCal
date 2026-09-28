@@ -13,9 +13,9 @@ import { NUTRIENT_INFO, NUTRIENT_KEYS } from '../data/dri';
 import { MacroKey } from '../data/education/macroExplanations';
 import { calculateNutrientTargets } from '../engine';
 import { RootStackParamList } from '../navigation/types';
-import { useOnboardingDraft } from '../onboarding/OnboardingDraftContext';
 import { useProfile } from '../profile/ProfileContext';
 import { useChangeNudge } from '../profile/useChangeNudge';
+import { useEditProfileNavigation } from '../profile/useEditProfileNavigation';
 import { radii, spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Results'>;
@@ -52,7 +52,7 @@ export function ResultsScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { profile } = useProfile();
-  const { hydrateFromProfile } = useOnboardingDraft();
+  const editProfile = useEditProfileNavigation();
   // Called unconditionally (before the `!profile` guard below) since hooks
   // can't be called conditionally — `useChangeNudge` is null-safe.
   const { visible: showChangeNudge, dismiss: dismissChangeNudge } = useChangeNudge(profile);
@@ -72,18 +72,11 @@ export function ResultsScreen() {
 
   const targets = calculateNutrientTargets(profile);
 
-  /**
-   * Re-enters the onboarding wizard prefilled with the current profile's
-   * answers (PRD §8.1 — "the profile should be editable at any time"),
-   * rather than clearing the saved profile and starting from a blank
-   * Welcome screen. The saved profile isn't touched until the user
-   * actually finishes the wizard again (`GoalScreen` overwrites it) —
-   * backing out partway through leaves the original profile intact.
-   */
-  const handleEditProfile = () => {
-    hydrateFromProfile(profile);
-    navigation.navigate('Sex');
-  };
+  // Re-enters the onboarding wizard prefilled with the current profile's
+  // answers (PRD §8.1 — "the profile should be editable at any time") — see
+  // `useEditProfileNavigation` for the shared implementation (also used by
+  // `SettingsScreen`'s "Edit profile" row).
+  const handleEditProfile = () => editProfile(profile);
 
   // TODO(navigation todo): wire this to `navigation.navigate('Settings')`
   // once the `Settings` route exists in `RootStackParamList`/`RootNavigator`
