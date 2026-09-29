@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import appJson from '../../app.json';
+import { Logo } from '../components/Logo';
 import { UnitToggle } from '../components/UnitToggle';
 import { RootStackParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
@@ -75,7 +76,10 @@ export function SettingsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.textPrimary }]}>Settings</Text>
+        <View style={styles.headerTitleRow}>
+          <Logo size={32} />
+          <Text style={[styles.title, { color: theme.textPrimary }]}>Settings</Text>
+        </View>
         <Text
           onPress={() => navigation.goBack()}
           accessibilityRole="button"
@@ -146,6 +150,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
     paddingBottom: spacing.sm,
   },
+  headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   title: { fontSize: 24, fontWeight: '800' },
   doneLink: { fontSize: 15, fontWeight: '600', textDecorationLine: 'underline' },
   content: { padding: spacing.lg, paddingTop: spacing.sm },

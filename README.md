@@ -37,12 +37,13 @@ src/
                         React context (`AppSettingsContext`), the second top-level context alongside ProfileContext
   onboarding/           Imperial/metric unit conversion + input validation helpers used by the Quick Assessment
                         screen — pure/tested
-  components/           Shared UI building blocks (PrimaryButton, UnitToggle, AnimatedNumber, AnimatedFillBar,
+  components/           Shared UI building blocks (PrimaryButton, UnitToggle, Logo, AnimatedNumber, AnimatedFillBar,
                         FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton, CircularProgress, Mascot)
   navigation/           Root native-stack (`RootNavigator`) + the bottom-tab shell (`MainTabs`) + shared param types
   screens/              App screens: Welcome, QuickAssessment (single-screen onboarding *and* the Assess tab),
                         ResultsScreen (the Targets tab), ScienceBreakdownScreen (the Science tab),
                         MicronutrientExplorerScreen (the Micros tab), MacroDetail modal, Settings modal
+assets/                 Brand mark (`logo.png`) plus Expo app icon / Android adaptive-icon / splash / favicon
 assets/illustrations/   Generated illustration assets (PRD §11.3) — currently just the welcome hero (macro icons
                         are now `MaterialIcons` glyphs, and the mascot is a hand-ported `react-native-svg` illustration)
 project-docs/

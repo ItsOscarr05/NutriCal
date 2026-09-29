@@ -1,15 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { FadeInView } from '../components/FadeInView';
+import { Logo } from '../components/Logo';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { RootStackParamList } from '../navigation/types';
 import { spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Welcome'>;
-
-const HERO_ILLUSTRATION = require('../../assets/illustrations/welcome-hero.png');
 
 /** Welcome/value-prop screen (PRD §9, step 1) — no login, straight into onboarding. */
 export function WelcomeScreen() {
@@ -20,7 +19,7 @@ export function WelcomeScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.hero}>
         <FadeInView duration={700}>
-          <Image source={HERO_ILLUSTRATION} style={styles.heroImage} resizeMode="contain" accessibilityIgnoresInvertColors />
+          <Logo size={220} style={styles.logo} />
         </FadeInView>
         <FadeInView delay={150}>
           <Text style={[styles.title, { color: theme.textPrimary }]}>NutriCal</Text>
@@ -40,7 +39,7 @@ export function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'space-between' },
   hero: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.lg },
-  heroImage: { width: 220, height: 220, marginBottom: spacing.lg },
+  logo: { marginBottom: spacing.lg },
   title: { fontSize: 32, fontWeight: '700', marginBottom: spacing.sm, textAlign: 'center' },
   subtitle: { fontSize: 16, textAlign: 'center' },
   footer: { padding: spacing.lg },
