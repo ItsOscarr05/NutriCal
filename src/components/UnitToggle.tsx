@@ -10,6 +10,8 @@ interface UnitToggleProps<T extends string> {
   options: UnitToggleOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  /** Center horizontally instead of hugging the leading edge. */
+  centered?: boolean;
 }
 
 /**
@@ -21,10 +23,16 @@ interface UnitToggleProps<T extends string> {
  * mode, so the correct "on" text color flips too. See `onAccentDeep`'s doc
  * in `src/theme/colors.ts`.
  */
-export function UnitToggle<T extends string>({ options, value, onChange }: UnitToggleProps<T>) {
+export function UnitToggle<T extends string>({ options, value, onChange, centered = false }: UnitToggleProps<T>) {
   const theme = useTheme();
   return (
-    <View style={[styles.container, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.surface, borderColor: theme.border },
+        centered && styles.centered,
+      ]}
+    >
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -54,6 +62,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: spacing.md,
   },
+  centered: { alignSelf: 'center' },
   option: {
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,

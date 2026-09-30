@@ -7,11 +7,20 @@ import { radii, spacing, useTheme } from '../../theme';
 
 export const ONBOARDING_STEP_COUNT = 6;
 
+interface SecondaryAction {
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+}
+
 /**
  * Shared layout for each onboarding page: back button, progress segments,
  * title/subtitle, scrollable content, and a pinned primary button. The
  * keyboard-avoiding wrapper keeps that button visible above the iOS
  * number pad on the age page (which has no return key).
+ *
+ * `centerBody` vertically centers the page's controls in the space below
+ * the title; `secondaryAction` adds an outlined button above the primary one.
  */
 export function OnboardingStep({
   step,
@@ -22,6 +31,8 @@ export function OnboardingStep({
   nextDisabled = false,
   onNext,
   onBack,
+  centerBody = false,
+  secondaryAction,
 }: {
   step: number;
   title: string;
@@ -31,6 +42,8 @@ export function OnboardingStep({
   nextDisabled?: boolean;
   onNext: () => void;
   onBack: () => void;
+  centerBody?: boolean;
+  secondaryAction?: SecondaryAction;
 }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -68,7 +81,7 @@ export function OnboardingStep({
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, centerBody && styles.contentGrow]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -76,10 +89,26 @@ export function OnboardingStep({
           {title}
         </Text>
         {subtitle ? <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{subtitle}</Text> : null}
-        <View style={styles.body}>{children}</View>
+        <View style={[styles.body, centerBody && styles.bodyCentered]}>{children}</View>
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
+        {secondaryAction ? (
+          <Pressable
+            onPress={secondaryAction.onPress}
+            disabled={secondaryAction.disabled}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !!secondaryAction.disabled }}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              { borderColor: theme.border },
+              pressed && { backgroundColor: theme.surfaceContainerLow },
+              secondaryAction.disabled && styles.disabled,
+            ]}
+          >
+            <Text style={[styles.secondaryLabel, { color: theme.textPrimary }]}>{secondaryAction.label}</Text>
+          </Pressable>
+        ) : null}
         <PrimaryButton label={nextLabel} onPress={onNext} disabled={nextDisabled} />
       </View>
     </KeyboardAvoidingView>
@@ -100,8 +129,19 @@ const styles = StyleSheet.create({
   progressSegment: { flex: 1, height: 6, borderRadius: radii.pill },
   stepCount: { fontSize: 13, fontWeight: '700', minWidth: 28, textAlign: 'right' },
   content: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.lg },
+  contentGrow: { flexGrow: 1 },
   title: { fontSize: 28, fontWeight: '800' },
   subtitle: { fontSize: 15, marginTop: spacing.xs, lineHeight: 21 },
   body: { marginTop: spacing.lg },
-  footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
+  bodyCentered: { flex: 1, justifyContent: 'center' },
+  footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.sm },
+  secondaryButton: {
+    borderWidth: 1.5,
+    borderRadius: radii.pill,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryLabel: { fontSize: 17, fontWeight: '700' },
+  disabled: { opacity: 0.4 },
 });
