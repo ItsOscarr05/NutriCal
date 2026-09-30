@@ -174,11 +174,37 @@ export function MetabolicForecastCard({
   theme,
   preview,
   footer,
+  size = 'default',
 }: {
   theme: ThemeColors;
   preview: NutrientTargets;
   footer: string;
+  /** `large` leads with daily energy as a hero number, for the onboarding forecast page. */
+  size?: 'default' | 'large';
 }) {
+  if (size === 'large') {
+    return (
+      <View style={[styles.previewCard, styles.previewCardLarge, { backgroundColor: theme.surfaceContainer }]}>
+        <View style={styles.previewHeader}>
+          <View style={[styles.previewDot, { backgroundColor: theme.accent }]} />
+          <Text style={[styles.previewHeadingLarge, { color: theme.textSecondary }]}>Metabolic Forecast</Text>
+        </View>
+        <View style={[styles.heroStat, { backgroundColor: theme.surface }]}>
+          <Text style={[styles.heroLabel, { color: theme.textSecondary }]}>Daily Energy</Text>
+          <View style={styles.previewStatValueRow}>
+            <Text style={[styles.heroValue, { color: theme.accent }]}>{preview.calorieTarget.toLocaleString()}</Text>
+            <Text style={[styles.heroUnit, { color: theme.textSecondary }]}> kcal</Text>
+          </View>
+        </View>
+        <View style={styles.previewRowLarge}>
+          <LargeStat theme={theme} label="Protein" value={preview.macros.protein.grams} unit="g" color={theme.tertiary} />
+          <LargeStat theme={theme} label="Base Burn" value={preview.bmr} unit="kcal" color={theme.secondary} />
+        </View>
+        <Text style={[styles.previewFooterLarge, { color: theme.textSecondary }]}>{footer}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.previewCard, { backgroundColor: theme.surfaceContainer }]}>
       <View style={styles.previewHeader}>
@@ -244,6 +270,30 @@ function BodyStatCard({
         maximumTrackTintColor={tintColor}
         thumbTintColor={accentColor}
       />
+    </View>
+  );
+}
+
+function LargeStat({
+  theme,
+  label,
+  value,
+  unit,
+  color,
+}: {
+  theme: ThemeColors;
+  label: string;
+  value: number;
+  unit: string;
+  color: string;
+}) {
+  return (
+    <View style={[styles.largeStat, { backgroundColor: theme.surface }]}>
+      <Text style={[styles.largeStatLabel, { color: theme.textSecondary }]}>{label}</Text>
+      <View style={styles.previewStatValueRow}>
+        <Text style={[styles.largeStatValue, { color }]}>{value.toLocaleString()}</Text>
+        <Text style={[styles.largeStatUnit, { color: theme.textSecondary }]}> {unit}</Text>
+      </View>
     </View>
   );
 }
@@ -314,4 +364,17 @@ const styles = StyleSheet.create({
   previewStatValue: { fontSize: 15, fontWeight: '800' },
   previewStatUnit: { fontSize: 10 },
   previewFooter: { fontSize: 12, textAlign: 'center' },
+
+  previewCardLarge: { padding: spacing.lg, gap: spacing.md },
+  previewHeadingLarge: { fontSize: 13, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
+  heroStat: { borderRadius: radii.md, paddingVertical: spacing.lg, alignItems: 'center' },
+  heroLabel: { fontSize: 15, fontWeight: '600' },
+  heroValue: { fontSize: 52, fontWeight: '800' },
+  heroUnit: { fontSize: 18, fontWeight: '600' },
+  previewRowLarge: { flexDirection: 'row', gap: spacing.sm },
+  largeStat: { flex: 1, borderRadius: radii.md, paddingVertical: spacing.md, alignItems: 'center' },
+  largeStatLabel: { fontSize: 14, fontWeight: '600' },
+  largeStatValue: { fontSize: 28, fontWeight: '800' },
+  largeStatUnit: { fontSize: 14 },
+  previewFooterLarge: { fontSize: 13, textAlign: 'center', lineHeight: 19 },
 });

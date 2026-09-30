@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboardingDraft } from '../../onboarding/OnboardingDraftContext';
-import { GoalPicker } from '../../onboarding/ui/AssessmentFields';
+import { OnboardingGoalPicker } from '../../onboarding/ui/OnboardingGoalPicker';
 import { OnboardingStep } from '../../onboarding/ui/OnboardingStep';
 import { useTheme } from '../../theme';
 
@@ -18,10 +18,11 @@ export function TargetOutcomeScreen() {
       step={5}
       title="Target outcome"
       subtitle="What would you like your nutrition to support right now?"
+      centerBody
       onNext={() => navigation.navigate('MetabolicForecast')}
       onBack={() => navigation.goBack()}
     >
-      <GoalPicker theme={theme} value={draft.goal} onChange={(goal) => updateDraft({ goal })} />
+      <OnboardingGoalPicker theme={theme} value={draft.goal} onChange={(goal) => updateDraft({ goal })} />
     </OnboardingStep>
   );
 }

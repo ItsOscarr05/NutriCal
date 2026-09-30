@@ -67,19 +67,22 @@ export function MetabolicForecastScreen() {
       step={6}
       title="Your metabolic forecast"
       subtitle="Here's a first look at your personalized daily targets."
-      nextLabel={saving ? 'Calculating…' : 'See my targets'}
+      centerBody
+      nextLabel={saving ? 'Calculating…' : 'Continue'}
       nextDisabled={preview === null || saving}
       onNext={handleFinish}
       onBack={() => navigation.goBack()}
+      secondaryAction={{ label: 'Go back and adjust', onPress: () => navigation.goBack(), disabled: saving }}
     >
       <View style={styles.mascot}>
-        <Mascot size={96} />
+        <Mascot size={72} />
       </View>
       {preview ? (
         <FadeInView delay={150}>
           <MetabolicForecastCard
             theme={theme}
             preview={preview}
+            size="large"
             footer="Calculated with the Mifflin-St Jeor equation. You can recalibrate any time from the Assess tab."
           />
         </FadeInView>
@@ -93,6 +96,6 @@ export function MetabolicForecastScreen() {
 }
 
 const styles = StyleSheet.create({
-  mascot: { alignItems: 'center', marginBottom: spacing.lg },
+  mascot: { alignItems: 'center', marginBottom: spacing.md },
   missing: { fontSize: 14, textAlign: 'center' },
 });
