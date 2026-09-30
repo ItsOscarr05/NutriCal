@@ -1,6 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { OnboardingDraftProvider } from '../onboarding/OnboardingDraftContext';
-import { QuickAssessmentScreen } from '../screens/QuickAssessmentScreen';
+import { AgeScreen } from '../screens/onboarding/AgeScreen';
+import { BodyCompositionScreen } from '../screens/onboarding/BodyCompositionScreen';
+import { DailyMotionScreen } from '../screens/onboarding/DailyMotionScreen';
+import { MetabolicForecastScreen } from '../screens/onboarding/MetabolicForecastScreen';
+import { SexScreen } from '../screens/onboarding/SexScreen';
+import { TargetOutcomeScreen } from '../screens/onboarding/TargetOutcomeScreen';
 import { useTheme } from '../theme';
 import { OnboardingStackParamList } from './types';
 
@@ -23,7 +28,12 @@ export function OnboardingStack() {
           contentStyle: { backgroundColor: theme.background },
         }}
       >
-        <Stack.Screen name="Sex" component={QuickAssessmentScreen} />
+        <Stack.Screen name="Sex" component={SexScreen} />
+        <Stack.Screen name="Age" component={AgeScreen} />
+        <Stack.Screen name="BodyComposition" component={BodyCompositionScreen} />
+        <Stack.Screen name="DailyMotion" component={DailyMotionScreen} />
+        <Stack.Screen name="TargetOutcome" component={TargetOutcomeScreen} />
+        <Stack.Screen name="MetabolicForecast" component={MetabolicForecastScreen} />
       </Stack.Navigator>
     </OnboardingDraftProvider>
   );
