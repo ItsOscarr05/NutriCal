@@ -46,8 +46,8 @@ src/
                         MicronutrientExplorerScreen (the Micros tab), MacroDetail modal, Settings modal
 assets/                 Brand mark master (`nutrical_logo_transparent.png`) and the variants generated from it:
                         `logo.png`, Expo app icon / Android adaptive-icon / splash / favicon
-assets/illustrations/   Generated illustration assets (PRD §11.3) — currently just the welcome hero (macro icons
-                        are now `MaterialIcons` glyphs, and the mascot is a hand-ported `react-native-svg` illustration)
+assets/illustrations/   Generated bitmap illustrations (PRD §11.3) — currently none (macro icons are `MaterialIcons`
+                        glyphs, and the mascot is a hand-ported `react-native-svg` illustration)
 project-docs/
   PRD.md                The full product requirements document
 ```
