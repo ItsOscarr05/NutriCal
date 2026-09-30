@@ -55,6 +55,10 @@ describe('isValidUserProfile', () => {
     expect(isValidUserProfile(validProfile)).toBe(true);
   });
 
+  it('accepts the inactive activity level', () => {
+    expect(isValidUserProfile({ ...validProfile, activityLevel: 'inactive' })).toBe(true);
+  });
+
   it.each([
     ['null', null],
     ['a string', 'not an object'],

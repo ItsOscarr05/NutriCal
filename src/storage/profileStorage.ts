@@ -12,6 +12,7 @@ const PROFILE_STORAGE_KEY = '@nutrical/profile';
 
 const VALID_SEXES: Sex[] = ['male', 'female'];
 const VALID_ACTIVITY_LEVELS: ActivityLevel[] = [
+  'inactive',
   'sedentary',
   'lightly_active',
   'moderately_active',

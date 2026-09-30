@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { NutrientTargets } from '../../engine';
@@ -110,7 +110,7 @@ export function ActivityPicker({
           >
             <View style={styles.activityCardHeader}>
               <View style={[styles.activityEmojiBadge, { backgroundColor: theme.surface }]}>
-                <Text style={styles.activityEmoji}>{option.emoji}</Text>
+                <MaterialCommunityIcons name={option.icon} size={20} color={theme.accent} />
               </View>
               {selected ? <MaterialIcons name="check-circle" size={20} color={theme.onAccentFixed} /> : null}
             </View>
@@ -288,7 +288,6 @@ const styles = StyleSheet.create({
   activityCard: { width: '47%', borderRadius: radii.md, padding: spacing.sm },
   activityCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   activityEmojiBadge: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  activityEmoji: { fontSize: 18 },
   activityLabel: { fontSize: 14, fontWeight: '700', marginTop: spacing.sm },
   activityDescription: { fontSize: 12, marginTop: 2 },
 

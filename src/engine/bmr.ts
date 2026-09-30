@@ -26,8 +26,13 @@ export function calculateBMR(params: {
  * Standard activity multipliers, PRD §10 range of 1.2–1.9.
  * Source: commonly cited TDEE multiplier bands used alongside
  * Mifflin-St Jeor in dietetics practice.
+ *
+ * `inactive` (1.1) sits below that standard band for people who are
+ * mostly seated or lying down all day with minimal walking — a
+ * conservative extension, not one of the published bands.
  */
 export const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
+  inactive: 1.1, // mostly seated/resting, minimal daily walking
   sedentary: 1.2, // little or no exercise
   lightly_active: 1.375, // light exercise/sports 1-3 days/week
   moderately_active: 1.55, // moderate exercise/sports 3-5 days/week

@@ -1,14 +1,18 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { ActivityLevel, Goal } from '../types/profile';
 
-export const ACTIVITY_OPTIONS: { value: ActivityLevel; label: string; description: string; emoji: string }[] = [
-  { value: 'sedentary', label: 'Desk Bound', description: '< 4,000 steps/day', emoji: '🛋️' },
-  { value: 'lightly_active', label: 'Light Active', description: 'Daily walks & chores', emoji: '🚶' },
-  { value: 'moderately_active', label: 'Active', description: 'Workouts 3-5x/wk', emoji: '🏃' },
-  { value: 'very_active', label: 'Very Active', description: 'Hard training, 6-7x/wk', emoji: '⚡' },
-  // A 5th tier beyond the Stitch mockup's 4 cards — kept so this screen
-  // doesn't regress the engine's existing `extremely_active` coverage.
-  { value: 'extremely_active', label: 'Athlete', description: 'Elite training / physical job', emoji: '🔥' },
+export const ACTIVITY_OPTIONS: {
+  value: ActivityLevel;
+  label: string;
+  description: string;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+}[] = [
+  { value: 'inactive', label: 'Couch Potato', description: 'Mostly sitting or resting', icon: 'sofa-outline' },
+  { value: 'sedentary', label: 'Desk Duty', description: 'Seated job, little exercise', icon: 'laptop' },
+  { value: 'lightly_active', label: 'Light Active', description: 'Walks & light exercise', icon: 'walk' },
+  { value: 'moderately_active', label: 'Active', description: 'Workouts 3-5x/wk', icon: 'run' },
+  { value: 'very_active', label: 'Very Active', description: 'Hard training 6-7x/wk', icon: 'lightning-bolt-outline' },
+  { value: 'extremely_active', label: 'Manual Labor/Athlete', description: 'Physical job or elite training', icon: 'account-hard-hat-outline' },
 ];
 
 // The Stitch mockup only offered 3 goal pills with flat kcal deltas

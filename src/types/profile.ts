@@ -10,10 +10,11 @@
 export type Sex = 'male' | 'female';
 
 /**
- * 5-tier activity picker (PRD §8.1). Each tier maps to a TDEE multiplier
+ * 6-tier activity picker (PRD §8.1). Each tier maps to a TDEE multiplier
  * in `src/engine/bmr.ts`.
  */
 export type ActivityLevel =
+  | 'inactive'
   | 'sedentary'
   | 'lightly_active'
   | 'moderately_active'

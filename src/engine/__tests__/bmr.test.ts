@@ -15,6 +15,10 @@ describe('calculateBMR (Mifflin-St Jeor)', () => {
 });
 
 describe('calculateTDEE', () => {
+  it('applies the inactive multiplier', () => {
+    expect(calculateTDEE(1780, 'inactive')).toBeCloseTo(1958, 2);
+  });
+
   it('applies the sedentary multiplier', () => {
     expect(calculateTDEE(1780, 'sedentary')).toBeCloseTo(2136, 2);
   });
