@@ -11,8 +11,8 @@ const COLUMNS = 2;
 // (>= 4.5:1); `lightText`/`darkText` color the icon on the pale `tint` in
 // light and dark mode.
 const ACTIVITY_COLORS: Record<ActivityLevel, { fill: string; lightText: string; darkText: string; tint: string }> = {
-  inactive: { fill: '#1D4ED8', lightText: '#1E40AF', darkText: '#93C5FD', tint: 'rgba(29, 78, 216, 0.14)' },
-  sedentary: { fill: '#0F766E', lightText: '#115E59', darkText: '#5EEAD4', tint: 'rgba(15, 118, 110, 0.14)' },
+  inactive: { fill: '#7E22CE', lightText: '#6B21A8', darkText: '#D8B4FE', tint: 'rgba(126, 34, 206, 0.14)' },
+  sedentary: { fill: '#1D4ED8', lightText: '#1E40AF', darkText: '#93C5FD', tint: 'rgba(29, 78, 216, 0.14)' },
   lightly_active: { fill: '#15803D', lightText: '#166534', darkText: '#86EFAC', tint: 'rgba(21, 128, 61, 0.14)' },
   moderately_active: { fill: '#B45309', lightText: '#92400E', darkText: '#FCD34D', tint: 'rgba(180, 83, 9, 0.14)' },
   very_active: { fill: '#C2410C', lightText: '#9A3412', darkText: '#FDBA74', tint: 'rgba(194, 65, 12, 0.14)' },
