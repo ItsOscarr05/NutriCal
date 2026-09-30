@@ -19,15 +19,24 @@ export type MainTabParamList = {
 };
 
 /**
+ * Paged first-time onboarding, one page per question, rendered by
+ * `OnboardingStack` as the root `Onboarding` route.
+ */
+export type OnboardingStackParamList = {
+  Sex: undefined;
+  Age: undefined;
+  BodyComposition: undefined;
+  DailyMotion: undefined;
+  TargetOutcome: undefined;
+  MetabolicForecast: undefined;
+};
+
+/**
  * Root stack param list, kept in its own module (rather than inline in
  * RootNavigator.tsx) so screens can import the type without creating a
  * circular import with the navigator that renders them.
  *
- * Mirrors the v1.1 user flow: Welcome -> QuickAssessment -> Main. The old
- * 6-step wizard (Sex -> Age -> Height -> Weight -> Activity -> Goal) is
- * gone, replaced by one screen (`QuickAssessmentScreen`) mounted here for
- * first-time onboarding and reused as the `Assess` tab inside `Main` for
- * editing an existing profile.
+ * Mirrors the user flow: Welcome -> Onboarding (paged) -> Main.
  *
  * `MacroDetail` and `Settings` are both modals reached from the `Main`
  * tab shell (PRD §8.4 for `MacroDetail`; the gear icon for `Settings`),
@@ -35,7 +44,7 @@ export type MainTabParamList = {
  */
 export type RootStackParamList = {
   Welcome: undefined;
-  QuickAssessment: undefined;
+  Onboarding: NavigatorScreenParams<OnboardingStackParamList> | undefined;
   Main: NavigatorScreenParams<MainTabParamList> | undefined;
   MacroDetail: { macro: MacroKey; grams: number; percent: number; goal: Goal };
   Settings: undefined;

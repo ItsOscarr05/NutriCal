@@ -29,7 +29,7 @@ export function WelcomeScreen() {
         </FadeInView>
       </View>
       <View style={styles.footer}>
-        <PrimaryButton label="Get started" onPress={() => navigation.navigate('QuickAssessment')} />
+        <PrimaryButton label="Get started" onPress={() => navigation.navigate('Onboarding')} />
       </View>
       <StatusBar style="auto" />
     </View>

@@ -147,7 +147,7 @@ export function QuickAssessmentScreen() {
       // Mounted directly on the root stack (no profile existed yet) —
       // swap onboarding out for the tab shell. `justCompleted` triggers
       // the one-time celebratory reveal (PRD §11.3) on the Targets tab.
-      navigation.reset({
+      (navigation.getParent() ?? navigation).reset({
         index: 0,
         routes: [{ name: 'Main', params: { screen: 'Targets', params: { justCompleted: true } } }],
       });
