@@ -1,11 +1,14 @@
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactNode, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Mascot } from '../components/Mascot';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { UnitToggle } from '../components/UnitToggle';
 import { calculateNutrientTargets } from '../engine';
+import { MainTabParamList, RootStackParamList } from '../navigation/types';
 import { DEFAULT_ASSESSMENT } from '../onboarding/assessmentOptions';
 import { ActivityPicker, BodyCompositionFields, GoalPicker, MetabolicForecastCard } from '../onboarding/ui/AssessmentFields';
 import { MIN_SUPPORTED_AGE } from '../onboarding/validation';
@@ -30,31 +33,26 @@ const SEX_OPTIONS: { value: Sex; label: string; emoji: string }[] = [
 
 const DEFAULT_SEX: Sex = 'female';
 
+type Nav = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Assess'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
+
 /**
- * The single scrolling "Quick Assessment" screen (v1.1 Stitch redesign) —
- * pills/sliders and a live-calculating preview strip. Serves two roles
- * depending on where it's mounted:
- *
- *  - First-time onboarding: inside the root `Onboarding` stack, reached
- *    from `WelcomeScreen`. No profile exists yet, so every field starts
- *    from defaults.
- *  - Editing: the `Assess` tab inside `MainTabs`, reached any time a
- *    profile already exists. Every field seeds directly from `profile`.
+ * The `Assess` tab (v1.1 Stitch redesign): a single scrolling screen of
+ * pills/sliders and a live-calculating preview strip for recalibrating an
+ * existing profile. Every field seeds from `profile` on mount. First-time
+ * onboarding is the separate paged `OnboardingStack`, not this screen.
  *
  * The live preview always calls the real `calculateNutrientTargets`
  * engine entry point (never the mockup's simplified inline formulas), so
  * it can never drift from the numbers shown on the Targets dashboard.
  */
 export function QuickAssessmentScreen() {
-  // Deliberately loosely typed: this component mounts in two different
-  // navigator contexts (see the doc comment above) with two different
-  // navigation prop shapes, and only one of the two branches below is
-  // ever reachable for the actual mounted instance — see `handleFinish`.
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<Nav>();
   const theme = useTheme();
   const { profile, saveProfile } = useProfile();
   const { settings, setUnits } = useAppSettings();
-  const isEditing = profile !== null;
 
   const [unit, setUnit] = useState<Units>(settings.units);
   const [sex, setSex] = useState<Sex>(profile?.sex ?? DEFAULT_SEX);
@@ -96,18 +94,8 @@ export function QuickAssessmentScreen() {
       updatedAt: new Date().toISOString(),
     };
     await saveProfile(nextProfile);
-    if (isEditing) {
-      // Already inside `MainTabs` — `Targets` is a sibling tab.
-      navigation.navigate('Targets');
-    } else {
-      // Nested inside the `Onboarding` stack — swap onboarding out for the
-      // tab shell. `justCompleted` triggers the one-time celebratory
-      // reveal (PRD §11.3) on the Targets tab.
-      (navigation.getParent() ?? navigation).reset({
-        index: 0,
-        routes: [{ name: 'Main', params: { screen: 'Targets', params: { justCompleted: true } } }],
-      });
-    }
+    setSaving(false);
+    navigation.navigate('Targets');
   };
 
   return (
@@ -191,7 +179,7 @@ export function QuickAssessmentScreen() {
 
       <View style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
         <PrimaryButton
-          label={saving ? 'Calculating…' : isEditing ? 'Save changes' : 'Calculate My Science Targets'}
+          label={saving ? 'Calculating…' : 'Save changes'}
           onPress={handleFinish}
           disabled={saving}
         />
