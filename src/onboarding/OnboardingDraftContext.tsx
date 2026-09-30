@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { ActivityLevel, Goal, Sex } from '../types/profile';
+import { DEFAULT_ASSESSMENT } from './assessmentOptions';
 
 /**
  * In-progress answers for the paged first-time onboarding flow. Scoped to
@@ -23,10 +24,10 @@ export interface OnboardingDraft {
 const INITIAL_DRAFT: OnboardingDraft = {
   sex: null,
   ageText: '',
-  heightCm: 173,
-  weightKg: 70,
-  activityLevel: 'lightly_active',
-  goal: 'lose_weight',
+  heightCm: DEFAULT_ASSESSMENT.heightCm,
+  weightKg: DEFAULT_ASSESSMENT.weightKg,
+  activityLevel: DEFAULT_ASSESSMENT.activityLevel,
+  goal: DEFAULT_ASSESSMENT.goal,
 };
 
 interface OnboardingDraftContextValue {
