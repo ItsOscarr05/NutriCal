@@ -64,7 +64,7 @@ export function BodyCompositionWheelFields({
       onValueChange={onChange}
       accessibilityLabel={label}
       style={inRow ? styles.pickerInRow : styles.picker}
-      itemStyle={[styles.pickerItem, { color: theme.textPrimary }]}
+      itemStyle={[styles.pickerItem, inRow && styles.pickerItemInRow, { color: theme.textPrimary }]}
       dropdownIconColor={theme.textSecondary}
       mode="dropdown"
     >
@@ -82,6 +82,7 @@ export function BodyCompositionWheelFields({
           icon="height"
           iconColor={theme.accent}
           label="Height"
+          flex={1.4}
           valueText={unit === 'imperial' ? `${feet}'${inches}"` : `${cm} cm`}
         >
           {unit === 'imperial' ? (
@@ -98,6 +99,7 @@ export function BodyCompositionWheelFields({
           icon="scale"
           iconColor={theme.secondary}
           label="Weight"
+          flex={0.9}
           valueText={unit === 'imperial' ? `${lb} lb` : `${kg} kg`}
         >
           {unit === 'imperial'
@@ -119,6 +121,7 @@ function WheelColumn({
   icon,
   iconColor,
   label,
+  flex,
   valueText,
   children,
 }: {
@@ -126,11 +129,12 @@ function WheelColumn({
   icon: keyof typeof MaterialIcons.glyphMap;
   iconColor: string;
   label: string;
+  flex: number;
   valueText: string;
   children: ReactNode;
 }) {
   return (
-    <View style={[styles.column, { backgroundColor: theme.surfaceContainerLow }]}>
+    <View style={[styles.column, { flex, backgroundColor: theme.surfaceContainerLow }]}>
       <View style={styles.columnHeader}>
         <MaterialIcons name={icon} size={22} color={iconColor} />
         <Text style={[styles.columnLabel, { color: theme.textSecondary }]}>{label}</Text>
@@ -144,7 +148,7 @@ function WheelColumn({
 const styles = StyleSheet.create({
   root: { gap: spacing.lg },
   columns: { flexDirection: 'row', gap: spacing.sm },
-  column: { flex: 1, borderRadius: radii.lg, paddingTop: spacing.md, paddingHorizontal: spacing.xs, alignItems: 'center' },
+  column: { borderRadius: radii.lg, paddingTop: spacing.md, paddingHorizontal: spacing.xs, alignItems: 'center' },
   columnHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   columnLabel: { fontSize: 15, fontWeight: '600' },
   columnValue: { fontSize: 30, fontWeight: '800', marginTop: spacing.xs },
@@ -152,6 +156,7 @@ const styles = StyleSheet.create({
   picker: { alignSelf: 'stretch', height: WHEEL_HEIGHT },
   pickerInRow: { flex: 1, height: WHEEL_HEIGHT },
   pickerItem: { fontSize: 20, height: WHEEL_HEIGHT },
+  pickerItemInRow: { fontSize: 18 },
   bmiPill: { alignSelf: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill },
   bmiText: { fontSize: 16, fontWeight: '700' },
 });
