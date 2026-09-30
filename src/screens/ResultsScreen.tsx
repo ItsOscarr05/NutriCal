@@ -18,7 +18,7 @@ import { calculateNutrientTargets } from '../engine';
 import { MainTabParamList, RootStackParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
 import { useChangeNudge } from '../profile/useChangeNudge';
-import { palette, radii, spacing, ThemeColors, useTheme } from '../theme';
+import { darkTheme, palette, radii, spacing, ThemeColors, useTheme } from '../theme';
 import { Goal } from '../types/profile';
 
 // This screen now renders as the `Targets` tab inside `MainTabs`, but still
@@ -127,7 +127,7 @@ export function ResultsScreen() {
         <View style={[styles.heroCard, { backgroundColor: theme.surface }]}>
           <Mascot size={64} />
           <View style={[styles.heroBadge, { backgroundColor: theme.accentFixed }]}>
-            <View style={[styles.heroBadgeDot, { backgroundColor: theme.accent }]} />
+            <View style={[styles.heroBadgeDot, { backgroundColor: theme.accentFill }]} />
             <Text style={[styles.heroBadgeText, { color: theme.onAccentFixed }]}>Your Daily Calibration</Text>
           </View>
           <Text style={[styles.heroTitle, { color: theme.textPrimary }]}>Here are your numbers ✨</Text>
@@ -151,8 +151,8 @@ export function ResultsScreen() {
               progress={82}
               trackColor={theme.surfaceContainerLow}
               gradientStops={[
-                { offset: '0%', color: palette.primaryContainer },
-                { offset: '50%', color: palette.primaryDark },
+                { offset: '0%', color: theme === darkTheme ? palette.primaryContainer : palette.mintPressed },
+                { offset: '50%', color: theme === darkTheme ? palette.primaryDark : palette.mint },
                 { offset: '100%', color: palette.primaryFixed },
               ]}
             >
@@ -166,7 +166,7 @@ export function ResultsScreen() {
             </CircularProgress>
           </View>
           <View style={[styles.statusPill, { backgroundColor: theme.surfaceContainerLow }]}>
-            <View style={[styles.statusDot, { backgroundColor: theme.accent }]} />
+            <View style={[styles.statusDot, { backgroundColor: theme.accentFill }]} />
             <Text style={[styles.statusPillText, { color: theme.textPrimary }]}>{GOAL_DESCRIPTOR[profile.goal]}</Text>
           </View>
           <View style={[styles.quickStatsRow, { backgroundColor: theme.surfaceContainerLow }]}>
@@ -224,8 +224,8 @@ export function ResultsScreen() {
         {showChangeNudge && <ChangeNudgeCard onUpdate={handleEditProfile} onDismiss={dismissChangeNudge} />}
 
         <View style={[styles.insightCard, { backgroundColor: theme.surfaceContainerLow }]}>
-          <View style={[styles.insightIconBadge, { backgroundColor: theme.accentContainer }]}>
-            <MaterialIcons name="lightbulb" size={20} color={theme.onAccent} />
+          <View style={[styles.insightIconBadge, { backgroundColor: theme.accentFill }]}>
+            <MaterialIcons name="lightbulb" size={20} color={theme.onAccentFill} />
           </View>
           <View style={styles.insightTextBlock}>
             <View style={styles.insightHeaderRow}>

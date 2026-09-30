@@ -71,7 +71,7 @@ export function OnboardingStep({
           {Array.from({ length: ONBOARDING_STEP_COUNT }, (_, i) => (
             <View
               key={i}
-              style={[styles.progressSegment, { backgroundColor: i < step ? theme.accent : theme.surfaceContainerHigh }]}
+              style={[styles.progressSegment, { backgroundColor: i < step ? theme.accentFill : theme.surfaceContainerHigh }]}
             />
           ))}
         </View>

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { palette, radii, spacing } from '../theme';
+import { radii, spacing, useTheme } from '../theme';
 
 interface PrimaryButtonProps {
   label: string;
@@ -8,43 +8,40 @@ interface PrimaryButtonProps {
 }
 
 /**
- * The solid-green filled CTA button (Stitch palette, `primaryContainer`).
- * Uses fixed literal palette values rather than `useTheme()`, same as
- * before the Stitch re-theme — `primaryContainer`/`primary` are identical
- * in both light and dark mode, so the button looks the same either way.
- * Label color is white — per the WCAG audit in `src/theme/colors.ts`,
- * white on `primaryContainer` passes AA (~4.64:1).
+ * The solid-green filled CTA button: logo mint with a dark-green label in
+ * light mode, `primaryContainer` with a white label in dark mode (see the
+ * `buttonFill` tokens and the WCAG audit in `src/theme/colors.ts`).
  */
 export function PrimaryButton({ label, onPress, disabled }: PrimaryButtonProps) {
+  const theme = useTheme();
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!disabled }}
-      style={({ pressed }) => [styles.button, pressed && !disabled && styles.pressed, disabled && styles.disabled]}
+      style={({ pressed }) => [
+        styles.button,
+        { backgroundColor: pressed && !disabled ? theme.buttonFillPressed : theme.buttonFill },
+        disabled && styles.disabled,
+      ]}
     >
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: theme.onButtonFill }]}>{label}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: palette.primaryContainer,
     borderRadius: radii.pill,
     paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: {
-    backgroundColor: palette.primary,
-  },
   disabled: {
     opacity: 0.4,
   },
   label: {
-    color: palette.white,
     fontSize: 17,
     fontWeight: '700',
   },

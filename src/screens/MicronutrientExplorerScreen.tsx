@@ -86,7 +86,7 @@ export function MicronutrientExplorerScreen() {
               onPress={() => setFilter(f.key)}
               style={[
                 styles.filterPill,
-                { backgroundColor: active ? theme.accent : theme.surfaceContainer, color: active ? theme.onAccent : theme.textSecondary },
+                { backgroundColor: active ? theme.accentFill : theme.surfaceContainer, color: active ? theme.onAccentFill : theme.textSecondary },
               ]}
             >
               {f.label}

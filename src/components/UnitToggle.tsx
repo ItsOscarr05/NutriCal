@@ -17,11 +17,8 @@ interface UnitToggleProps<T extends string> {
 /**
  * Small segmented control for the imperial/metric toggle on the height and
  * weight onboarding screens (AGENTS.md — imperial-first with a metric
- * toggle). The selected segment uses `theme.onAccentDeep` for its text —
- * a dedicated theme field (not a literal palette value) because
- * `accentDeep` flips from dark-green-in-light-mode to bright-green-in-dark-
- * mode, so the correct "on" text color flips too. See `onAccentDeep`'s doc
- * in `src/theme/colors.ts`.
+ * toggle). The selected segment is an `accentFill` pill with
+ * `onAccentFill` text.
  */
 export function UnitToggle<T extends string>({ options, value, onChange, centered = false }: UnitToggleProps<T>) {
   const theme = useTheme();
@@ -41,9 +38,9 @@ export function UnitToggle<T extends string>({ options, value, onChange, centere
             onPress={() => onChange(option.value)}
             accessibilityRole="button"
             accessibilityState={{ selected }}
-            style={[styles.option, selected && { backgroundColor: theme.accentDeep }]}
+            style={[styles.option, selected && { backgroundColor: theme.accentFill }]}
           >
-            <Text style={[styles.label, { color: selected ? theme.onAccentDeep : theme.textSecondary }]}>
+            <Text style={[styles.label, { color: selected ? theme.onAccentFill : theme.textSecondary }]}>
               {option.label}
             </Text>
           </Pressable>

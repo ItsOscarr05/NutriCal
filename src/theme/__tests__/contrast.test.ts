@@ -127,6 +127,23 @@ describe('lightTheme / darkTheme — resolved tokens stay AA-safe for their docu
     }
   });
 
+  it('onAccentFill is AA-safe on accentFill, in both themes', () => {
+    for (const theme of [lightTheme, darkTheme]) {
+      expect(meetsWcagAA(contrastRatio(theme.onAccentFill, theme.accentFill), 'normal-text')).toBe(true);
+    }
+  });
+
+  it('the PrimaryButton label is AA-safe on its fill and pressed fill, in both themes', () => {
+    for (const theme of [lightTheme, darkTheme]) {
+      expect(meetsWcagAA(contrastRatio(theme.onButtonFill, theme.buttonFill), 'normal-text')).toBe(true);
+      expect(meetsWcagAA(contrastRatio(theme.onButtonFill, theme.buttonFillPressed), 'normal-text')).toBe(true);
+    }
+  });
+
+  it('flags that the light-mode mint fill is too pale to be text on the light surfaces', () => {
+    expect(meetsWcagAA(contrastRatio(lightTheme.accentFill, lightTheme.surface), 'large-text-or-ui')).toBe(false);
+  });
+
   it('error stays a muted, AA-safe (non-alarm) color on background in both themes', () => {
     for (const theme of [lightTheme, darkTheme]) {
       expect(meetsWcagAA(contrastRatio(theme.error, theme.background), 'large-text-or-ui')).toBe(true);

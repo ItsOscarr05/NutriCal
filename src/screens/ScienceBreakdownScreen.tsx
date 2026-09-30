@@ -133,7 +133,7 @@ export function ScienceBreakdownScreen() {
         </View>
 
         <View style={[styles.proportionalBar, { backgroundColor: theme.surfaceContainerHigh }]}>
-          <View style={{ flex: pct(targets.bmr), backgroundColor: theme.accent }} />
+          <View style={{ flex: pct(targets.bmr), backgroundColor: theme.accentFill }} />
           <View style={{ flex: pct(neatCalories), backgroundColor: theme.accentFixed }} />
           <View style={{ flex: pct(exerciseCalories), backgroundColor: theme.secondaryFixed }} />
           <View style={{ flex: Math.max(1, pct(tefCalories)), backgroundColor: theme.secondaryContainer }} />
@@ -206,12 +206,12 @@ export function ScienceBreakdownScreen() {
           <View style={[styles.comparisonSwitch, { backgroundColor: theme.surfaceContainerHigh }]}>
             <Pressable
               onPress={() => setComparisonView('personalized')}
-              style={[styles.comparisonSwitchOption, comparisonView === 'personalized' && { backgroundColor: theme.accent }]}
+              style={[styles.comparisonSwitchOption, comparisonView === 'personalized' && { backgroundColor: theme.accentFill }]}
             >
               <Text
                 style={[
                   styles.comparisonSwitchText,
-                  { color: comparisonView === 'personalized' ? theme.onAccent : theme.textSecondary },
+                  { color: comparisonView === 'personalized' ? theme.onAccentFill : theme.textSecondary },
                 ]}
               >
                 Personalized
@@ -293,13 +293,13 @@ export function ScienceBreakdownScreen() {
                 <View
                   style={[
                     styles.auditCheckIcon,
-                    { backgroundColor: checked[index] ? theme.accent : theme.surfaceContainerHigh },
+                    { backgroundColor: checked[index] ? theme.accentFill : theme.surfaceContainerHigh },
                   ]}
                 >
                   <MaterialIcons
                     name={checked[index] ? 'check' : 'remove'}
                     size={16}
-                    color={checked[index] ? theme.onAccent : theme.textSecondary}
+                    color={checked[index] ? theme.onAccentFill : theme.textSecondary}
                   />
                 </View>
                 <Text style={[styles.auditLabel, { color: theme.textPrimary }]}>{label}</Text>

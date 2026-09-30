@@ -23,12 +23,12 @@
  * `surface` unless noted):
  *   textPrimary (on-surface, #1a1b22):        16.32 / 17.16
  *   textSecondary (on-surface-variant, #3e4a3d): 8.87 / 9.33
- *   accent/primary (#006b2c):                  6.36 / 6.69  -> also safe
- *                                                              as direct fg
- *                                                              text/icon,
- *                                                              unlike the
- *                                                              old brand
- *                                                              green.
+ *   accent/accentDeep (leaf, #1B7F45):         ~4.8 / ~5.05 -> safe as
+ *                                                              direct fg
+ *                                                              text/icon.
+ *   onAccentFill / onButtonFill (#002109) on the logo mint fill (#6FD67E):
+ *     ~9.5; on the pressed mint (#58C060): ~7.5. Mint itself is too pale
+ *     to be a text color on the light surfaces — fills only.
  *   secondary (#855300):                       6.17 / 6.49
  *   tertiary (#a63047):                        6.37 / 6.70
  *   error (unchanged from v1, muted/non-alarm, PRD §11.1): 4.61 on the new
@@ -39,7 +39,7 @@
  *     passes but close to the 4.5 floor -> reserved for large/bold text
  *     and icons, not small body copy)
  *   onTertiary... white on tertiaryContainer:   4.65 (same caveat as above)
- *   onAccentDeep (white) on accentDeep (#006b2c):        6.69
+ *   onAccentDeep (white) on accentDeep (leaf, #1B7F45):  ~5.05
  *   NOTE: white on secondaryContainer is only 1.97 (FAILS) -- that pale
  *     orange container must always pair with a dark "on" color
  *     (onSecondaryFixed), never white. Don't add a white-text usage
@@ -85,6 +85,11 @@ export const palette = {
   onPrimaryFixed: '#002109', // safe dark fg text/icon on primaryFixed
   onPrimaryFixedVariant: '#005320', // also doubles as the dark-mode "fixed" tint bg (paired with primaryDark fg)
 
+  // ---- Light-mode brand greens, sampled from the logo artwork ----
+  mint: '#6FD67E', // the logo's light face green: light-mode solid fills (buttons, selected chips, bars)
+  mintPressed: '#58C060', // the logo's mid green: pressed state of mint fills
+  leaf: '#1B7F45', // logo-family green darkened to pass AA as light-mode text/icons
+
   // ---- Secondary (amber/gold) — Stitch's "secondary" family ----
   secondary: '#855300',
   secondaryDark: '#ffb95f', // secondary-fixed-dim
@@ -129,6 +134,14 @@ export interface ThemeColors {
   onAccentFixed: string;
   /** Safe fg text/icon color *on* `accent`/`accentContainer` (large/bold text or icons only for `accentContainer`, see contrast notes). */
   onAccent: string;
+  /** Solid green fill for small surfaces: selected chips/segments, checkboxes, progress bars, dots, badges. Light mint in light mode — never use it as a text color. Pair with `onAccentFill`. */
+  accentFill: string;
+  /** Safe fg text/icon color *on* `accentFill`. */
+  onAccentFill: string;
+  /** `PrimaryButton` fill, its pressed state, and its label color. */
+  buttonFill: string;
+  buttonFillPressed: string;
+  onButtonFill: string;
 
   secondary: string;
   secondaryContainer: string;
@@ -154,13 +167,18 @@ export const lightTheme: ThemeColors = {
   surfaceContainer: palette.surfaceContainerLight,
   surfaceContainerHigh: palette.surfaceContainerHighLight,
 
-  accent: palette.primary,
-  accentDeep: palette.primary,
+  accent: palette.leaf,
+  accentDeep: palette.leaf,
   onAccentDeep: palette.white,
   accentContainer: palette.primaryContainer,
   accentFixed: palette.primaryFixed,
   onAccentFixed: palette.onPrimaryFixed,
   onAccent: palette.white,
+  accentFill: palette.mint,
+  onAccentFill: palette.onPrimaryFixed,
+  buttonFill: palette.mint,
+  buttonFillPressed: palette.mintPressed,
+  onButtonFill: palette.onPrimaryFixed,
 
   secondary: palette.secondary,
   secondaryContainer: palette.secondaryContainer,
@@ -195,6 +213,11 @@ export const darkTheme: ThemeColors = {
   accentFixed: palette.onPrimaryFixedVariant,
   onAccentFixed: palette.primaryDark,
   onAccent: palette.white,
+  accentFill: palette.primaryDark,
+  onAccentFill: palette.onPrimaryFixed,
+  buttonFill: palette.primaryContainer,
+  buttonFillPressed: palette.primary,
+  onButtonFill: palette.white,
 
   secondary: palette.secondaryDark,
   secondaryContainer: palette.secondaryContainer,

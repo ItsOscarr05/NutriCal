@@ -152,16 +152,16 @@ export function GoalPicker({
                 <View style={styles.goalLabelRow}>
                   <Text style={[styles.goalLabel, { color: theme.textPrimary }]}>{option.label}</Text>
                   {option.badge ? (
-                    <View style={[styles.goalBadge, { backgroundColor: theme.accent }]}>
-                      <Text style={[styles.goalBadgeText, { color: theme.onAccent }]}>{option.badge}</Text>
+                    <View style={[styles.goalBadge, { backgroundColor: theme.accentFill }]}>
+                      <Text style={[styles.goalBadgeText, { color: theme.onAccentFill }]}>{option.badge}</Text>
                     </View>
                   ) : null}
                 </View>
                 <Text style={[styles.goalDescription, { color: theme.textSecondary }]}>{option.description}</Text>
               </View>
             </View>
-            <View style={[styles.goalRadio, { backgroundColor: selected ? theme.accent : theme.surfaceContainerHigh }]}>
-              {selected ? <MaterialIcons name="check" size={14} color={theme.onAccent} /> : null}
+            <View style={[styles.goalRadio, { backgroundColor: selected ? theme.accentFill : theme.surfaceContainerHigh }]}>
+              {selected ? <MaterialIcons name="check" size={14} color={theme.onAccentFill} /> : null}
             </View>
           </Pressable>
         );
@@ -186,7 +186,7 @@ export function MetabolicForecastCard({
     return (
       <View style={[styles.previewCard, styles.previewCardLarge, { backgroundColor: theme.surfaceContainer }]}>
         <View style={styles.previewHeader}>
-          <View style={[styles.previewDot, { backgroundColor: theme.accent }]} />
+          <View style={[styles.previewDot, { backgroundColor: theme.accentFill }]} />
           <Text style={[styles.previewHeadingLarge, { color: theme.textSecondary }]}>Metabolic Forecast</Text>
         </View>
         <View style={[styles.heroStat, { backgroundColor: theme.surface }]}>
@@ -208,7 +208,7 @@ export function MetabolicForecastCard({
   return (
     <View style={[styles.previewCard, { backgroundColor: theme.surfaceContainer }]}>
       <View style={styles.previewHeader}>
-        <View style={[styles.previewDot, { backgroundColor: theme.accent }]} />
+        <View style={[styles.previewDot, { backgroundColor: theme.accentFill }]} />
         <Text style={[styles.previewHeading, { color: theme.textSecondary }]}>Metabolic Forecast</Text>
       </View>
       <View style={styles.previewRow}>
