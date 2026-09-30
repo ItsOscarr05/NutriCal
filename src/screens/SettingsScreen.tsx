@@ -40,13 +40,12 @@ export function SettingsScreen() {
   const { settings, setUnits, setAppearance } = useAppSettings();
   const { profile, clearProfile } = useProfile();
 
-  // Same destination as `ResultsScreen`'s "Edit profile" link — the
-  // `Assess` tab (single-screen Quick Assessment, reused for editing).
-  // Settings is a root-level modal, so this uses the nested-navigator
-  // params form rather than a plain sibling `navigate('Assess')`.
+  // Same destination as `ResultsScreen`'s recalibrate CTA — the `Profile`
+  // tab. Settings is a root-level modal, so this uses the nested-navigator
+  // params form rather than a plain sibling `navigate('Profile')`.
   const handleEditProfile = () => {
     if (!profile) return;
-    navigation.navigate('Main', { screen: 'Assess' });
+    navigation.navigate('Main', { screen: 'Profile' });
   };
 
   // Irreversible (no accounts/backend to recover from, PRD §13) — confirmed

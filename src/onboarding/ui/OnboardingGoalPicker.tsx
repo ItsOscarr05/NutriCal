@@ -32,7 +32,7 @@ function goalColors(goal: Goal, theme: ThemeColors): { tint: string; fg: string;
 
 /**
  * Onboarding-only goal picker: tall, color-coded cards that stretch to
- * fill the page. The `Assess` tab keeps the compact `GoalPicker`.
+ * fill the page. The Profile tab keeps the compact `GoalPicker`.
  */
 export function OnboardingGoalPicker({
   theme,

@@ -85,10 +85,10 @@ export function ResultsScreen() {
   // Called unconditionally (before the `!profile` guard below) since hooks
   // can't be called conditionally — `useChangeNudge` is null-safe.
   const { visible: showChangeNudge, dismiss: dismissChangeNudge } = useChangeNudge(profile);
-  // Only true right after `QuickAssessmentScreen.handleFinish` completes
-  // first-time onboarding — never on a routine app open, and not on a
-  // profile *edit* either (that path navigates straight to this tab
-  // without the param) — see `MainTabParamList.Targets`.
+  // Only true right after first-time onboarding finishes
+  // (`MetabolicForecastScreen.handleFinish`) — never on a routine app
+  // open, and not on a profile *edit* either (that path navigates
+  // straight here without the param) — see `MainTabParamList.Targets`.
   const [showCelebration, setShowCelebration] = useState(!!params?.justCompleted);
 
   if (!profile) {
@@ -104,11 +104,9 @@ export function ResultsScreen() {
   const targets = calculateNutrientTargets(profile);
   const activeOffset = Math.max(0, Math.round(targets.tdee - targets.bmr));
 
-  // Jumps to the `Assess` tab — the single-screen Quick Assessment,
-  // reused for editing (PRD §8.1 — "the profile should be editable at any
-  // time"). It reads directly from `useProfile()` itself, so there's
-  // nothing to hydrate/pass here, unlike the old multi-step wizard.
-  const handleEditProfile = () => navigation.navigate('Assess');
+  // Jumps to the `Profile` tab — saved stats plus the recalibration form
+  // (PRD §8.1 — "the profile should be editable at any time").
+  const handleEditProfile = () => navigation.navigate('Profile');
 
   const handleOpenSettings = () => navigation.navigate('Settings');
 

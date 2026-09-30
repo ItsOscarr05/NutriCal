@@ -5,7 +5,7 @@ import { DEFAULT_ASSESSMENT } from './assessmentOptions';
 /**
  * In-progress answers for the paged first-time onboarding flow. Scoped to
  * `OnboardingStack` (not `App.tsx`) so it lives only as long as the
- * onboarding pages are mounted — the `Assess` tab keeps its own local
+ * onboarding pages are mounted — the Profile tab keeps its own local
  * state seeded from `ProfileContext` instead.
  *
  * `sex` starts unselected and `ageText` starts empty so the first two

@@ -1,29 +1,18 @@
 import Slider from '@react-native-community/slider';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactNode, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Mascot } from '../components/Mascot';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { UnitToggle } from '../components/UnitToggle';
-import { calculateNutrientTargets } from '../engine';
-import { MainTabParamList, RootStackParamList } from '../navigation/types';
-import { DEFAULT_ASSESSMENT } from '../onboarding/assessmentOptions';
-import { ActivityPicker, BodyCompositionFields, GoalPicker, MetabolicForecastCard } from '../onboarding/ui/AssessmentFields';
-import { MIN_SUPPORTED_AGE } from '../onboarding/validation';
-import { useProfile } from '../profile/ProfileContext';
-import { useAppSettings } from '../settings/AppSettingsContext';
-import { Units } from '../settings/appSettings';
-import { radii, spacing, ThemeColors, useTheme } from '../theme';
-import { ActivityLevel, Goal, Sex, UserProfile } from '../types/profile';
+import { PrimaryButton } from '../../components/PrimaryButton';
+import { UnitToggle } from '../../components/UnitToggle';
+import { calculateNutrientTargets } from '../../engine';
+import { useProfile } from '../../profile/ProfileContext';
+import { useAppSettings } from '../../settings/AppSettingsContext';
+import { Units } from '../../settings/appSettings';
+import { radii, spacing, ThemeColors, useTheme } from '../../theme';
+import { ActivityLevel, Goal, Sex, UserProfile } from '../../types/profile';
+import { DEFAULT_ASSESSMENT } from '../assessmentOptions';
+import { MIN_SUPPORTED_AGE } from '../validation';
+import { ActivityPicker, BodyCompositionFields, GoalPicker, MetabolicForecastCard } from './AssessmentFields';
 
-// A generous-but-still-realistic slider ceiling — `MAX_SUPPORTED_AGE` (120,
-// see `src/onboarding/validation.ts`) is a validation ceiling, not a
-// sensible single-drag slider range. `MIN_SUPPORTED_AGE` (9) is kept as
-// the true floor, since the DRI data layer genuinely supports it and this
-// is the only way to enter age on this screen (no text input) — AGENTS.md's
-// "ages below MIN_SUPPORTED_AGE aren't seeded" note assumes 9+ is reachable.
 const PRACTICAL_MAX_AGE = 100;
 
 const SEX_OPTIONS: { value: Sex; label: string; emoji: string }[] = [
@@ -33,23 +22,13 @@ const SEX_OPTIONS: { value: Sex; label: string; emoji: string }[] = [
 
 const DEFAULT_SEX: Sex = 'female';
 
-type Nav = CompositeNavigationProp<
-  BottomTabNavigationProp<MainTabParamList, 'Assess'>,
-  NativeStackNavigationProp<RootStackParamList>
->;
-
 /**
- * The `Assess` tab (v1.1 Stitch redesign): a single scrolling screen of
- * pills/sliders and a live-calculating preview strip for recalibrating an
- * existing profile. Every field seeds from `profile` on mount. First-time
- * onboarding is the separate paged `OnboardingStack`, not this screen.
- *
- * The live preview always calls the real `calculateNutrientTargets`
- * engine entry point (never the mockup's simplified inline formulas), so
- * it can never drift from the numbers shown on the Targets dashboard.
+ * Scrollable recalibration form (live `calculateNutrientTargets` preview +
+ * save). Used only from the Profile tab — first-time onboarding is the
+ * paged `OnboardingStack`. `header` is rendered at the top of the same
+ * ScrollView so Profile's stats summary and this form never nest scrolls.
  */
-export function QuickAssessmentScreen() {
-  const navigation = useNavigation<Nav>();
+export function AssessmentEditor({ header, onSaved }: { header?: ReactNode; onSaved: () => void }) {
   const theme = useTheme();
   const { profile, saveProfile } = useProfile();
   const { settings, setUnits } = useAppSettings();
@@ -95,20 +74,13 @@ export function QuickAssessmentScreen() {
     };
     await saveProfile(nextProfile);
     setSaving(false);
-    navigation.navigate('Targets');
+    onSaved();
   };
 
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.hero}>
-          <Mascot size={72} />
-          <Text style={[styles.heroTitle, { color: theme.textPrimary }]}>Calibrate your biology.</Text>
-          <Text style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
-            No account required. Stored 100% on your device, backed by metabolic science.
-          </Text>
-        </View>
-
+        {header}
         <SectionCard number={1} title="Sex & Age" theme={theme}>
           <View style={styles.sexRow}>
             {SEX_OPTIONS.map((option) => (
@@ -178,11 +150,7 @@ export function QuickAssessmentScreen() {
       </ScrollView>
 
       <View style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
-        <PrimaryButton
-          label={saving ? 'Calculating…' : 'Save changes'}
-          onPress={handleFinish}
-          disabled={saving}
-        />
+        <PrimaryButton label={saving ? 'Calculating…' : 'Save changes'} onPress={handleFinish} disabled={saving} />
       </View>
     </View>
   );
@@ -303,17 +271,12 @@ function SliderRow({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md },
-  hero: { alignItems: 'center', marginBottom: spacing.sm },
-  heroTitle: { fontSize: 24, fontWeight: '800', marginTop: spacing.sm, textAlign: 'center' },
-  heroSubtitle: { fontSize: 14, marginTop: spacing.xs, textAlign: 'center', maxWidth: 280 },
-
   section: { borderRadius: radii.lg, padding: spacing.md, gap: spacing.md },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   sectionBadge: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   sectionBadgeText: { fontSize: 13, fontWeight: '800' },
   sectionTitle: { fontSize: 17, fontWeight: '700' },
-
   sexRow: { flexDirection: 'row', gap: spacing.sm },
   sexPill: {
     flex: 1,
@@ -327,7 +290,6 @@ const styles = StyleSheet.create({
   sexPillSelected: { shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 1 },
   sexEmoji: { fontSize: 16 },
   sexLabel: { fontSize: 14, fontWeight: '700' },
-
   sliderBlock: { marginTop: spacing.xs },
   sliderHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs },
   sliderLabel: { fontSize: 13, fontWeight: '600' },
@@ -336,6 +298,5 @@ const styles = StyleSheet.create({
   sliderUnitText: { fontSize: 12 },
   sliderCaptionsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
   sliderCaption: { fontSize: 11 },
-
   footer: { padding: spacing.lg, borderTopWidth: StyleSheet.hairlineWidth },
 });

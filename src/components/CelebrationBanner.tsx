@@ -14,7 +14,7 @@ interface CelebrationBannerProps {
  * celebratory animation when onboarding completes." Shown once, driven by
  * `ResultsScreen` reading a `justCompleted` nav param set only when the
  * user just finished first-time onboarding (not when saving edits from
- * the Assess tab) — never on a routine app open. Calls `onDone` once fully faded out so the
+ * the Profile tab) — never on a routine app open. Calls `onDone` once fully faded out so the
  * parent can unmount it.
  *
  * Uses the pale-green "fixed" tint + dark-green "on" text pairing from the

@@ -83,7 +83,7 @@ export function MetabolicForecastScreen() {
             theme={theme}
             preview={preview}
             size="large"
-            footer="Calculated with the Mifflin-St Jeor equation. You can recalibrate any time from the Assess tab."
+            footer="Calculated with the Mifflin-St Jeor equation. You can recalibrate any time from the Profile tab."
           />
         </FadeInView>
       ) : (

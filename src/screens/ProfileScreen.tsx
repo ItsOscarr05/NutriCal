@@ -1,6 +1,11 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StyleSheet, Text, View } from 'react-native';
 import { Mascot } from '../components/Mascot';
+import { MainTabParamList, RootStackParamList } from '../navigation/types';
 import { ACTIVITY_OPTIONS, GOAL_OPTIONS } from '../onboarding/assessmentOptions';
+import { AssessmentEditor } from '../onboarding/ui/AssessmentEditor';
 import { cmToFeetInches, kgToLb } from '../onboarding/unitConversion';
 import { useProfile } from '../profile/ProfileContext';
 import { useAppSettings } from '../settings/AppSettingsContext';
@@ -12,12 +17,18 @@ const SEX_LABEL: Record<Sex, string> = {
   male: 'Male',
 };
 
+type Nav = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Profile'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
+
 /**
- * Local "your stats" tab — not an account (no login, no cloud). Shows a
- * read-only summary of the saved `UserProfile`. Recalibration lives on
- * this same screen after the next navbar pass (the Assess form moves here).
+ * Local "your stats" tab — not an account (no login, no cloud). Saved
+ * `UserProfile` summary plus the recalibration form (formerly the Assess
+ * tab) in one scroll.
  */
 export function ProfileScreen() {
+  const navigation = useNavigation<Nav>();
   const theme = useTheme();
   const { profile } = useProfile();
   const { settings } = useAppSettings();
@@ -34,25 +45,37 @@ export function ProfileScreen() {
   const weight = formatWeight(profile, settings.units);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
-      <View style={styles.hero}>
-        <Mascot size={72} />
-        <Text style={[styles.heroTitle, { color: theme.textPrimary }]}>Your profile</Text>
-        <Text style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
-          Stored only on this device — no account, no cloud sync.
-        </Text>
-      </View>
+    <AssessmentEditor
+      onSaved={() => navigation.navigate('Targets')}
+      header={
+        <>
+          <View style={styles.hero}>
+            <Mascot size={72} />
+            <Text style={[styles.heroTitle, { color: theme.textPrimary }]}>Your profile</Text>
+            <Text style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
+              Stored only on this device — no account, no cloud sync.
+            </Text>
+          </View>
 
-      <View style={[styles.card, { backgroundColor: theme.surface }]}>
-        <Text style={[styles.cardEyebrow, { color: theme.textSecondary }]}>Saved stats</Text>
-        <StatRow theme={theme} label="Sex" value={SEX_LABEL[profile.sex]} />
-        <StatRow theme={theme} label="Age" value={`${profile.age} yrs`} />
-        <StatRow theme={theme} label="Height" value={height} />
-        <StatRow theme={theme} label="Weight" value={weight} />
-        <StatRow theme={theme} label="Activity" value={activityLabel(profile.activityLevel)} />
-        <StatRow theme={theme} label="Goal" value={goalLabel(profile.goal)} last />
-      </View>
-    </ScrollView>
+          <View style={[styles.card, { backgroundColor: theme.surface }]}>
+            <Text style={[styles.cardEyebrow, { color: theme.textSecondary }]}>Saved stats</Text>
+            <StatRow theme={theme} label="Sex" value={SEX_LABEL[profile.sex]} />
+            <StatRow theme={theme} label="Age" value={`${profile.age} yrs`} />
+            <StatRow theme={theme} label="Height" value={height} />
+            <StatRow theme={theme} label="Weight" value={weight} />
+            <StatRow theme={theme} label="Activity" value={activityLabel(profile.activityLevel)} />
+            <StatRow theme={theme} label="Goal" value={goalLabel(profile.goal)} last />
+          </View>
+
+          <View>
+            <Text style={[styles.recalibrateHeading, { color: theme.textPrimary }]}>Recalibrate</Text>
+            <Text style={[styles.recalibrateSub, { color: theme.textSecondary }]}>
+              Adjust anything below and save to update your daily targets.
+            </Text>
+          </View>
+        </>
+      }
+    />
   );
 }
 
@@ -95,9 +118,7 @@ function goalLabel(goal: Goal): string {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  content: { padding: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md },
   hero: { alignItems: 'center', marginBottom: spacing.sm },
   heroTitle: { fontSize: 24, fontWeight: '800', marginTop: spacing.sm, textAlign: 'center' },
   heroSubtitle: { fontSize: 14, marginTop: spacing.xs, textAlign: 'center', maxWidth: 280 },
@@ -106,4 +127,6 @@ const styles = StyleSheet.create({
   statRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm, gap: spacing.md },
   statLabel: { fontSize: 14 },
   statValue: { fontSize: 15, fontWeight: '700', flexShrink: 1, textAlign: 'right' },
+  recalibrateHeading: { fontSize: 18, fontWeight: '800' },
+  recalibrateSub: { fontSize: 13, marginTop: spacing.xs },
 });

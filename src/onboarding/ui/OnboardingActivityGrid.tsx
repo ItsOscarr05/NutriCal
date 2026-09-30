@@ -7,7 +7,7 @@ import { ACTIVITY_OPTIONS } from '../assessmentOptions';
 const COLUMNS = 2;
 
 // Reading order of the grid; differs from ACTIVITY_OPTIONS (which the
-// Assess tab's compact list keeps in intensity order).
+// Profile tab's compact list keeps in intensity order).
 const GRID_ORDER: ActivityLevel[] = [
   'inactive',
   'sedentary',
@@ -34,7 +34,7 @@ const ACTIVITY_COLORS: Record<ActivityLevel, { fill: string; dark: string }> = {
  * Onboarding-only 2x3 activity grid: large cards that stretch to fill the
  * page's content area, each with a thick color-coded border on a
  * transparent background and an outlined icon in a ringed badge. The
- * `Assess` tab uses the compact `ActivityPicker` instead.
+ * `Profile` tab uses the compact `ActivityPicker` instead.
  */
 export function OnboardingActivityGrid({
   theme,

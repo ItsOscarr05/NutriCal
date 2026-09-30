@@ -73,7 +73,7 @@ export function ScienceBreakdownScreen() {
   const isSurplus = delta > 5;
   const weeklyKg = Math.abs((delta * 7) / KCAL_PER_KG_FAT);
 
-  const handleRecalibrate = () => navigation.navigate('Assess');
+  const handleRecalibrate = () => navigation.navigate('Profile');
 
   const handleShare = () => {
     void Share.share({

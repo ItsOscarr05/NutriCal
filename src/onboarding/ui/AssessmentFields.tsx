@@ -10,9 +10,9 @@ import { cmToFeetInches, kgToLb } from '../unitConversion';
 import { MAX_HEIGHT_CM, MAX_WEIGHT_KG, MIN_HEIGHT_CM, MIN_WEIGHT_KG } from '../validation';
 
 /**
- * Assessment inputs shared by the `Assess` tab and the paged first-time
- * onboarding, so the two never drift. Values are always metric; imperial
- * is display-only here.
+ * Assessment inputs shared by the Profile tab's recalibrate form and the
+ * paged first-time onboarding, so the two never drift. Values are always
+ * metric; imperial is display-only here.
  */
 
 /**
