@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MicronutrientExplorerScreen } from '../screens/MicronutrientExplorerScreen';
+import { ProfileScreen } from '../screens/ProfileScreen';
 import { QuickAssessmentScreen } from '../screens/QuickAssessmentScreen';
 import { ResultsScreen } from '../screens/ResultsScreen';
 import { ScienceBreakdownScreen } from '../screens/ScienceBreakdownScreen';
@@ -15,14 +16,13 @@ const TAB_ICONS: Record<keyof MainTabParamList, keyof typeof MaterialIcons.glyph
   Assess: 'auto-awesome',
   Micros: 'eco',
   Science: 'menu-book',
+  Profile: 'person-outline',
 };
 
 /**
- * The persistent bottom tab bar (v1.1 Stitch redesign) — replaces the old
- * single-flow "onboard once, land on one Results screen" shape with four
- * always-available sections, per an explicit user decision to adopt the
- * mockups' nav shell rather than just restyle the single-screen flow.
- * Mounted as the `Main` route in `RootNavigator`, once a profile exists.
+ * The persistent bottom tab bar — Targets / Assess / Micros / Science /
+ * Profile (local stats summary; no account). Mounted as the `Main` route
+ * in `RootNavigator`, once a profile exists.
  *
  * `Assess` is the single-scroll Quick Assessment for recalibrating an
  * existing profile; first-time onboarding is the separate paged
@@ -46,6 +46,7 @@ export function MainTabs() {
       <Tab.Screen name="Assess" component={QuickAssessmentScreen} />
       <Tab.Screen name="Micros" component={MicronutrientExplorerScreen} />
       <Tab.Screen name="Science" component={ScienceBreakdownScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

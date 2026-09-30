@@ -4,17 +4,18 @@ import { Goal } from '../types/profile';
 
 /**
  * Bottom tab shell (v1.1 Stitch redesign), reached once a profile exists.
- * Targets/Assess/Micros/Science mirror the Stitch mockups' persistent
- * nav bar. `Targets`'s `justCompleted` param is set only by
- * `MetabolicForecastScreen` right after first-time onboarding, so that
- * tab can show a one-time celebratory reveal (PRD §11.3) instead of on
- * every routine app open.
+ * Targets/Assess/Micros/Science plus a local Profile tab (no account —
+ * saved body-metric summary only). `Targets`'s `justCompleted` param is
+ * set only by `MetabolicForecastScreen` right after first-time onboarding,
+ * so that tab can show a one-time celebratory reveal (PRD §11.3) instead
+ * of on every routine app open.
  */
 export type MainTabParamList = {
   Targets: { justCompleted?: boolean } | undefined;
   Assess: undefined;
   Micros: undefined;
   Science: undefined;
+  Profile: undefined;
 };
 
 /**
