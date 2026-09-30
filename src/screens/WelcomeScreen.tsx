@@ -58,9 +58,8 @@ export function WelcomeScreen() {
           {VALUE_PROPS.map((prop, i) => (
             <FadeInView key={prop.title} delay={300 + i * 100}>
               <View style={[styles.propRow, { backgroundColor: theme.surfaceContainerLow }]}>
-                <View style={[styles.propIcon, { backgroundColor: theme.accentFixed }]}>
-                  <MaterialIcons name={prop.icon} size={22} color={theme.onAccentFixed} />
-                </View>
+                <MaterialIcons name={prop.icon} size={28} color={theme.accent} />
+
                 <View style={styles.propText}>
                   <Text style={[styles.propTitle, { color: theme.textPrimary }]}>{prop.title}</Text>
                   <Text style={[styles.propBody, { color: theme.textSecondary }]}>{prop.body}</Text>
@@ -94,13 +93,6 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.md,
     borderRadius: radii.md,
-  },
-  propIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   propText: { flex: 1 },
   propTitle: { fontSize: 15, fontWeight: '700' },
