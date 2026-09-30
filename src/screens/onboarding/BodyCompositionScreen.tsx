@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { UnitToggle } from '../../components/UnitToggle';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboardingDraft } from '../../onboarding/OnboardingDraftContext';
-import { BodyCompositionFields } from '../../onboarding/ui/AssessmentFields';
+import { BodyCompositionWheelFields } from '../../onboarding/ui/BodyCompositionWheelFields';
 import { OnboardingStep } from '../../onboarding/ui/OnboardingStep';
 import { useAppSettings } from '../../settings/AppSettingsContext';
 import { Units } from '../../settings/appSettings';
@@ -21,7 +21,8 @@ export function BodyCompositionScreen() {
     <OnboardingStep
       step={3}
       title="Body composition"
-      subtitle="Drag to set your height and weight. Change units any time."
+      subtitle="Spin the wheels to set your height and weight."
+      centerBody
       onNext={() => navigation.navigate('DailyMotion')}
       onBack={() => navigation.goBack()}
     >
@@ -32,8 +33,9 @@ export function BodyCompositionScreen() {
         ]}
         value={settings.units}
         onChange={setUnits}
+        centered
       />
-      <BodyCompositionFields
+      <BodyCompositionWheelFields
         theme={theme}
         unit={settings.units}
         heightCm={draft.heightCm}

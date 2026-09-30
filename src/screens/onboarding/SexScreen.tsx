@@ -35,6 +35,7 @@ export function SexScreen() {
       title="What's your biological sex?"
       subtitle="Metabolism and nutrient needs differ by sex, so this shapes every number that follows."
       nextDisabled={draft.sex === null}
+      centerBody
       onNext={() => navigation.navigate('Age')}
       onBack={() => navigation.goBack()}
     >
@@ -59,7 +60,7 @@ export function SexScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <MaterialCommunityIcons name={option.icon} size={64} color={fg} />
+              <MaterialCommunityIcons name={option.icon} size={80} color={fg} />
               <Text style={[styles.label, { color: fg }]}>{option.label}</Text>
             </Pressable>
           );
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.md },
   option: {
     flex: 1,
-    aspectRatio: 0.85,
+    minHeight: 240,
     borderRadius: radii.lg,
     borderWidth: 2,
     alignItems: 'center',
@@ -81,5 +82,5 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   pressed: { opacity: 0.85 },
-  label: { fontSize: 20, fontWeight: '800' },
+  label: { fontSize: 22, fontWeight: '800' },
 });

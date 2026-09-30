@@ -15,6 +15,17 @@ import { MAX_HEIGHT_CM, MAX_WEIGHT_KG, MIN_HEIGHT_CM, MIN_WEIGHT_KG } from '../v
  * is display-only here.
  */
 
+/**
+ * BMI is a well-known, standard, universally-defined formula (unlike
+ * calorie/macro targets) — shown as light contextual info only, not a
+ * computed "target," so it lives in the UI rather than `src/engine`.
+ */
+export function getBmi(heightCm: number, weightKg: number): { bmi: number; bmiLabel: string } {
+  const bmi = weightKg / (heightCm / 100) ** 2;
+  const bmiLabel = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
+  return { bmi, bmiLabel };
+}
+
 export function BodyCompositionFields({
   theme,
   unit,
@@ -30,12 +41,7 @@ export function BodyCompositionFields({
   onHeightChange: (heightCm: number) => void;
   onWeightChange: (weightKg: number) => void;
 }) {
-  // BMI is a well-known, standard, universally-defined formula (unlike
-  // calorie/macro targets) — shown here as light contextual info only,
-  // not a computed "target," so it lives in the UI rather than
-  // `src/engine`.
-  const bmi = weightKg / (heightCm / 100) ** 2;
-  const bmiLabel = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
+  const { bmi, bmiLabel } = getBmi(heightCm, weightKg);
 
   const heightText = unit === 'imperial' ? formatFeetInches(heightCm) : `${Math.round(heightCm)}`;
   const heightUnitText = unit === 'imperial' ? '' : 'cm';
