@@ -9,7 +9,7 @@ import { MainTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-/** Ported 1:1 from the Stitch mockups' bottom nav (Material Symbols names, hyphenated for `MaterialIcons`). */
+/** Tab icons — Micros is registered immediately after Targets so those two sit side by side. */
 const TAB_ICONS: Record<keyof MainTabParamList, keyof typeof MaterialIcons.glyphMap> = {
   Targets: 'track-changes',
   Micros: 'eco',
@@ -18,10 +18,10 @@ const TAB_ICONS: Record<keyof MainTabParamList, keyof typeof MaterialIcons.glyph
 };
 
 /**
- * The persistent bottom tab bar — Targets / Micros / Science / Profile
- * (local stats + recalibrate; no account). Mounted as the `Main` route
- * in `RootNavigator`, once a profile exists. First-time onboarding is the
- * paged `OnboardingStack`.
+ * The persistent bottom tab bar — Targets, Micros (adjacent), Science,
+ * Profile (local stats + recalibrate; no account). Mounted as the `Main`
+ * route in `RootNavigator`, once a profile exists. First-time onboarding
+ * is the paged `OnboardingStack`.
  */
 export function MainTabs() {
   const theme = useTheme();
