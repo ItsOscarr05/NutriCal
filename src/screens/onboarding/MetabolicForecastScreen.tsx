@@ -68,7 +68,7 @@ export function MetabolicForecastScreen() {
       title="Your metabolic forecast"
       subtitle="Here's a first look at your personalized daily targets."
       centerBody
-      nextLabel={saving ? 'Calculating…' : 'Continue'}
+      nextLabel={saving ? 'Calculating…' : "I'm Ready!"}
       nextDisabled={preview === null || saving}
       onNext={handleFinish}
       onBack={() => navigation.goBack()}
