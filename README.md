@@ -11,7 +11,7 @@ Full product spec: [`project-docs/PRD.md`](./project-docs/PRD.md).
 - **Expo (React Native) + TypeScript** — cross-platform mobile from one codebase.
 - **React Navigation** — a native-stack root (`Welcome` → paged `Onboarding` stack → `Main`, plus `MacroDetail`/`Settings` modals) wrapping a persistent bottom-tab shell (`@react-navigation/bottom-tabs`: Targets / Micros / Recipes / Science / Profile).
 - **`react-native-svg`** — the `CircularProgress` progress ring and the `Mascot` illustration.
-- **`@react-native-community/slider`** — height/weight sliders (onboarding and Profile) and the Profile tab's age slider.
+- **`@react-native-community/slider`** — height/weight/age sliders on the Profile tab's recalibrate form. First-time onboarding uses a height wheel and a weight number pad instead.
 - **`@expo-google-fonts/plus-jakarta-sans` + `expo-font`** — the app's display typeface, matching the Stitch design system.
 - **AsyncStorage** — local, on-device profile storage (v1 is no-account / local-only by design — see PRD §8.1, §12).
 - **Jest** (`jest-expo` preset) — unit testing, especially for the calculation engine.
@@ -36,7 +36,7 @@ src/
                         and its hook (`useChangeNudge`)
   settings/             App-level preferences (units, appearance) — pure types/defaults (`appSettings.ts`) + a thin
                         React context (`AppSettingsContext`), the second top-level context alongside ProfileContext
-  onboarding/           Unit conversion, input validation, and age-text parsing (pure/tested); the onboarding
+  onboarding/           Unit conversion, input validation, and age/weight-text parsing (pure/tested); the onboarding
                         draft context; assessment controls shared by onboarding and the Profile tab (`ui/`)
   components/           Shared UI building blocks (PrimaryButton, UnitToggle, Logo, AnimatedNumber, AnimatedFillBar,
                         FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton, CircularProgress, Mascot)
@@ -64,7 +64,7 @@ The app used to be one straight-line flow: a 6-step onboarding wizard ending on 
 - **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, and a self-check checklist.
 - **Profile** (`ProfileScreen`) — local saved-stats summary plus the recalibration form (sliders + pills, live preview). Not an account — no login.
 
-First-time onboarding (before a profile exists) is a separate paged flow, one question per page with a native slide between them: Sex → Age (number pad) → Body Composition → Daily Motion → Target Outcome → Metabolic Forecast, ending on the Targets tab.
+First-time onboarding (before a profile exists) is a separate paged flow, one question per page with a native slide between them: Sex → Age (number pad) → Body Composition (height wheel, weight number pad) → Daily Motion → Target Outcome → Metabolic Forecast, ending on the Targets tab.
 
 `MacroDetail` (tap a macro card), `Settings` (gear icon on Targets), and `LegalDocument` (Privacy Policy / Terms from Settings → About) remain modals reached from inside the tab shell rather than tabs themselves.
 

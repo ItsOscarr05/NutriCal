@@ -17,7 +17,7 @@ interface SecondaryAction {
  * Shared layout for each onboarding page: back button, progress segments,
  * title/subtitle, scrollable content, and a pinned primary button. The
  * keyboard-avoiding wrapper keeps that button visible above the iOS
- * number pad on the age page (which has no return key).
+ * number pad on the age and body-composition pages (which have no return key).
  *
  * `centerBody` vertically centers the page's controls in the space below
  * the title; `secondaryAction` adds an outlined button above the primary one.

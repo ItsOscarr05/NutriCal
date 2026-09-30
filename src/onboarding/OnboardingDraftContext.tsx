@@ -8,15 +8,15 @@ import { DEFAULT_ASSESSMENT } from './assessmentOptions';
  * onboarding pages are mounted — the Profile tab keeps its own local
  * state seeded from `ProfileContext` instead.
  *
- * `sex` starts unselected and `ageText` starts empty so the first two
- * pages ask rather than assume; the remaining fields start from sensible
- * defaults so later pages are never blank.
+ * `sex` starts unselected and `ageText`/`weightText` start empty so those
+ * pages ask rather than assume; height and later fields start from
+ * sensible defaults so those pages are never blank.
  */
 export interface OnboardingDraft {
   sex: Sex | null;
   ageText: string;
   heightCm: number;
-  weightKg: number;
+  weightText: string;
   activityLevel: ActivityLevel;
   goal: Goal;
 }
@@ -25,7 +25,7 @@ const INITIAL_DRAFT: OnboardingDraft = {
   sex: null,
   ageText: '',
   heightCm: DEFAULT_ASSESSMENT.heightCm,
-  weightKg: DEFAULT_ASSESSMENT.weightKg,
+  weightText: '',
   activityLevel: DEFAULT_ASSESSMENT.activityLevel,
   goal: DEFAULT_ASSESSMENT.goal,
 };

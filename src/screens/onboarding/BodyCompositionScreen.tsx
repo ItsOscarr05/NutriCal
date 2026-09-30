@@ -1,10 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Keyboard } from 'react-native';
 import { UnitToggle } from '../../components/UnitToggle';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboardingDraft } from '../../onboarding/OnboardingDraftContext';
 import { BodyCompositionWheelFields } from '../../onboarding/ui/BodyCompositionWheelFields';
 import { OnboardingStep } from '../../onboarding/ui/OnboardingStep';
+import { convertWeightText, parseWeightInput, sanitizeWeightText } from '../../onboarding/weightInput';
 import { useAppSettings } from '../../settings/AppSettingsContext';
 import { Units } from '../../settings/appSettings';
 import { useTheme } from '../../theme';
@@ -16,14 +18,26 @@ export function BodyCompositionScreen() {
   const theme = useTheme();
   const { draft, updateDraft } = useOnboardingDraft();
   const { settings, setUnits } = useAppSettings();
+  const weightKg = parseWeightInput(draft.weightText, settings.units);
+
+  const handleUnitsChange = (next: Units) => {
+    updateDraft({ weightText: convertWeightText(draft.weightText, settings.units, next) });
+    setUnits(next);
+  };
+
+  const handleNext = () => {
+    Keyboard.dismiss();
+    navigation.navigate('DailyMotion');
+  };
 
   return (
     <OnboardingStep
       step={3}
       title="Body composition"
-      subtitle="Spin the wheels to set your height and weight."
+      subtitle="Spin the height wheel and type your weight."
       centerBody
-      onNext={() => navigation.navigate('DailyMotion')}
+      nextDisabled={weightKg === null}
+      onNext={handleNext}
       onBack={() => navigation.goBack()}
     >
       <UnitToggle<Units>
@@ -32,16 +46,17 @@ export function BodyCompositionScreen() {
           { value: 'metric', label: 'Metric' },
         ]}
         value={settings.units}
-        onChange={setUnits}
+        onChange={handleUnitsChange}
         centered
       />
       <BodyCompositionWheelFields
         theme={theme}
         unit={settings.units}
         heightCm={draft.heightCm}
-        weightKg={draft.weightKg}
+        weightText={draft.weightText}
+        weightKg={weightKg}
         onHeightChange={(heightCm) => updateDraft({ heightCm })}
-        onWeightChange={(weightKg) => updateDraft({ weightKg })}
+        onWeightTextChange={(text) => updateDraft({ weightText: sanitizeWeightText(text) })}
       />
     </OnboardingStep>
   );

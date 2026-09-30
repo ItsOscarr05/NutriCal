@@ -10,7 +10,9 @@ import { parseAgeInput } from '../../onboarding/ageInput';
 import { useOnboardingDraft } from '../../onboarding/OnboardingDraftContext';
 import { MetabolicForecastCard } from '../../onboarding/ui/AssessmentFields';
 import { OnboardingStep } from '../../onboarding/ui/OnboardingStep';
+import { parseWeightInput } from '../../onboarding/weightInput';
 import { useProfile } from '../../profile/ProfileContext';
+import { useAppSettings } from '../../settings/AppSettingsContext';
 import { spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<OnboardingStackParamList, 'MetabolicForecast'>;
@@ -21,34 +23,36 @@ export function MetabolicForecastScreen() {
   const theme = useTheme();
   const { draft } = useOnboardingDraft();
   const { saveProfile } = useProfile();
+  const { settings } = useAppSettings();
   const [saving, setSaving] = useState(false);
   const age = parseAgeInput(draft.ageText);
+  const weightKg = parseWeightInput(draft.weightText, settings.units);
   const sex = draft.sex;
 
   const preview = useMemo(
     () =>
-      sex !== null && age !== null
+      sex !== null && age !== null && weightKg !== null
         ? calculateNutrientTargets({
             sex,
             age,
             heightCm: draft.heightCm,
-            weightKg: draft.weightKg,
+            weightKg,
             activityLevel: draft.activityLevel,
             goal: draft.goal,
             updatedAt: '',
           })
         : null,
-    [sex, age, draft.heightCm, draft.weightKg, draft.activityLevel, draft.goal],
+    [sex, age, draft.heightCm, weightKg, draft.activityLevel, draft.goal],
   );
 
   const handleFinish = async () => {
-    if (sex === null || age === null) return;
+    if (sex === null || age === null || weightKg === null) return;
     setSaving(true);
     await saveProfile({
       sex,
       age,
       heightCm: Math.round(draft.heightCm),
-      weightKg: Math.round(draft.weightKg * 10) / 10,
+      weightKg: Math.round(weightKg * 10) / 10,
       activityLevel: draft.activityLevel,
       goal: draft.goal,
       updatedAt: new Date().toISOString(),
@@ -88,7 +92,7 @@ export function MetabolicForecastScreen() {
         </FadeInView>
       ) : (
         <Text style={[styles.missing, { color: theme.textSecondary }]}>
-          Go back and add your sex and age to see your forecast.
+          Go back and add your sex, age, and weight to see your forecast.
         </Text>
       )}
     </OnboardingStep>

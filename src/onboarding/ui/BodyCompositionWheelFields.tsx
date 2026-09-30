@@ -1,52 +1,54 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { Units } from '../../settings/appSettings';
 import { radii, spacing, ThemeColors } from '../../theme';
-import { cmToFeetInches, feetInchesToCm, kgToLb, lbToKg } from '../unitConversion';
+import { cmToFeetInches, feetInchesToCm, kgToLb } from '../unitConversion';
 import { MAX_HEIGHT_CM, MAX_WEIGHT_KG, MIN_HEIGHT_CM, MIN_WEIGHT_KG } from '../validation';
+import { WEIGHT_INPUT_MAX_LENGTH } from '../weightInput';
 import { getBmi } from './AssessmentFields';
 
 const range = (min: number, max: number) => Array.from({ length: max - min + 1 }, (_, i) => min + i);
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 const CM_VALUES = range(MIN_HEIGHT_CM, MAX_HEIGHT_CM);
-const KG_VALUES = range(MIN_WEIGHT_KG, MAX_WEIGHT_KG);
 const FEET_VALUES = range(3, 8);
 const INCH_VALUES = range(0, 11);
-// Whole-pound bounds that stay inside the metric validation range once converted.
-const MIN_LB = Math.ceil(kgToLb(MIN_WEIGHT_KG));
-const MAX_LB = Math.floor(kgToLb(MAX_WEIGHT_KG));
-const LB_VALUES = range(MIN_LB, MAX_LB);
 
 const WHEEL_HEIGHT = 190;
 
 /**
- * Onboarding-only height/weight entry using native wheel pickers (iOS
- * wheel, Android dropdown). Values stay metric; imperial wheels convert at
- * the edge via `unitConversion`.
+ * Onboarding height (native wheel) plus weight (number pad, same pattern
+ * as the Age page). Height stays metric internally; imperial wheels
+ * convert at the edge. Weight is typed in the active unit and parsed to
+ * kg by the parent via `parseWeightInput`.
  */
 export function BodyCompositionWheelFields({
   theme,
   unit,
   heightCm,
+  weightText,
   weightKg,
   onHeightChange,
-  onWeightChange,
+  onWeightTextChange,
 }: {
   theme: ThemeColors;
   unit: Units;
   heightCm: number;
-  weightKg: number;
+  weightText: string;
+  /** Parsed kilograms, or `null` while the text box is empty/invalid. */
+  weightKg: number | null;
   onHeightChange: (heightCm: number) => void;
-  onWeightChange: (weightKg: number) => void;
+  onWeightTextChange: (text: string) => void;
 }) {
-  const { bmi, bmiLabel } = getBmi(heightCm, weightKg);
   const { feet, inches } = cmToFeetInches(heightCm);
-  const lb = clamp(Math.round(kgToLb(weightKg)), MIN_LB, MAX_LB);
   const cm = clamp(Math.round(heightCm), MIN_HEIGHT_CM, MAX_HEIGHT_CM);
-  const kg = clamp(Math.round(weightKg), MIN_WEIGHT_KG, MAX_WEIGHT_KG);
+  const weightUnit = unit === 'imperial' ? 'lb' : 'kg';
+  const showWeightHint = weightText.length > 0 && weightKg === null;
+  const minWeight = unit === 'imperial' ? Math.round(kgToLb(MIN_WEIGHT_KG)) : MIN_WEIGHT_KG;
+  const maxWeight = unit === 'imperial' ? Math.round(kgToLb(MAX_WEIGHT_KG)) : MAX_WEIGHT_KG;
+  const bmi = weightKg === null ? null : getBmi(heightCm, weightKg);
 
   const setHeightFromImperial = (nextFeet: number, nextInches: number) =>
     onHeightChange(clamp(feetInchesToCm(nextFeet, nextInches), MIN_HEIGHT_CM, MAX_HEIGHT_CM));
@@ -94,24 +96,39 @@ export function BodyCompositionWheelFields({
             wheel(CM_VALUES, cm, onHeightChange, 'Height in centimeters')
           )}
         </WheelColumn>
-        <WheelColumn
-          theme={theme}
-          icon="scale"
-          iconColor={theme.secondary}
-          label="Weight"
-          flex={0.9}
-          valueText={unit === 'imperial' ? `${lb} lb` : `${kg} kg`}
-        >
-          {unit === 'imperial'
-            ? wheel(LB_VALUES, lb, (v) => onWeightChange(lbToKg(v)), 'Weight in pounds')
-            : wheel(KG_VALUES, kg, onWeightChange, 'Weight in kilograms')}
-        </WheelColumn>
+        <View style={[styles.column, { flex: 0.9, backgroundColor: theme.surfaceContainerLow }]}>
+          <View style={styles.columnHeader}>
+            <MaterialIcons name="scale" size={22} color={theme.secondary} />
+            <Text style={[styles.columnLabel, { color: theme.textSecondary }]}>Weight</Text>
+          </View>
+          <View style={styles.weightInputRow}>
+            <TextInput
+              value={weightText}
+              onChangeText={onWeightTextChange}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              maxLength={WEIGHT_INPUT_MAX_LENGTH}
+              placeholder="--"
+              placeholderTextColor={theme.textSecondary}
+              accessibilityLabel={`Weight in ${unit === 'imperial' ? 'pounds' : 'kilograms'}`}
+              style={[styles.weightInput, { color: theme.textPrimary }]}
+            />
+            <Text style={[styles.weightUnit, { color: theme.textSecondary }]}>{weightUnit}</Text>
+          </View>
+          <Text style={[styles.weightHint, { color: theme.textSecondary }]}>
+            {showWeightHint
+              ? `Enter a weight between ${minWeight} and ${maxWeight} ${weightUnit}.`
+              : ' '}
+          </Text>
+        </View>
       </View>
-      <View style={[styles.bmiPill, { backgroundColor: theme.surfaceContainer }]}>
-        <Text style={[styles.bmiText, { color: theme.accent }]}>
-          BMI {bmi.toFixed(1)} • {bmiLabel}
-        </Text>
-      </View>
+      {bmi !== null && (
+        <View style={[styles.bmiPill, { backgroundColor: theme.surfaceContainer }]}>
+          <Text style={[styles.bmiText, { color: theme.accent }]}>
+            BMI {bmi.bmi.toFixed(1)} • {bmi.bmiLabel}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -147,8 +164,8 @@ function WheelColumn({
 
 const styles = StyleSheet.create({
   root: { gap: spacing.lg },
-  columns: { flexDirection: 'row', gap: spacing.sm },
-  column: { borderRadius: radii.lg, paddingTop: spacing.md, paddingHorizontal: spacing.xs, alignItems: 'center' },
+  columns: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
+  column: { borderRadius: radii.lg, paddingTop: spacing.md, paddingHorizontal: spacing.xs, alignItems: 'center', paddingBottom: spacing.md },
   columnHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   columnLabel: { fontSize: 15, fontWeight: '600' },
   columnValue: { fontSize: 30, fontWeight: '800', marginTop: spacing.xs },
@@ -157,6 +174,10 @@ const styles = StyleSheet.create({
   pickerInRow: { flex: 1, height: WHEEL_HEIGHT },
   pickerItem: { fontSize: 20, height: WHEEL_HEIGHT },
   pickerItemInRow: { fontSize: 18 },
+  weightInputRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: spacing.xs, marginTop: spacing.md },
+  weightInput: { fontSize: 40, fontWeight: '800', minWidth: 72, textAlign: 'center', padding: 0 },
+  weightUnit: { fontSize: 16, fontWeight: '600' },
+  weightHint: { fontSize: 11, textAlign: 'center', marginTop: spacing.xs, paddingHorizontal: spacing.xs, minHeight: 28 },
   bmiPill: { alignSelf: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill },
   bmiText: { fontSize: 16, fontWeight: '700' },
 });
