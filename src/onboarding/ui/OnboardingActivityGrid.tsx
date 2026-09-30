@@ -6,22 +6,34 @@ import { ACTIVITY_OPTIONS } from '../assessmentOptions';
 
 const COLUMNS = 2;
 
-// Cool-to-warm hues by intensity, local to this grid rather than theme
-// tokens (same pattern as the Sex page). `fill` carries white text
-// (>= 4.5:1); `lightText`/`darkText` color the icon on the pale `tint` in
-// light and dark mode.
-const ACTIVITY_COLORS: Record<ActivityLevel, { fill: string; lightText: string; darkText: string; tint: string }> = {
-  inactive: { fill: '#7E22CE', lightText: '#6B21A8', darkText: '#D8B4FE', tint: 'rgba(126, 34, 206, 0.14)' },
-  sedentary: { fill: '#1D4ED8', lightText: '#1E40AF', darkText: '#93C5FD', tint: 'rgba(29, 78, 216, 0.14)' },
-  lightly_active: { fill: '#15803D', lightText: '#166534', darkText: '#86EFAC', tint: 'rgba(21, 128, 61, 0.14)' },
-  moderately_active: { fill: '#B45309', lightText: '#92400E', darkText: '#FCD34D', tint: 'rgba(180, 83, 9, 0.14)' },
-  very_active: { fill: '#C2410C', lightText: '#9A3412', darkText: '#FDBA74', tint: 'rgba(194, 65, 12, 0.14)' },
-  extremely_active: { fill: '#B91C1C', lightText: '#991B1B', darkText: '#FCA5A5', tint: 'rgba(185, 28, 28, 0.14)' },
+// Reading order of the grid; differs from ACTIVITY_OPTIONS (which the
+// Assess tab's compact list keeps in intensity order).
+const GRID_ORDER: ActivityLevel[] = [
+  'inactive',
+  'sedentary',
+  'moderately_active',
+  'lightly_active',
+  'very_active',
+  'extremely_active',
+];
+
+// Per-activity hues, local to this grid rather than theme tokens (same
+// pattern as the Sex page). `fill` is the light-mode border/icon color and
+// the selected icon badge fill (carries a white icon); `dark` is the
+// brighter border/icon color for the navy dark-mode background.
+const ACTIVITY_COLORS: Record<ActivityLevel, { fill: string; dark: string }> = {
+  inactive: { fill: '#7E22CE', dark: '#D8B4FE' },
+  sedentary: { fill: '#1D4ED8', dark: '#93C5FD' },
+  lightly_active: { fill: '#15803D', dark: '#86EFAC' },
+  moderately_active: { fill: '#B45309', dark: '#FCD34D' },
+  very_active: { fill: '#C2410C', dark: '#FDBA74' },
+  extremely_active: { fill: '#B91C1C', dark: '#FCA5A5' },
 };
 
 /**
  * Onboarding-only 2x3 activity grid: large cards that stretch to fill the
- * page's content area, each with an outlined icon in a ringed badge. The
+ * page's content area, each with a thick color-coded border on a
+ * transparent background and an outlined icon in a ringed badge. The
  * `Assess` tab uses the compact `ActivityPicker` instead.
  */
 export function OnboardingActivityGrid({
@@ -33,9 +45,11 @@ export function OnboardingActivityGrid({
   value: ActivityLevel;
   onChange: (value: ActivityLevel) => void;
 }) {
-  const rows = Array.from({ length: Math.ceil(ACTIVITY_OPTIONS.length / COLUMNS) }, (_, i) =>
-    ACTIVITY_OPTIONS.slice(i * COLUMNS, i * COLUMNS + COLUMNS),
+  const options = GRID_ORDER.map((level) => ACTIVITY_OPTIONS.find((o) => o.value === level)!);
+  const rows = Array.from({ length: Math.ceil(options.length / COLUMNS) }, (_, i) =>
+    options.slice(i * COLUMNS, i * COLUMNS + COLUMNS),
   );
+  const isDark = theme === darkTheme;
 
   return (
     <View style={styles.grid} accessibilityRole="radiogroup">
@@ -44,7 +58,7 @@ export function OnboardingActivityGrid({
           {row.map((option) => {
             const selected = value === option.value;
             const colors = ACTIVITY_COLORS[option.value];
-            const fg = selected ? '#ffffff' : theme === darkTheme ? colors.darkText : colors.lightText;
+            const accent = isDark ? colors.dark : colors.fill;
             return (
               <Pressable
                 key={option.value}
@@ -52,25 +66,21 @@ export function OnboardingActivityGrid({
                 accessibilityRole="radio"
                 accessibilityState={{ selected }}
                 accessibilityLabel={`${option.label}, ${option.description}`}
-                style={({ pressed }) => [
-                  styles.card,
-                  {
-                    backgroundColor: selected ? colors.fill : colors.tint,
-                    borderColor: selected ? colors.fill : 'transparent',
-                  },
-                  pressed && styles.pressed,
-                ]}
+                style={({ pressed }) => [styles.card, { borderColor: accent }, pressed && styles.pressed]}
               >
                 {selected ? (
-                  <MaterialIcons name="check-circle" size={20} color="#ffffff" style={styles.check} />
+                  <MaterialIcons name="check-circle" size={22} color={accent} style={styles.check} />
                 ) : null}
-                <View style={[styles.iconRing, { borderColor: fg }]}>
-                  <MaterialCommunityIcons name={option.icon} size={30} color={fg} />
+                <View
+                  style={[
+                    styles.iconRing,
+                    { borderColor: accent, backgroundColor: selected ? colors.fill : 'transparent' },
+                  ]}
+                >
+                  <MaterialCommunityIcons name={option.icon} size={30} color={selected ? '#ffffff' : accent} />
                 </View>
-                <Text style={[styles.label, { color: selected ? '#ffffff' : theme.textPrimary }]}>{option.label}</Text>
-                <Text style={[styles.description, { color: selected ? '#ffffff' : theme.textSecondary }]}>
-                  {option.description}
-                </Text>
+                <Text style={[styles.label, { color: theme.textPrimary }]}>{option.label}</Text>
+                <Text style={[styles.description, { color: theme.textSecondary }]}>{option.description}</Text>
               </Pressable>
             );
           })}
@@ -87,7 +97,8 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 140,
     borderRadius: radii.lg,
-    borderWidth: 2,
+    borderWidth: 4,
+    backgroundColor: 'transparent',
     padding: spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
