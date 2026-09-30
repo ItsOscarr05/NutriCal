@@ -4,15 +4,16 @@ import { Goal } from '../types/profile';
 
 /**
  * Bottom tab shell (v1.1 Stitch redesign), reached once a profile exists.
- * Targets/Micros/Science plus a local Profile tab (saved stats +
- * recalibrate form; no account). `Targets`'s `justCompleted` param is
- * set only by `MetabolicForecastScreen` right after first-time onboarding,
- * so that tab can show a one-time celebratory reveal (PRD §11.3) instead
- * of on every routine app open.
+ * Targets, Micros, Recipes (placeholder), Science, and a local Profile
+ * tab (saved stats + recalibrate form; no account). `Targets`'s
+ * `justCompleted` param is set only by `MetabolicForecastScreen` right
+ * after first-time onboarding, so that tab can show a one-time celebratory
+ * reveal (PRD §11.3) instead of on every routine app open.
  */
 export type MainTabParamList = {
   Targets: { justCompleted?: boolean } | undefined;
   Micros: undefined;
+  Recipes: undefined;
   Science: undefined;
   Profile: undefined;
 };

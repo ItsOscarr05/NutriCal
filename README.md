@@ -9,9 +9,9 @@ Full product spec: [`project-docs/PRD.md`](./project-docs/PRD.md).
 ## Stack
 
 - **Expo (React Native) + TypeScript** — cross-platform mobile from one codebase.
-- **React Navigation** — a native-stack root (`Welcome` → paged `Onboarding` stack → `Main`, plus `MacroDetail`/`Settings` modals) wrapping a persistent bottom-tab shell (`@react-navigation/bottom-tabs`: Targets / Assess / Micros / Science).
+- **React Navigation** — a native-stack root (`Welcome` → paged `Onboarding` stack → `Main`, plus `MacroDetail`/`Settings` modals) wrapping a persistent bottom-tab shell (`@react-navigation/bottom-tabs`: Targets / Micros / Recipes / Science / Profile).
 - **`react-native-svg`** — the `CircularProgress` progress ring and the `Mascot` illustration.
-- **`@react-native-community/slider`** — height/weight sliders (onboarding and Assess) and the Assess tab's age slider.
+- **`@react-native-community/slider`** — height/weight sliders (onboarding and Profile) and the Profile tab's age slider.
 - **`@expo-google-fonts/plus-jakarta-sans` + `expo-font`** — the app's display typeface, matching the Stitch design system.
 - **AsyncStorage** — local, on-device profile storage (v1 is no-account / local-only by design — see PRD §8.1, §12).
 - **Jest** (`jest-expo` preset) — unit testing, especially for the calculation engine.
@@ -36,14 +36,14 @@ src/
   settings/             App-level preferences (units, appearance) — pure types/defaults (`appSettings.ts`) + a thin
                         React context (`AppSettingsContext`), the second top-level context alongside ProfileContext
   onboarding/           Unit conversion, input validation, and age-text parsing (pure/tested); the onboarding
-                        draft context; assessment controls shared by onboarding and the Assess tab (`ui/`)
+                        draft context; assessment controls shared by onboarding and the Profile tab (`ui/`)
   components/           Shared UI building blocks (PrimaryButton, UnitToggle, Logo, AnimatedNumber, AnimatedFillBar,
                         FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton, CircularProgress, Mascot)
   navigation/           Root native-stack (`RootNavigator`), the paged `OnboardingStack`, the bottom-tab shell
                         (`MainTabs`) + shared param types
-  screens/              App screens: Welcome, `onboarding/` (the six first-time pages), QuickAssessment (the Assess tab),
-                        ResultsScreen (the Targets tab), ScienceBreakdownScreen (the Science tab),
-                        MicronutrientExplorerScreen (the Micros tab), MacroDetail modal, Settings modal
+  screens/              App screens: Welcome, `onboarding/` (the six first-time pages), ProfileScreen (stats +
+                        recalibrate), RecipesScreen (placeholder), ResultsScreen (Targets), ScienceBreakdownScreen,
+                        MicronutrientExplorerScreen (Micros), MacroDetail modal, Settings modal
 assets/                 Brand mark master (`nutrical_logo_transparent.png`) and the variants generated from it:
                         `logo.png`, Expo app icon / Android adaptive-icon / splash / favicon
 assets/illustrations/   Generated bitmap illustrations (PRD §11.3) — currently none (macro icons are `MaterialIcons`
@@ -54,14 +54,15 @@ project-docs/
 
 ## Navigation shape (v1.1)
 
-The app used to be one straight-line flow: a 6-step onboarding wizard ending on a single Results screen. It's now a persistent bottom-tab shell, matching a set of Stitch (Google Stitch) mockups the product's design was rebuilt from:
+The app used to be one straight-line flow: a 6-step onboarding wizard ending on a single Results screen. It's now a persistent bottom-tab shell (max five tabs):
 
 - **Targets** (`ResultsScreen`) — the calorie/macro dashboard, reached after onboarding or on any return visit.
-- **Assess** (`QuickAssessmentScreen`) — a single scrolling screen (sliders + pills, live preview) for recalibrating an existing profile.
+- **Micros** (`MicronutrientExplorerScreen`) — every vitamin/mineral by name, locked (no values/percentages) for free users — the freemium boundary (PRD §7, §8.4) is unchanged even though this screen's visual design comes from a mockup that showed real values to everyone.
+- **Recipes** (`RecipesScreen`) — placeholder for future meal ideas / recommendations. No recipes or food APIs yet (PRD §6 lists meal planning as a v1 non-goal).
+- **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, and a self-check checklist.
+- **Profile** (`ProfileScreen`) — local saved-stats summary plus the recalibration form (sliders + pills, live preview). Not an account — no login.
 
 First-time onboarding (before a profile exists) is a separate paged flow, one question per page with a native slide between them: Sex → Age (number pad) → Body Composition → Daily Motion → Target Outcome → Metabolic Forecast, ending on the Targets tab.
-- **Micros** (`MicronutrientExplorerScreen`) — every vitamin/mineral by name, locked (no values/percentages) for free users — the freemium boundary (PRD §7, §8.4) is unchanged even though this screen's visual design comes from a mockup that showed real values to everyone.
-- **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, and a self-check checklist.
 
 `MacroDetail` (tap a macro card) and `Settings` (gear icon on Targets) remain modals reached from inside the tab shell rather than tabs themselves.
 
@@ -94,8 +95,8 @@ Following the milestones in PRD §17:
 - [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`.
 - [x] **v1.1 redesign — Stitch mockup-driven visual/IA overhaul.** Found and adopted a set of 4 Google Stitch mockups (Daily Targets Dashboard, Science Breakdown, Quick Assessment, Micronutrient Explorer) as the new design direction:
   - [x] **New theme.** `src/theme/colors.ts` rebuilt from the Stitch design system's Material Design 3-style token set (`primary`/`primaryContainer`/`primaryFixed`, `secondary`/`tertiary` families, `surfaceContainer*` tiers, etc.), every pairing re-validated against WCAG AA.
-  - [x] **New navigation shell.** A persistent bottom tab bar (Targets/Assess/Micros/Science, `src/navigation/MainTabs.tsx`) replaces the old single-flow stack — see "Navigation shape" above.
-  - [x] **Quick Assessment.** The old 6-step onboarding wizard (Sex → Age → Height → Weight → Activity → Goal, one screen each, backed by an in-memory draft context) is gone, replaced by one scrolling screen (`QuickAssessmentScreen`) with sliders/pills and a live preview from the real calculation engine. It's reused for both first-time onboarding and editing an existing profile (`isEditing = profile !== null`), rather than a separate re-entry flow.
+  - [x] **New navigation shell.** A persistent bottom tab bar (Targets/Micros/Recipes/Science/Profile, `src/navigation/MainTabs.tsx`) replaces the old single-flow stack — see "Navigation shape" above.
+  - [x] **Quick Assessment / Profile editing.** First-time onboarding is a paged stack. Recalibrating an existing profile is the `Profile` tab (`AssessmentEditor` sliders/pills + live preview from the real calculation engine), not a separate Assess tab.
   - [x] **Targets dashboard.** `ResultsScreen` redesigned around a mascot hero, a big animated `CircularProgress` calorie dial, per-macro cards with mini progress rings, a plain-language "why this works" banner, and a "Recalibrate My Targets" CTA. The old locked micronutrient list moved off this screen entirely.
   - [x] **Science Breakdown.** New `Science` tab: an honest, presentational BMR/NEAT/Exercise/TEF energy-budget breakdown (BMR/TDEE/calorie-target numbers are real, from the engine; the NEAT/Exercise/TEF sub-split is a clearly-labeled illustrative estimate, not a new validated formula), a personalized-vs-crash-diets comparison, and a self-check checklist.
   - [x] **Micronutrient Explorer.** New `Micros` tab: every vitamin/mineral by name with a lock affordance — deliberately *not* adopting the mockup's "show real values/percentages/food-sources to everyone," to preserve the existing freemium paywall rule (PRD §7, §8.4) since no entitlement system exists yet.
