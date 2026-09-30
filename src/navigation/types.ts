@@ -5,11 +5,10 @@ import { Goal } from '../types/profile';
 /**
  * Bottom tab shell (v1.1 Stitch redesign), reached once a profile exists.
  * Targets/Assess/Micros/Science mirror the Stitch mockups' persistent
- * nav bar. `Targets`'s `justCompleted` param is set only by `GoalScreen`
- * right after finishing (or re-finishing, via edit) onboarding, so that
+ * nav bar. `Targets`'s `justCompleted` param is set only by
+ * `MetabolicForecastScreen` right after first-time onboarding, so that
  * tab can show a one-time celebratory reveal (PRD §11.3) instead of on
- * every routine app open — same semantics the old root-level `Results`
- * route param had before this screen moved under the tab shell.
+ * every routine app open.
  */
 export type MainTabParamList = {
   Targets: { justCompleted?: boolean } | undefined;

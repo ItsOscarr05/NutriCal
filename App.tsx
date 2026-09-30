@@ -9,12 +9,9 @@ import { AppSettingsProvider } from './src/settings/AppSettingsContext';
 // `AppSettingsProvider` sits above `RootNavigator` (and everything else)
 // since `useTheme()` reads its appearance preference — see `src/theme/index.ts`.
 //
-// There used to be a third top-level `OnboardingProvider` here, backing an
-// in-memory draft context for the old multi-step onboarding wizard. The
-// v1.1 Stitch redesign replaced that wizard with a single scrolling
-// `QuickAssessmentScreen` that keeps its own local state (seeded directly
-// from `ProfileContext` when editing), so that provider — and the wizard
-// screens it existed for — is gone.
+// The paged first-time onboarding keeps its in-progress answers in an
+// `OnboardingDraftProvider` scoped to `OnboardingStack`, not here, so the
+// draft only lives while those pages are mounted.
 export default function App() {
   return (
     <SafeAreaProvider>

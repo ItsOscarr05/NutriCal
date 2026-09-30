@@ -24,10 +24,9 @@ const TAB_ICONS: Record<keyof MainTabParamList, keyof typeof MaterialIcons.glyph
  * mockups' nav shell rather than just restyle the single-screen flow.
  * Mounted as the `Main` route in `RootNavigator`, once a profile exists.
  *
- * `Assess` reuses the same screen for both first-time-style recalibration
- * and (once the `assessment`/`wiring` todos land) editing an existing
- * profile — see AGENTS.md's existing "editing reuses onboarding" pattern,
- * now expressed as a tab instead of a stack push.
+ * `Assess` is the single-scroll Quick Assessment for recalibrating an
+ * existing profile; first-time onboarding is the separate paged
+ * `OnboardingStack`.
  */
 export function MainTabs() {
   const theme = useTheme();
