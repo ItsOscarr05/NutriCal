@@ -44,7 +44,8 @@ src/
   screens/              App screens: Welcome, `onboarding/` (the six first-time pages), QuickAssessment (the Assess tab),
                         ResultsScreen (the Targets tab), ScienceBreakdownScreen (the Science tab),
                         MicronutrientExplorerScreen (the Micros tab), MacroDetail modal, Settings modal
-assets/                 Brand mark (`logo.png`) plus Expo app icon / Android adaptive-icon / splash / favicon
+assets/                 Brand mark master (`nutrical_logo_transparent.png`) and the variants generated from it:
+                        `logo.png`, Expo app icon / Android adaptive-icon / splash / favicon
 assets/illustrations/   Generated illustration assets (PRD §11.3) — currently just the welcome hero (macro icons
                         are now `MaterialIcons` glyphs, and the mascot is a hand-ported `react-native-svg` illustration)
 project-docs/
