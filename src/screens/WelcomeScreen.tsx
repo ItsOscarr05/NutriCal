@@ -12,8 +12,6 @@ import { radii, spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Welcome'>;
 
-const HALO_SIZE = 200;
-
 const VALUE_PROPS: { icon: keyof typeof MaterialIcons.glyphMap; title: string; body: string }[] = [
   {
     icon: 'insights',
@@ -45,9 +43,7 @@ export function WelcomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <FadeInView duration={700} style={styles.hero}>
-          <View style={[styles.halo, { backgroundColor: theme.accentFixed }]}>
-            <Logo size={150} />
-          </View>
+          <Logo size={180} />
         </FadeInView>
 
         <FadeInView delay={150}>
@@ -88,13 +84,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
   hero: { alignItems: 'center', marginBottom: spacing.lg },
-  halo: {
-    width: HALO_SIZE,
-    height: HALO_SIZE,
-    borderRadius: HALO_SIZE / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   title: { fontSize: 36, fontWeight: '800', textAlign: 'center', letterSpacing: -0.5 },
   tagline: { fontSize: 18, fontWeight: '700', textAlign: 'center', marginTop: spacing.xs },
   subtitle: { fontSize: 15, lineHeight: 21, textAlign: 'center', marginTop: spacing.sm },
