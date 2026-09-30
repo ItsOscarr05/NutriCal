@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -11,11 +11,12 @@ import { Sex } from '../../types/profile';
 type Nav = NativeStackNavigationProp<OnboardingStackParamList, 'Sex'>;
 
 // Conventional blue/pink sex colors, local to this page rather than theme
-// tokens. `fill` carries white text (>= 4.5:1); `lightText`/`darkText` are
-// the unselected label colors on the light and navy backgrounds.
-const SEX_COLORS: Record<Sex, { fill: string; lightText: string; darkText: string; tint: string }> = {
-  male: { fill: '#2563EB', lightText: '#1D4ED8', darkText: '#93C5FD', tint: 'rgba(37, 99, 235, 0.12)' },
-  female: { fill: '#C2185B', lightText: '#AD1457', darkText: '#F9A8D4', tint: 'rgba(194, 24, 91, 0.12)' },
+// tokens. `fill` is the light-mode border/icon color and the selected icon
+// badge fill (carries a white icon); `dark` is the brighter border/icon
+// color for the navy dark-mode background.
+const SEX_COLORS: Record<Sex, { fill: string; dark: string }> = {
+  male: { fill: '#2563EB', dark: '#93C5FD' },
+  female: { fill: '#C2185B', dark: '#F9A8D4' },
 };
 
 const OPTIONS: { value: Sex; label: string; icon: 'gender-male' | 'gender-female' }[] = [
@@ -43,7 +44,7 @@ export function SexScreen() {
         {OPTIONS.map((option) => {
           const selected = draft.sex === option.value;
           const colors = SEX_COLORS[option.value];
-          const fg = selected ? '#ffffff' : isDark ? colors.darkText : colors.lightText;
+          const accent = isDark ? colors.dark : colors.fill;
           return (
             <Pressable
               key={option.value}
@@ -51,17 +52,17 @@ export function SexScreen() {
               accessibilityRole="radio"
               accessibilityState={{ selected }}
               accessibilityLabel={option.label}
-              style={({ pressed }) => [
-                styles.option,
-                {
-                  backgroundColor: selected ? colors.fill : colors.tint,
-                  borderColor: selected ? colors.fill : 'transparent',
-                },
-                pressed && styles.pressed,
-              ]}
+              style={({ pressed }) => [styles.option, { borderColor: accent }, pressed && styles.pressed]}
             >
-              <MaterialCommunityIcons name={option.icon} size={80} color={fg} />
-              <Text style={[styles.label, { color: fg }]}>{option.label}</Text>
+              {selected ? (
+                <MaterialIcons name="check-circle" size={26} color={accent} style={styles.check} />
+              ) : null}
+              <View
+                style={[styles.iconRing, { borderColor: accent, backgroundColor: selected ? colors.fill : 'transparent' }]}
+              >
+                <MaterialCommunityIcons name={option.icon} size={64} color={selected ? '#ffffff' : accent} />
+              </View>
+              <Text style={[styles.label, { color: theme.textPrimary }]}>{option.label}</Text>
             </Pressable>
           );
         })}
@@ -76,11 +77,21 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 240,
     borderRadius: radii.lg,
+    borderWidth: 4,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
+  },
+  pressed: { opacity: 0.85 },
+  check: { position: 'absolute', top: spacing.sm, right: spacing.sm },
+  iconRing: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
   },
-  pressed: { opacity: 0.85 },
   label: { fontSize: 22, fontWeight: '800' },
 });
