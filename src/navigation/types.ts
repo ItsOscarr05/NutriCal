@@ -1,5 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { MacroKey } from '../data/education/macroExplanations';
+import { LegalKind } from '../data/legal/legalDocuments';
 import { Goal } from '../types/profile';
 
 /**
@@ -38,9 +39,10 @@ export type OnboardingStackParamList = {
  *
  * Mirrors the user flow: Welcome -> Onboarding (paged) -> Main.
  *
- * `MacroDetail` and `Settings` are both modals reached from the `Main`
- * tab shell (PRD §8.4 for `MacroDetail`; the gear icon for `Settings`),
- * not tabs themselves.
+ * `MacroDetail`, `Settings`, and `LegalDocument` are modals reached from
+ * the `Main` tab shell (PRD §8.4 for `MacroDetail`; the gear icon for
+ * `Settings`; About rows for Privacy Policy / Terms of Service), not tabs
+ * themselves.
  */
 export type RootStackParamList = {
   Welcome: undefined;
@@ -48,4 +50,5 @@ export type RootStackParamList = {
   Main: NavigatorScreenParams<MainTabParamList> | undefined;
   MacroDetail: { macro: MacroKey; grams: number; percent: number; goal: Goal };
   Settings: undefined;
+  LegalDocument: { kind: LegalKind };
 };

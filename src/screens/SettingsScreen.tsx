@@ -29,10 +29,10 @@ const APPEARANCE_OPTIONS: { value: Appearance; label: string }[] = [
  * `ResultsScreen` (same `presentation: 'modal'` pattern as
  * `MacroDetailScreen`). Covers exactly the sections confirmed with the
  * user: Preferences (units/appearance), Profile (edit shortcut), Data &
- * Privacy (delete-my-data), About (version + placeholder legal rows).
- * Explicitly excludes a restore-purchases stub and a contact/feedback
- * link — no subscription or support system exists yet (revisit alongside
- * milestone 5's paywall work).
+ * Privacy (delete-my-data), About (version + Privacy Policy / Terms of
+ * Service). Explicitly excludes a restore-purchases stub and a
+ * contact/feedback link — no subscription or support inbox exists yet
+ * (revisit alongside milestone 5's paywall work).
  */
 export function SettingsScreen() {
   const navigation = useNavigation<Nav>();
@@ -121,14 +121,22 @@ export function SettingsScreen() {
             <Text style={[styles.rowLabel, { color: theme.textPrimary }]}>Version</Text>
             <Text style={[styles.rowValue, { color: theme.textSecondary }]}>{appJson.expo.version}</Text>
           </View>
-          <View style={[styles.row, styles.rowStatic, styles.rowDisabled]}>
-            <Text style={[styles.rowLabel, { color: theme.textSecondary }]}>Privacy Policy</Text>
-            <Text style={[styles.comingSoon, { color: theme.textSecondary }]}>Coming soon</Text>
-          </View>
-          <View style={[styles.row, styles.rowStatic, styles.rowDisabled]}>
-            <Text style={[styles.rowLabel, { color: theme.textSecondary }]}>Terms of Service</Text>
-            <Text style={[styles.comingSoon, { color: theme.textSecondary }]}>Coming soon</Text>
-          </View>
+          <Pressable
+            onPress={() => navigation.navigate('LegalDocument', { kind: 'privacy' })}
+            accessibilityRole="button"
+            style={styles.row}
+          >
+            <Text style={[styles.rowLabel, { color: theme.textPrimary }]}>Privacy Policy</Text>
+            <Text style={[styles.chevron, { color: theme.textSecondary }]}>{'\u203A'}</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('LegalDocument', { kind: 'terms' })}
+            accessibilityRole="button"
+            style={styles.row}
+          >
+            <Text style={[styles.rowLabel, { color: theme.textPrimary }]}>Terms of Service</Text>
+            <Text style={[styles.chevron, { color: theme.textSecondary }]}>{'\u203A'}</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -162,7 +170,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   rowStatic: {},
-  rowDisabled: { opacity: 0.6 },
   rowLabel: { fontSize: 15, fontWeight: '600', marginBottom: spacing.xs },
   rowValue: { fontSize: 14 },
   chevron: { fontSize: 18 },
@@ -172,5 +179,4 @@ const styles = StyleSheet.create({
   // notes at the top of `src/theme/colors.ts`. Deliberately not red — PRD
   // §11.1 avoids alarm-color framing even for a destructive action.
   deleteLabel: { fontSize: 18, fontWeight: '700', color: palette.errorNeutral },
-  comingSoon: { fontSize: 12, fontStyle: 'italic' },
 });

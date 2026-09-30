@@ -25,6 +25,7 @@ src/
   engine/               BMR/TDEE + macro calculation engine (PRD §10) — pure, unit-tested functions
   data/dri/             DRI/RDA/AI/UL micronutrient reference tables, keyed by age/sex bracket (PRD §8.3, §10)
   data/education/       Plain-language macro explanation copy (PRD §8.4, §8.5) — pure content, unit-tested for completeness
+  data/legal/           In-app Privacy Policy and Terms of Service copy — completeness-tested, not legal advice
   theme/                Color tokens (rebuilt from the Stitch design system, PRD §11.2) + light/dark theme and shared
                         spacing/radii; contrast-validated in `__tests__/contrast.test.ts`
   types/                Shared domain types (UserProfile, etc.)
@@ -43,7 +44,8 @@ src/
                         (`MainTabs`) + shared param types
   screens/              App screens: Welcome, `onboarding/` (the six first-time pages), ProfileScreen (stats +
                         recalibrate), RecipesScreen (placeholder), ResultsScreen (Targets), ScienceBreakdownScreen,
-                        MicronutrientExplorerScreen (Micros), MacroDetail modal, Settings modal
+                        MicronutrientExplorerScreen (Micros), MacroDetail modal, Settings modal,
+                        LegalDocument modal (Privacy Policy / Terms of Service)
 assets/                 Brand mark master (`nutrical_logo_transparent.png`) and the variants generated from it:
                         `logo.png`, Expo app icon / Android adaptive-icon / splash / favicon
 assets/illustrations/   Generated bitmap illustrations (PRD §11.3) — currently none (macro icons are `MaterialIcons`
@@ -64,7 +66,7 @@ The app used to be one straight-line flow: a 6-step onboarding wizard ending on 
 
 First-time onboarding (before a profile exists) is a separate paged flow, one question per page with a native slide between them: Sex → Age (number pad) → Body Composition → Daily Motion → Target Outcome → Metabolic Forecast, ending on the Targets tab.
 
-`MacroDetail` (tap a macro card) and `Settings` (gear icon on Targets) remain modals reached from inside the tab shell rather than tabs themselves.
+`MacroDetail` (tap a macro card), `Settings` (gear icon on Targets), and `LegalDocument` (Privacy Policy / Terms from Settings → About) remain modals reached from inside the tab shell rather than tabs themselves.
 
 ## Getting started
 
