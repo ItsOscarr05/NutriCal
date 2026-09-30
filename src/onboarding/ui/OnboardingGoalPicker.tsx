@@ -1,24 +1,32 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { radii, spacing, ThemeColors } from '../../theme';
+import { darkTheme, radii, spacing, ThemeColors } from '../../theme';
 import { Goal } from '../../types/profile';
 import { GOAL_OPTIONS } from '../assessmentOptions';
 
+// The theme has no blue family, so Healthy Weight Gain uses a local
+// light/dark set (same approach as the Sex page blue).
+const BLUE = {
+  light: { tint: '#DBEAFE', fg: '#1D4ED8', on: '#1E3A8A' },
+  dark: { tint: '#1E3A8A', fg: '#93C5FD', on: '#BFDBFE' },
+};
+
 /**
- * Each goal gets its own existing palette family so the options feel
- * distinct: `tint` is the card fill, `fg` the icon/selected border, and
- * `on` the text color already contrast-validated on that tint.
+ * Each goal gets its own color so the options feel distinct: `tint` is the
+ * card fill, `fg` the icon/selected border, and `on` the text color on that
+ * tint. Red, amber, and green reuse the theme's tertiary, secondary, and
+ * accent families.
  */
 function goalColors(goal: Goal, theme: ThemeColors): { tint: string; fg: string; on: string } {
   switch (goal) {
-    case 'lose_weight':
-      return { tint: theme.tertiaryFixed, fg: theme.tertiary, on: theme.onTertiaryFixed };
     case 'build_muscle':
-      return { tint: theme.accentFixed, fg: theme.accent, on: theme.onAccentFixed };
-    case 'gain_weight':
+      return { tint: theme.tertiaryFixed, fg: theme.tertiary, on: theme.onTertiaryFixed };
+    case 'lose_weight':
       return { tint: theme.secondaryFixed, fg: theme.secondary, on: theme.onSecondaryFixed };
     case 'maintain':
-      return { tint: theme.surfaceContainerHigh, fg: theme.textPrimary, on: theme.textPrimary };
+      return { tint: theme.accentFixed, fg: theme.accent, on: theme.onAccentFixed };
+    case 'gain_weight':
+      return theme === darkTheme ? BLUE.dark : BLUE.light;
   }
 }
 

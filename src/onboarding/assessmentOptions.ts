@@ -26,8 +26,8 @@ export const GOAL_OPTIONS: {
   icon: keyof typeof MaterialIcons.glyphMap;
   badge?: string;
 }[] = [
-  { value: 'lose_weight', label: 'Fat Loss & Vital Energy', description: 'A gentle, sustainable deficit', icon: 'local-fire-department', badge: 'Popular' },
   { value: 'build_muscle', label: 'Lean Hypertrophy', description: 'Higher protein + a modest surplus', icon: 'fitness-center' },
+  { value: 'lose_weight', label: 'Fat Loss & Vital Energy', description: 'A gentle, sustainable deficit', icon: 'local-fire-department', badge: 'Popular' },
   { value: 'maintain', label: 'Longevity & Maintenance', description: 'Nutrient density, no calorie change', icon: 'self-improvement' },
   { value: 'gain_weight', label: 'Healthy Weight Gain', description: 'A gradual, steady calorie surplus', icon: 'trending-up' },
 ];
