@@ -8,10 +8,11 @@ import { useProfile } from '../../profile/ProfileContext';
 import { useAppSettings } from '../../settings/AppSettingsContext';
 import { Units } from '../../settings/appSettings';
 import { radii, spacing, ThemeColors, useTheme } from '../../theme';
-import { ActivityLevel, Goal, Sex, UserProfile } from '../../types/profile';
+import { ActivityLevel, BodyFatCategory, Goal, Sex, UserProfile } from '../../types/profile';
 import { DEFAULT_ASSESSMENT } from '../assessmentOptions';
 import { MIN_SUPPORTED_AGE } from '../validation';
 import { ActivityPicker, BodyCompositionFields, GoalPicker, MetabolicForecastCard } from './AssessmentFields';
+import { BodyFatPicker } from './BodyFatPicker';
 
 const PRACTICAL_MAX_AGE = 100;
 
@@ -40,6 +41,7 @@ export function AssessmentEditor({ header, onSaved }: { header?: ReactNode; onSa
   const [weightKg, setWeightKg] = useState(profile?.weightKg ?? DEFAULT_ASSESSMENT.weightKg);
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>(profile?.activityLevel ?? DEFAULT_ASSESSMENT.activityLevel);
   const [goal, setGoal] = useState<Goal>(profile?.goal ?? DEFAULT_ASSESSMENT.goal);
+  const [bodyFat, setBodyFat] = useState<BodyFatCategory | undefined>(profile?.bodyFat);
   const [saving, setSaving] = useState(false);
 
   const handleUnitChange = (next: Units) => {
@@ -56,9 +58,10 @@ export function AssessmentEditor({ header, onSaved }: { header?: ReactNode; onSa
         weightKg,
         activityLevel,
         goal,
+        bodyFat,
         updatedAt: '',
       }),
-    [sex, age, heightCm, weightKg, activityLevel, goal],
+    [sex, age, heightCm, weightKg, activityLevel, goal, bodyFat],
   );
 
   const handleFinish = async () => {
@@ -70,6 +73,7 @@ export function AssessmentEditor({ header, onSaved }: { header?: ReactNode; onSa
       weightKg: Math.round(weightKg * 10) / 10,
       activityLevel,
       goal,
+      ...(bodyFat ? { bodyFat } : {}),
       updatedAt: new Date().toISOString(),
     };
     await saveProfile(nextProfile);
@@ -134,11 +138,15 @@ export function AssessmentEditor({ header, onSaved }: { header?: ReactNode; onSa
           />
         </SectionCard>
 
-        <SectionCard number={3} title="Daily Motion" theme={theme}>
+        <SectionCard number={3} title="Body Fat Estimate" theme={theme}>
+          <BodyFatPicker theme={theme} sex={sex} value={bodyFat} onChange={setBodyFat} />
+        </SectionCard>
+
+        <SectionCard number={4} title="Daily Motion" theme={theme}>
           <ActivityPicker theme={theme} value={activityLevel} onChange={setActivityLevel} />
         </SectionCard>
 
-        <SectionCard number={4} title="Target Outcome" theme={theme}>
+        <SectionCard number={5} title="Target Outcome" theme={theme}>
           <GoalPicker theme={theme} value={goal} onChange={setGoal} />
         </SectionCard>
 
