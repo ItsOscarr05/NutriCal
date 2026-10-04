@@ -3,6 +3,7 @@ import { calculateCalorieTarget } from './bmr';
 import { calculateMacroTargets, MacroTargets } from './macros';
 
 export * from './bmr';
+export * from './bodyComposition';
 export * from './macros';
 
 export interface NutrientTargets {
@@ -19,6 +20,12 @@ export interface NutrientTargets {
  */
 export function calculateNutrientTargets(profile: UserProfile): NutrientTargets {
   const { bmr, tdee, calorieTarget } = calculateCalorieTarget(profile);
-  const macros = calculateMacroTargets({ calorieTarget, weightKg: profile.weightKg, goal: profile.goal });
+  const macros = calculateMacroTargets({
+    calorieTarget,
+    weightKg: profile.weightKg,
+    sex: profile.sex,
+    activityLevel: profile.activityLevel,
+    goal: profile.goal,
+  });
   return { bmr, tdee, calorieTarget, macros };
 }

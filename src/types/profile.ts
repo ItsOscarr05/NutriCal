@@ -28,6 +28,13 @@ export type ActivityLevel =
  */
 export type Goal = 'maintain' | 'lose_weight' | 'gain_weight' | 'build_muscle';
 
+/**
+ * Self-estimated body fat level, picked from illustrated cards rather than
+ * an exact percentage. Mapped to a representative % per sex in
+ * `src/engine/bodyComposition.ts`.
+ */
+export type BodyFatCategory = 'very_lean' | 'lean' | 'average' | 'soft' | 'higher';
+
 export interface UserProfile {
   sex: Sex;
   /** Age in whole years. */
