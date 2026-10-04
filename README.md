@@ -25,6 +25,7 @@ src/
   engine/               BMR/TDEE + macro calculation engine (PRD §10) — pure, unit-tested functions
   data/dri/             DRI/RDA/AI/UL micronutrient reference tables, keyed by age/sex bracket (PRD §8.3, §10)
   data/education/       Plain-language macro explanation copy (PRD §8.4, §8.5) — pure content, unit-tested for completeness
+  data/references.ts    Published sources behind every formula/default, listed on the Science tab (URLs verified)
   data/legal/           In-app Privacy Policy and Terms of Service copy — completeness-tested, not legal advice
   theme/                Color tokens (rebuilt from the Stitch design system, PRD §11.2) + light/dark theme and shared
                         spacing/radii; contrast-validated in `__tests__/contrast.test.ts`
@@ -42,14 +43,14 @@ src/
                         FadeInView, CelebrationBanner, ChangeNudgeCard, GearButton, CircularProgress, Mascot)
   navigation/           Root native-stack (`RootNavigator`), the paged `OnboardingStack`, the bottom-tab shell
                         (`MainTabs`) + shared param types
-  screens/              App screens: Welcome, `onboarding/` (the six first-time pages), ProfileScreen (stats +
+  screens/              App screens: Welcome, `onboarding/` (the seven first-time pages), ProfileScreen (stats +
                         recalibrate), RecipesScreen (placeholder), ResultsScreen (Targets), ScienceBreakdownScreen,
                         MicronutrientExplorerScreen (Micros), MacroDetail modal, Settings modal,
                         LegalDocument modal (Privacy Policy / Terms of Service)
 assets/                 Brand mark master (`nutrical_logo_transparent.png`) and the variants generated from it:
                         `logo.png`, Expo app icon / Android adaptive-icon / splash / favicon
-assets/illustrations/   Generated bitmap illustrations (PRD §11.3) — currently none (macro icons are `MaterialIcons`
-                        glyphs, and the mascot is a hand-ported `react-native-svg` illustration)
+assets/illustrations/   Generated bitmap illustrations (PRD §11.3) — `body-fat/` holds the 10 body fat estimate figures
+                        (5 per sex); macro icons are `MaterialIcons` glyphs and the mascot is `react-native-svg`
 project-docs/
   PRD.md                The full product requirements document
 ```
@@ -61,10 +62,10 @@ The app used to be one straight-line flow: a 6-step onboarding wizard ending on 
 - **Targets** (`ResultsScreen`) — the calorie/macro dashboard, reached after onboarding or on any return visit.
 - **Micros** (`MicronutrientExplorerScreen`) — every vitamin/mineral by name, locked (no values/percentages) for free users — the freemium boundary (PRD §7, §8.4) is unchanged even though this screen's visual design comes from a mockup that showed real values to everyone.
 - **Recipes** (`RecipesScreen`) — placeholder for future meal ideas / recommendations. No recipes or food APIs yet (PRD §6 lists meal planning as a v1 non-goal).
-- **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, and a self-check checklist.
+- **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, a self-check checklist, and a "Sources & references" list linking every study and guideline the engine is built on.
 - **Profile** (`ProfileScreen`) — local saved-stats summary plus the recalibration form (sliders + pills, live preview). Not an account — no login.
 
-First-time onboarding (before a profile exists) is a separate paged flow, one question per page with a native slide between them: Sex → Age (number pad) → Body Composition (height wheel, weight number pad) → Daily Motion → Target Outcome → Metabolic Forecast, ending on the Targets tab.
+First-time onboarding (before a profile exists) is a separate paged flow, one question per page with a native slide between them: Sex → Age (number pad) → Body Composition (height wheel, weight number pad) → Body Fat (illustrated estimate, or "Not sure") → Daily Motion → Target Outcome → Metabolic Forecast, ending on the Targets tab.
 
 `MacroDetail` (tap a macro card), `Settings` (gear icon on Targets), and `LegalDocument` (Privacy Policy / Terms from Settings → About) remain modals reached from inside the tab shell rather than tabs themselves.
 
@@ -94,6 +95,7 @@ Following the milestones in PRD §17:
 - [x] Project scaffold (Expo + TypeScript, navigation, theming, testing)
 - [x] Calculation engine v1: BMR/TDEE (Mifflin-St Jeor) + goal-adjusted macro splits, with unit tests
 - [x] Engine rebalance: fixed kcal goal deltas with a safe deficit floor; protein and fat from body weight, carbs fill the rest
+- [x] Body fat & research update: optional illustrated body fat estimate (onboarding + Profile tab) enabling a lean-mass protein rule; carbs set by activity level (g/kg, 130 g minimum) with fat as the remainder; 0.8 g/kg protein floor; protein-per-meal tip; sources & references list on the Science tab
 - [x] **Data foundation:** DRI/RDA/AI/UL reference tables. All four standard **adult** brackets (19-30, 31-50, 51-70, 71+) plus the **adolescent** brackets (9-13, 14-18) × both sexes are seeded (`src/data/dri/adultBrackets.ts`, `adolescentBrackets.ts`), with tests covering the boundary shifts (vitamin D, B6, calcium, iron, magnesium, phosphorus UL, sodium AI, and the 9-13 → 14-18 iron jump for females). `MIN_SUPPORTED_AGE` (9) is exported from `src/data/dri/index.ts`. Pregnancy/lactation life stages are a deliberate **v1 non-goal** (revisit post-v1 — the schema already supports it via `lifeStage`). Still outstanding: cross-checking every value against the [NIH Office of Dietary Supplements DRI tables](https://ods.od.nih.gov/HealthInformation/Dietary_Reference_Intakes.aspx) — the adolescent sodium AI/CDRR figures are flagged as the least confident.
 - [x] Color tokens WCAG AA-validated (PRD §11.2): see the audit at the top of `src/theme/colors.ts` and the self-checking tests in `src/theme/__tests__/contrast.test.ts`.
 - [x] **v1.1 redesign — Stitch mockup-driven visual/IA overhaul.** Found and adopted a set of 4 Google Stitch mockups (Daily Targets Dashboard, Science Breakdown, Quick Assessment, Micronutrient Explorer) as the new design direction:
