@@ -1,7 +1,6 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeInView } from '../components/FadeInView';
@@ -12,19 +11,23 @@ import { radii, spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Welcome'>;
 
-const VALUE_PROPS: { icon: keyof typeof MaterialIcons.glyphMap; title: string; body: string }[] = [
+type PropIcon =
+  | { family: 'mi'; name: keyof typeof MaterialIcons.glyphMap }
+  | { family: 'mci'; name: keyof typeof MaterialCommunityIcons.glyphMap };
+
+const VALUE_PROPS: { icon: PropIcon; title: string; body: string }[] = [
   {
-    icon: 'insights',
+    icon: { family: 'mi', name: 'insights' },
     title: 'Built around you',
     body: 'Calories and macros tuned to your body, activity, and goal.',
   },
   {
-    icon: 'science',
+    icon: { family: 'mci', name: 'flask-outline' },
     title: 'Grounded in nutrition science',
     body: 'Established formulas, explained in plain language.',
   },
   {
-    icon: 'lock-outline',
+    icon: { family: 'mi', name: 'lock-outline' },
     title: 'Private by design',
     body: 'No account needed. Your info stays on this device.',
   },
@@ -58,7 +61,11 @@ export function WelcomeScreen() {
           {VALUE_PROPS.map((prop, i) => (
             <FadeInView key={prop.title} delay={300 + i * 100}>
               <View style={[styles.propRow, { backgroundColor: theme.surfaceContainerLow }]}>
-                <MaterialIcons name={prop.icon} size={28} color={theme.accent} />
+                {prop.icon.family === 'mci' ? (
+                  <MaterialCommunityIcons name={prop.icon.name} size={28} color={theme.accent} />
+                ) : (
+                  <MaterialIcons name={prop.icon.name} size={28} color={theme.accent} />
+                )}
 
                 <View style={styles.propText}>
                   <Text style={[styles.propTitle, { color: theme.textPrimary }]}>{prop.title}</Text>
@@ -74,7 +81,6 @@ export function WelcomeScreen() {
         <PrimaryButton label="Get Started" onPress={() => navigation.navigate('Onboarding')} />
         <Text style={[styles.footnote, { color: theme.textSecondary }]}>Free to start · No sign-up required</Text>
       </FadeInView>
-      <StatusBar style="auto" />
     </View>
   );
 }
