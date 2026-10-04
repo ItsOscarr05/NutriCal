@@ -23,7 +23,8 @@ export type ActivityLevel =
 
 /**
  * Stated goal (PRD §8.1). Used to adjust the calorie target away from the
- * maintenance (TDEE) baseline, and to select a macro split (PRD §10).
+ * maintenance (TDEE) baseline, and to set the protein-per-body-weight
+ * multiplier (PRD §10).
  */
 export type Goal = 'maintain' | 'lose_weight' | 'gain_weight' | 'build_muscle';
 

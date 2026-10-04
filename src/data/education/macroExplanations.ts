@@ -25,7 +25,9 @@ export interface MacroExplanation {
  * and percent-of-calories value — see `MacroDetailScreen`.
  *
  * Content here is v1 wellness-tool copy, not medical advice (PRD §13) —
- * kept general rather than citing specific clinical thresholds.
+ * kept general rather than citing specific clinical thresholds. The
+ * `whyByGoal` lines mirror the engine's order of operations (protein and
+ * fat from body weight, carbs fill the rest) — update them together.
  */
 export const MACRO_EXPLANATIONS: Record<MacroKey, MacroExplanation> = {
   protein: {
@@ -33,13 +35,13 @@ export const MACRO_EXPLANATIONS: Record<MacroKey, MacroExplanation> = {
     what: 'Protein builds and repairs muscle, skin, and other tissues, and helps you feel full after eating.',
     whyByGoal: {
       maintain:
-        "We set protein at a moderate share of your calories — enough to support your body's everyday repair and maintenance needs without swinging your diet in any particular direction.",
+        "Your protein is based on your body weight, at a moderate level that covers your body's everyday repair and maintenance needs.",
       lose_weight:
-        "We set protein higher than usual because it helps preserve muscle and keep you feeling full while you're eating in a calorie deficit.",
+        "Your protein is based on your body weight and set toward the top of the recommended range, since it helps preserve muscle and keep you full while you're eating in a calorie deficit.",
       gain_weight:
-        'We kept protein steady, giving your body the building blocks it needs while most of your extra calories come from carbs.',
+        'Your protein is based on your body weight at a moderate level, giving your body the building blocks it needs while most of your extra calories come from carbs.',
       build_muscle:
-        "We set protein higher than usual since it's the main nutrient your muscles use to repair and grow after training.",
+        "Your protein is based on your body weight, in the range sports nutrition research supports for building muscle — enough to repair and grow after training without overdoing it.",
     },
     tooLittle: 'Getting too little protein over time can lead to muscle loss, slower recovery, and feeling hungry more often.',
     tooMuch:
@@ -49,10 +51,10 @@ export const MACRO_EXPLANATIONS: Record<MacroKey, MacroExplanation> = {
     displayName: 'Carbs',
     what: "Carbohydrates are your body's main energy source, fueling your brain and muscles throughout the day.",
     whyByGoal: {
-      maintain: 'Carbs make up about half your calories — enough steady energy for daily activity without a deficit or surplus.',
-      lose_weight: 'We lowered carbs to help create the calorie deficit weight loss needs, while still leaving room for energy.',
-      gain_weight: 'We raised carbs — an easy, well-tolerated way to add the extra energy needed to gain weight.',
-      build_muscle: 'Carbs stay in a solid range to fuel your workouts and recovery without crowding out the extra protein you need.',
+      maintain: 'Carbs fill the rest of your calories once protein and fat are set — steady energy for daily activity without a deficit or surplus.',
+      lose_weight: 'Carbs fill the calories left after protein and fat, so they take most of the trim that creates your deficit while still leaving room for energy.',
+      gain_weight: 'Carbs fill the calories left after protein and fat, so they carry most of your surplus — an easy, well-tolerated way to add energy.',
+      build_muscle: 'Carbs fill the calories left after protein and fat, fueling your workouts and recovery with most of your lean-bulk surplus.',
     },
     tooLittle: 'Consistently low carbs can leave you low on energy, irritable, or make it harder to push through workouts.',
     tooMuch: 'Eating far more carbs than you burn, especially from added sugars, can contribute to weight gain over time.',
@@ -61,10 +63,10 @@ export const MACRO_EXPLANATIONS: Record<MacroKey, MacroExplanation> = {
     displayName: 'Fat',
     what: 'Fat supports hormone production, helps you absorb certain vitamins, and provides long-lasting energy.',
     whyByGoal: {
-      maintain: 'Fat makes up a moderate share of your calories, within the range most nutrition guidelines recommend for general health.',
-      lose_weight: 'Fat stays at a moderate share of your calories — enough for hormone health while carbs take a bigger cut for your deficit.',
-      gain_weight: 'We eased fat back slightly, freeing up more room for the carbs driving your calorie surplus.',
-      build_muscle: 'Fat sits at a moderate share of your calories, balanced against the extra protein your muscles need to recover.',
+      maintain: 'Your fat is based on your body weight and kept within the range most nutrition guidelines recommend for general health.',
+      lose_weight: 'Your fat is based on your body weight — enough for hormone health even while you eat in a deficit.',
+      gain_weight: 'Your fat is based on your body weight and kept within guideline ranges, leaving carbs to carry most of your surplus.',
+      build_muscle: 'Your fat is based on your body weight, with a guideline minimum so hormone health stays supported alongside your training.',
     },
     tooLittle: 'Too little fat over time can affect hormone production and make it harder to absorb vitamins A, D, E, and K.',
     tooMuch: 'Consistently high fat intake, especially from saturated sources, can affect heart health over time.',

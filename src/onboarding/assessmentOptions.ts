@@ -15,9 +15,9 @@ export const ACTIVITY_OPTIONS: {
   { value: 'extremely_active', label: 'Manual Labor/Athlete', description: 'Physical job or elite training', icon: 'account-hard-hat-outline' },
 ];
 
-// The Stitch mockup only offered 3 goal pills with flat kcal deltas
-// (-400/+250/0) and no "gain_weight" option. Mapped onto the engine's real
-// 4-goal, %-based `GOAL_ADJUSTMENT_FACTOR` (`src/engine/bmr.ts`) instead —
+// The Stitch mockup only offered 3 goal pills and no "gain_weight" option.
+// Each pill maps onto the engine's 4-goal `GOAL_CALORIE_DELTA`
+// (`src/engine/bmr.ts`) and `PROTEIN_G_PER_LB` (`src/engine/macros.ts`) —
 // see AGENTS.md's "calculation engine must stay pure" rule.
 export const GOAL_OPTIONS: {
   value: Goal;
