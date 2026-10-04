@@ -15,7 +15,7 @@ export function TargetOutcomeScreen() {
 
   return (
     <OnboardingStep
-      step={5}
+      step={6}
       title="Target outcome"
       subtitle="What would you like your nutrition to support right now?"
       centerBody

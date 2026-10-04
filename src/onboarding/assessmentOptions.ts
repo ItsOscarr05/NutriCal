@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { ActivityLevel, Goal } from '../types/profile';
+import { ActivityLevel, BodyFatCategory, Goal, Sex } from '../types/profile';
 
 export const ACTIVITY_OPTIONS: {
   value: ActivityLevel;
@@ -30,6 +30,23 @@ export const GOAL_OPTIONS: {
   { value: 'lose_weight', label: 'Fat Loss & Vital Energy', description: 'A gentle, sustainable deficit', icon: 'local-fire-department', badge: 'Popular' },
   { value: 'maintain', label: 'Longevity & Maintenance', description: 'Nutrient density, no calorie change', icon: 'self-improvement' },
   { value: 'gain_weight', label: 'Healthy Weight Gain', description: 'A gradual, steady calorie surplus', icon: 'trending-up' },
+];
+
+/**
+ * Body fat estimate cards, lightest to highest. `range` mirrors the bands
+ * documented on `BODY_FAT_PERCENT` (`src/engine/bodyComposition.ts`).
+ * Labels stay descriptive rather than judgmental (PRD §11.1).
+ */
+export const BODY_FAT_OPTIONS: {
+  value: BodyFatCategory;
+  label: string;
+  range: Record<Sex, string>;
+}[] = [
+  { value: 'very_lean', label: 'Very lean', range: { male: '6-10%', female: '14-18%' } },
+  { value: 'lean', label: 'Lean & athletic', range: { male: '11-15%', female: '19-23%' } },
+  { value: 'average', label: 'Average', range: { male: '16-21%', female: '24-29%' } },
+  { value: 'soft', label: 'Soft (skinny-fat)', range: { male: '22-26%', female: '30-34%' } },
+  { value: 'higher', label: 'Higher body fat', range: { male: '27%+', female: '35%+' } },
 ];
 
 /** Starting values for a brand-new assessment (no saved profile yet). */

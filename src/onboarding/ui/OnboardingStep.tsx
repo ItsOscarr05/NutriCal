@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { radii, spacing, useTheme } from '../../theme';
 
-export const ONBOARDING_STEP_COUNT = 6;
+export const ONBOARDING_STEP_COUNT = 7;
 
 interface SecondaryAction {
   label: string;

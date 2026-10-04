@@ -27,7 +27,7 @@ export function BodyCompositionScreen() {
 
   const handleNext = () => {
     Keyboard.dismiss();
-    navigation.navigate('DailyMotion');
+    navigation.navigate('BodyFat');
   };
 
   return (

@@ -27,6 +27,7 @@ export type OnboardingStackParamList = {
   Sex: undefined;
   Age: undefined;
   BodyComposition: undefined;
+  BodyFat: undefined;
   DailyMotion: undefined;
   TargetOutcome: undefined;
   MetabolicForecast: undefined;

@@ -15,7 +15,7 @@ export function DailyMotionScreen() {
 
   return (
     <OnboardingStep
-      step={4}
+      step={5}
       title="Daily motion"
       subtitle="Pick the option that best matches a typical week."
       centerBody

@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { OnboardingDraftProvider } from '../onboarding/OnboardingDraftContext';
 import { AgeScreen } from '../screens/onboarding/AgeScreen';
 import { BodyCompositionScreen } from '../screens/onboarding/BodyCompositionScreen';
+import { BodyFatScreen } from '../screens/onboarding/BodyFatScreen';
 import { DailyMotionScreen } from '../screens/onboarding/DailyMotionScreen';
 import { MetabolicForecastScreen } from '../screens/onboarding/MetabolicForecastScreen';
 import { SexScreen } from '../screens/onboarding/SexScreen';
@@ -31,6 +32,7 @@ export function OnboardingStack() {
         <Stack.Screen name="Sex" component={SexScreen} />
         <Stack.Screen name="Age" component={AgeScreen} />
         <Stack.Screen name="BodyComposition" component={BodyCompositionScreen} />
+        <Stack.Screen name="BodyFat" component={BodyFatScreen} />
         <Stack.Screen name="DailyMotion" component={DailyMotionScreen} />
         <Stack.Screen name="TargetOutcome" component={TargetOutcomeScreen} />
         <Stack.Screen name="MetabolicForecast" component={MetabolicForecastScreen} />

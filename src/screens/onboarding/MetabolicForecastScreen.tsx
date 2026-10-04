@@ -28,6 +28,7 @@ export function MetabolicForecastScreen() {
   const age = parseAgeInput(draft.ageText);
   const weightKg = parseWeightInput(draft.weightText, settings.units);
   const sex = draft.sex;
+  const bodyFat = draft.bodyFatChoice === 'unsure' || draft.bodyFatChoice === null ? undefined : draft.bodyFatChoice;
 
   const preview = useMemo(
     () =>
@@ -39,10 +40,11 @@ export function MetabolicForecastScreen() {
             weightKg,
             activityLevel: draft.activityLevel,
             goal: draft.goal,
+            bodyFat,
             updatedAt: '',
           })
         : null,
-    [sex, age, draft.heightCm, weightKg, draft.activityLevel, draft.goal],
+    [sex, age, draft.heightCm, weightKg, draft.activityLevel, draft.goal, bodyFat],
   );
 
   const handleFinish = async () => {
@@ -55,6 +57,7 @@ export function MetabolicForecastScreen() {
       weightKg: Math.round(weightKg * 10) / 10,
       activityLevel: draft.activityLevel,
       goal: draft.goal,
+      ...(bodyFat ? { bodyFat } : {}),
       updatedAt: new Date().toISOString(),
     });
     // Swap onboarding out for the tab shell on the root stack.
@@ -68,7 +71,7 @@ export function MetabolicForecastScreen() {
 
   return (
     <OnboardingStep
-      step={6}
+      step={7}
       title="Your metabolic forecast"
       subtitle="Here's a first look at your personalized daily targets."
       centerBody

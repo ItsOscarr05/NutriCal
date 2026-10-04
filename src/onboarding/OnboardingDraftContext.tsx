@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { ActivityLevel, Goal, Sex } from '../types/profile';
+import { ActivityLevel, BodyFatCategory, Goal, Sex } from '../types/profile';
 import { DEFAULT_ASSESSMENT } from './assessmentOptions';
 
 /**
@@ -17,6 +17,8 @@ export interface OnboardingDraft {
   ageText: string;
   heightCm: number;
   weightText: string;
+  /** `null` until answered; `'unsure'` saves the profile without a body fat estimate. */
+  bodyFatChoice: BodyFatCategory | 'unsure' | null;
   activityLevel: ActivityLevel;
   goal: Goal;
 }
@@ -26,6 +28,7 @@ const INITIAL_DRAFT: OnboardingDraft = {
   ageText: '',
   heightCm: DEFAULT_ASSESSMENT.heightCm,
   weightText: '',
+  bodyFatChoice: null,
   activityLevel: DEFAULT_ASSESSMENT.activityLevel,
   goal: DEFAULT_ASSESSMENT.goal,
 };
