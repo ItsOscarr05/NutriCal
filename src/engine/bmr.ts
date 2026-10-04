@@ -45,18 +45,27 @@ export function calculateTDEE(bmr: number, activityLevel: ActivityLevel): number
 }
 
 /**
- * Goal adjustment applied to the TDEE (maintenance) baseline.
- *
- * These are deliberately conservative, evidence-informed defaults (a
- * ~15-20% deficit/surplus rather than a fixed large number) and should be
- * revisited alongside the macro engine as the product matures — see
- * PRD §10 "adjust up/down based on the user's stated goal."
+ * Fixed kcal adjustment applied to the TDEE (maintenance) baseline
+ * (PRD §10 "adjust up/down based on the user's stated goal"), following
+ * common sports-nutrition rules of thumb:
+ *   - lean bulk (`build_muscle`): a conservative +250 to +500 kcal surplus
+ *     to limit fat gain while supporting muscle protein synthesis;
+ *   - `gain_weight`: the top of that surplus range;
+ *   - cut (`lose_weight`): a -300 to -500 kcal deficit, never below
+ *     `MIN_CALORIES_BY_SEX` or BMR (see `calculateCalorieTarget`);
+ *   - `maintain`: TDEE unchanged.
  */
-const GOAL_ADJUSTMENT_FACTOR: Record<Goal, number> = {
-  maintain: 1.0,
-  lose_weight: 0.8, // ~20% deficit
-  gain_weight: 1.15, // ~15% surplus
-  build_muscle: 1.1, // ~10% surplus, paired with a higher-protein split
+export const GOAL_CALORIE_DELTA: Record<Goal, number> = {
+  maintain: 0,
+  lose_weight: -400,
+  gain_weight: 500,
+  build_muscle: 350,
+};
+
+/** Commonly cited minimum daily intake for an unsupervised calorie deficit. */
+export const MIN_CALORIES_BY_SEX: Record<Sex, number> = {
+  male: 1500,
+  female: 1200,
 };
 
 export function calculateCalorieTarget(params: {
@@ -69,6 +78,12 @@ export function calculateCalorieTarget(params: {
 }): { bmr: number; tdee: number; calorieTarget: number } {
   const bmr = calculateBMR(params);
   const tdee = calculateTDEE(bmr, params.activityLevel);
-  const calorieTarget = Math.round(tdee * GOAL_ADJUSTMENT_FACTOR[params.goal]);
-  return { bmr: Math.round(bmr), tdee: Math.round(tdee), calorieTarget };
+  let target = tdee + GOAL_CALORIE_DELTA[params.goal];
+  if (params.goal === 'lose_weight') {
+    // The floor never exceeds TDEE, so a deficit can shrink to zero but
+    // never flip into a surplus.
+    const floor = Math.min(tdee, Math.max(bmr, MIN_CALORIES_BY_SEX[params.sex]));
+    target = Math.max(target, floor);
+  }
+  return { bmr: Math.round(bmr), tdee: Math.round(tdee), calorieTarget: Math.round(target) };
 }
