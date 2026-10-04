@@ -19,6 +19,6 @@ export interface NutrientTargets {
  */
 export function calculateNutrientTargets(profile: UserProfile): NutrientTargets {
   const { bmr, tdee, calorieTarget } = calculateCalorieTarget(profile);
-  const macros = calculateMacroTargets(calorieTarget, profile.goal);
+  const macros = calculateMacroTargets({ calorieTarget, weightKg: profile.weightKg, goal: profile.goal });
   return { bmr, tdee, calorieTarget, macros };
 }
