@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { getMacroExplanation } from '../data/education/macroExplanations';
+import { calculateProteinPerMeal } from '../engine';
 import { RootStackParamList } from '../navigation/types';
+import { useProfile } from '../profile/ProfileContext';
 import { radii, spacing, useTheme } from '../theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'MacroDetail'>;
@@ -20,6 +22,7 @@ export function MacroDetailScreen() {
   const { params } = useRoute<Route>();
   const theme = useTheme();
   const explanation = getMacroExplanation(params.macro);
+  const { profile } = useProfile();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -31,6 +34,13 @@ export function MacroDetailScreen() {
 
         <Section title="What it does" body={explanation.what} theme={theme} />
         <Section title="Why your number is what it is" body={explanation.whyByGoal[params.goal]} theme={theme} />
+        {params.macro === 'protein' && profile ? (
+          <Section
+            title="Spread it out"
+            body={`Your muscles use protein best in portions of about ${calculateProteinPerMeal(profile.weightKg)}g per meal, spread across 3 to 4 meals, rather than all at once.`}
+            theme={theme}
+          />
+        ) : null}
         <Section title="If you get too little" body={explanation.tooLittle} theme={theme} />
         <Section title="If you get too much" body={explanation.tooMuch} theme={theme} />
       </ScrollView>
