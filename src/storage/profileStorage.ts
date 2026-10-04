@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityLevel, Goal, Sex, UserProfile } from '../types/profile';
+import { ActivityLevel, BodyFatCategory, Goal, Sex, UserProfile } from '../types/profile';
 
 /**
  * Local, on-device profile persistence (PRD §8.1, §12 — no account, no
@@ -20,6 +20,7 @@ const VALID_ACTIVITY_LEVELS: ActivityLevel[] = [
   'extremely_active',
 ];
 const VALID_GOALS: Goal[] = ['maintain', 'lose_weight', 'gain_weight', 'build_muscle'];
+const VALID_BODY_FAT: BodyFatCategory[] = ['very_lean', 'lean', 'average', 'soft', 'higher'];
 
 /**
  * Runtime type guard for data read back from storage. Local storage isn't
@@ -45,6 +46,7 @@ export function isValidUserProfile(value: unknown): value is UserProfile {
     p.weightKg > 0 &&
     VALID_ACTIVITY_LEVELS.includes(p.activityLevel as ActivityLevel) &&
     VALID_GOALS.includes(p.goal as Goal) &&
+    (p.bodyFat === undefined || VALID_BODY_FAT.includes(p.bodyFat as BodyFatCategory)) &&
     typeof p.updatedAt === 'string'
   );
 }

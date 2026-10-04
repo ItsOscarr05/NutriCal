@@ -46,6 +46,11 @@ export interface UserProfile {
   activityLevel: ActivityLevel;
   goal: Goal;
   /**
+   * Optional self-estimate; omitted when the user picked "Not sure" (or
+   * the profile predates this field). Lets protein use lean body mass.
+   */
+  bodyFat?: BodyFatCategory;
+  /**
    * When this profile was created or last edited. Used to power the
    * "has anything changed?" 30-day nudge on the results dashboard (PRD §8.1).
    */

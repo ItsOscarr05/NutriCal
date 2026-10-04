@@ -59,6 +59,11 @@ describe('isValidUserProfile', () => {
     expect(isValidUserProfile({ ...validProfile, activityLevel: 'inactive' })).toBe(true);
   });
 
+  it('accepts a profile with or without a body fat estimate', () => {
+    expect(isValidUserProfile({ ...validProfile, bodyFat: 'soft' })).toBe(true);
+    expect(isValidUserProfile({ ...validProfile, bodyFat: undefined })).toBe(true);
+  });
+
   it.each([
     ['null', null],
     ['a string', 'not an object'],
@@ -68,6 +73,7 @@ describe('isValidUserProfile', () => {
     ['a non-numeric weight', { ...validProfile, weightKg: '62' }],
     ['an invalid activity level', { ...validProfile, activityLevel: 'super_active' }],
     ['an invalid goal', { ...validProfile, goal: 'bulk' }],
+    ['an invalid body fat estimate', { ...validProfile, bodyFat: 'chunky' }],
     ['a missing updatedAt', (() => {
       const { updatedAt, ...rest } = validProfile;
       return rest;

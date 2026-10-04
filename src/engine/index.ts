@@ -26,6 +26,7 @@ export function calculateNutrientTargets(profile: UserProfile): NutrientTargets 
     sex: profile.sex,
     activityLevel: profile.activityLevel,
     goal: profile.goal,
+    bodyFat: profile.bodyFat,
   });
   return { bmr, tdee, calorieTarget, macros };
 }
