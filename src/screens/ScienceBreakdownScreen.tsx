@@ -2,9 +2,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
-import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { Mascot } from '../components/Mascot';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { REFERENCES } from '../data/references';
 import { calculateNutrientTargets } from '../engine';
 import { MainTabParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
@@ -309,6 +310,40 @@ export function ScienceBreakdownScreen() {
         </View>
       </View>
 
+      <View style={[styles.auditCard, { backgroundColor: theme.surface }]}>
+        <View style={styles.auditHeader}>
+          <View style={styles.headerTextBlock}>
+            <Text style={[styles.auditTitle, { color: theme.textPrimary }]}>Sources & references</Text>
+            <Text style={[styles.referencesNote, { color: theme.textSecondary }]}>
+              Every formula and default in NutriCal comes from published research or official guidelines. Tap a
+              source to read it. Your targets are estimates for healthy adults, not medical advice.
+            </Text>
+          </View>
+          <MaterialIcons name="menu-book" size={22} color={theme.accent} />
+        </View>
+        <View style={styles.auditList}>
+          {REFERENCES.map((ref) => (
+            <Pressable
+              key={ref.url}
+              onPress={() => void Linking.openURL(ref.url)}
+              accessibilityRole="link"
+              accessibilityLabel={`${ref.title}, ${ref.source}`}
+              style={[styles.referenceRow, { backgroundColor: theme.surfaceContainerLow }]}
+            >
+              <View style={styles.referenceTextBlock}>
+                <Text style={[styles.referenceTitle, { color: theme.textPrimary }]}>{ref.title}</Text>
+                <Text style={[styles.referenceSource, { color: theme.textSecondary }]}>
+                  {ref.source}
+                  {ref.year ? ` (${ref.year})` : ''}
+                </Text>
+                <Text style={[styles.referenceUsedFor, { color: theme.accent }]}>{ref.usedFor}</Text>
+              </View>
+              <MaterialIcons name="open-in-new" size={16} color={theme.textSecondary} />
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
       <View style={styles.actions}>
         <PrimaryButton label="Share Target Card" onPress={handleShare} />
         <Pressable onPress={handleRecalibrate} style={[styles.secondaryButton, { backgroundColor: theme.surfaceContainerHigh }]}>
@@ -447,6 +482,13 @@ const styles = StyleSheet.create({
   auditRowLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   auditCheckIcon: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   auditLabel: { fontSize: 13, fontWeight: '500', flexShrink: 1 },
+
+  referencesNote: { fontSize: 12, marginTop: 2, lineHeight: 16 },
+  referenceRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, borderRadius: radii.md, padding: spacing.sm },
+  referenceTextBlock: { flex: 1, minWidth: 0, gap: 2 },
+  referenceTitle: { fontSize: 13, fontWeight: '700', lineHeight: 17 },
+  referenceSource: { fontSize: 11 },
+  referenceUsedFor: { fontSize: 11, fontWeight: '600' },
 
   actions: { gap: spacing.sm, marginTop: spacing.xs },
   secondaryButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs, borderRadius: radii.pill, paddingVertical: spacing.sm },
