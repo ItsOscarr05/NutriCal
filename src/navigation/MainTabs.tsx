@@ -1,6 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MicronutrientExplorerScreen } from '../screens/MicronutrientExplorerScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { RecipesScreen } from '../screens/RecipesScreen';
 import { ResultsScreen } from '../screens/ResultsScreen';
@@ -10,20 +9,19 @@ import { MainTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-/** Tab icons — Micros sits immediately after Targets; Recipes is between Micros and Science. */
 const TAB_ICONS: Record<keyof MainTabParamList, keyof typeof MaterialIcons.glyphMap> = {
   Targets: 'track-changes',
-  Micros: 'eco',
-  Recipes: 'restaurant',
+  Recipes: 'restaurant-menu',
   Science: 'menu-book',
-  Profile: 'person-outline',
+  Profile: 'account-circle',
 };
 
 /**
- * The persistent bottom tab bar — Targets, Micros, Recipes (placeholder),
- * Science, Profile (local stats + recalibrate; no account). Mounted as the
- * `Main` route in `RootNavigator`, once a profile exists. First-time
- * onboarding is the paged `OnboardingStack`.
+ * The persistent bottom tab bar — Targets (macros + locked micros
+ * toggle), Recipes (placeholder), Science, Profile (local stats +
+ * recalibrate; no account). Mounted as the `Main` route in
+ * `RootNavigator`, once a profile exists. First-time onboarding is the
+ * paged `OnboardingStack`.
  */
 export function MainTabs() {
   const theme = useTheme();
@@ -40,7 +38,6 @@ export function MainTabs() {
       })}
     >
       <Tab.Screen name="Targets" component={ResultsScreen} />
-      <Tab.Screen name="Micros" component={MicronutrientExplorerScreen} />
       <Tab.Screen name="Recipes" component={RecipesScreen} />
       <Tab.Screen name="Science" component={ScienceBreakdownScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />

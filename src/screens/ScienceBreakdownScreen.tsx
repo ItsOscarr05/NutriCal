@@ -3,6 +3,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { splitActiveCalories } from '../components/activeCalorieSplit';
 import { Mascot } from '../components/Mascot';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { REFERENCES } from '../data/references';
@@ -18,18 +19,6 @@ type Nav = BottomTabNavigationProp<MainTabParamList, 'Science'>;
 // *rough* weekly pace below, not as an engine-level claim.
 const KCAL_PER_KG_FAT = 7700;
 
-/**
- * Presentational-only estimate of how "active calories" (everything above
- * BMR: TDEE minus BMR) roughly splits across NEAT, structured exercise,
- * and the thermic effect of food. `src/engine` has no such split — it
- * only models a single activity multiplier (PRD §10) — so this is
- * deliberately NOT exported from `src/engine` or unit-tested as a
- * calculation; it's a fixed, clearly-labeled illustrative ratio, the same
- * spirit as the Stitch mockup's own hardcoded example breakdown, just
- * computed from the user's real `tdee - bmr` instead of a fixed number.
- */
-const ACTIVE_CALORIE_SPLIT = { neat: 0.45, exercise: 0.35, tef: 0.2 } as const;
-
 const AUDIT_ITEMS = [
   'Deep, uninterrupted night sleep (>7h)',
   'Clear morning cognitive focus & energy',
@@ -42,7 +31,7 @@ const AUDIT_ITEMS = [
  * plain language: an energy-budget breakdown (BMR / NEAT / Exercise /
  * TEF, all real numbers from `calculateNutrientTargets` except the
  * NEAT/Exercise/TEF sub-split, which is presentational only — see
- * `ACTIVE_CALORIE_SPLIT`), a personalized-vs-crash-diet comparison, and a
+ * `splitActiveCalories`), a personalized-vs-crash-diet comparison, and a
  * lightweight self-check "audit" (local-only, resets on remount — this
  * app doesn't do historical logging in v1).
  */
@@ -62,10 +51,11 @@ export function ScienceBreakdownScreen() {
   }
 
   const targets = calculateNutrientTargets(profile);
-  const activeCalories = Math.max(0, targets.tdee - targets.bmr);
-  const neatCalories = Math.round(activeCalories * ACTIVE_CALORIE_SPLIT.neat);
-  const exerciseCalories = Math.round(activeCalories * ACTIVE_CALORIE_SPLIT.exercise);
-  const tefCalories = Math.max(0, activeCalories - neatCalories - exerciseCalories);
+  const {
+    neat: neatCalories,
+    exercise: exerciseCalories,
+    tef: tefCalories,
+  } = splitActiveCalories(targets.bmr, targets.tdee);
 
   const pct = (value: number) => Math.round((value / targets.calorieTarget) * 100);
 

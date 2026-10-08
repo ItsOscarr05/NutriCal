@@ -3,9 +3,8 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 import { ProfileProvider } from './src/profile/ProfileContext';
 import { AppSettingsProvider } from './src/settings/AppSettingsContext';
 
-// `SafeAreaProvider` was an installed-but-unused dependency until the
-// Settings gear icon needed `useSafeAreaInsets()` to sit below the status
-// bar/notch on both platforms — see `GearButton`/`ResultsScreen`.
+// `SafeAreaProvider` lets screens and `AppHeader` read
+// `useSafeAreaInsets()` to sit below the status bar/notch on both platforms.
 // `AppSettingsProvider` sits above `RootNavigator` (and everything else)
 // since `useTheme()` reads its appearance preference — see `src/theme/index.ts`.
 //
