@@ -39,7 +39,7 @@ export function EnergyArcGauge({
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size} viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}>
-        <G rotation={135} origin={`${VIEWBOX / 2}, ${VIEWBOX / 2}`}>
+        <G transform={`rotate(135 ${VIEWBOX / 2} ${VIEWBOX / 2})`}>
           <Circle
             cx={VIEWBOX / 2}
             cy={VIEWBOX / 2}
