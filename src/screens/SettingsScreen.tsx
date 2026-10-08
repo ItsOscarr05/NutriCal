@@ -8,6 +8,7 @@ import { RootStackParamList } from '../navigation/types';
 import { useProfile } from '../profile/ProfileContext';
 import { Appearance, Units } from '../settings/appSettings';
 import { useAppSettings } from '../settings/AppSettingsContext';
+import { clearGrocerySelection } from '../storage/grocerySelectionStorage';
 import { clearDismissedNudgeTimestamp } from '../storage/nudgeStorage';
 import { palette, radii, spacing, useTheme } from '../theme';
 
@@ -65,6 +66,7 @@ export function SettingsScreen() {
           onPress: async () => {
             await clearProfile();
             await clearDismissedNudgeTimestamp();
+            await clearGrocerySelection();
             navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
           },
         },

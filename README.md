@@ -45,7 +45,7 @@ src/
   navigation/           Root native-stack (`RootNavigator`), the paged `OnboardingStack`, the bottom-tab shell
                         (`MainTabs`) + shared param types
   screens/              App screens: Welcome, `onboarding/` (the seven first-time pages), ProfileScreen (stats +
-                        recalibrate), RecipesScreen (placeholder), ResultsScreen (Targets: macros + locked micros),
+                        recalibrate), RecipesScreen (target-matched meals), ResultsScreen (Targets: macros + locked micros),
                         ScienceBreakdownScreen, MacroDetail modal, Settings modal,
                         LegalDocument modal (Privacy Policy / Terms of Service)
 assets/                 Brand mark master (`nutrical_logo_transparent.png`) and the variants generated from it:
@@ -62,7 +62,7 @@ The app used to be one straight-line flow: a 6-step onboarding wizard ending on 
 
 - **Home** (`HomeScreen`) — the default tab: a daily overview with the calorie gauge, macro tiles, a locked micronutrient teaser, and shortcuts into the other tabs.
 - **Targets** (`ResultsScreen`) — "Your Science Targets": a Macronutrients / Micros & Minerals toggle. Macros shows the calorie target on a BMR / movement / digestion arc, per-macro cards, and the energy-budget math. Micros lists every vitamin/mineral by name, locked (no values/percentages) for free users — the freemium boundary (PRD §7, §8.4) is unchanged even though the mockup showed real values to everyone.
-- **Recipes** (`RecipesScreen`) — placeholder for future meal ideas / recommendations. No recipes or food APIs yet (PRD §6 lists meal planning as a v1 non-goal).
+- **Recipes** (`RecipesScreen`) — "Target-Matched Meals": a small built-in recipe set ranked by how well one serving fits about a quarter of your daily targets, with search, filters (high protein, quick, plant-forward), inline steps, and a grocery checklist saved on-device and shareable. No food API or backend, and not a full meal planner (PRD §6).
 - **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, a self-check checklist, and a "Sources & references" list linking every study and guideline the engine is built on.
 - **Profile** (`ProfileScreen`) — local saved-stats summary plus the recalibration form (sliders + pills, live preview). Not an account — no login.
 
@@ -110,6 +110,7 @@ Following the milestones in PRD §17:
 - [ ] **v2 redesign — second set of Stitch mockups (Home, Targets, Recipes, Profile).** Implemented one page at a time; mockup elements without real data behind them (name/avatar, streaks, hydration/sleep, health-app sync, exports) are left out, and micronutrient values stay locked.
   - [x] **Targets.** "Your Science Targets" with a Macronutrients / Micros & Minerals toggle (the `Micros` tab is folded in), a BMR / movement / digestion `EnergyArcGauge`, per-macro cards with real g/kg and floor tips, and the energy-budget math. Shared `AppHeader` (logo, light/dark toggle, Settings) replaces the floating gear.
   - [x] **Home.** New default tab (`HomeScreen`): time-of-day greeting with goal/activity chips, the fuel gauge with BMR/TDEE markers and partitions, quick macro tiles, a locked "Micro Focus" teaser linking to the Targets micros toggle, shortcut cards (Profile, Science, Recipes), and a mascot note showing how long ago targets were calibrated.
+  - [x] **Recipes.** "Target-Matched Meals" (`RecipesScreen`): nine hand-written recipes (`src/data/recipes`) scored against a per-meal share of the real targets (`src/recipes/recipeMatching.ts`), a "star match" card plus ranked feed, search and filters, and a grouped grocery checklist (`src/recipes/groceryList.ts`) persisted locally and cleared by "Delete my data". Mockup food photos are emoji tiles (offline), and micronutrient tags are omitted.
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12) — this remains the blocker for turning the Targets tab's locked micros teaser into real personalized values, and for writing micronutrient education copy (the macro equivalent of `src/data/education/macroExplanations.ts`)
 - [ ] Accessibility + edge-case testing pass
 - [ ] v1 release to a small test group
