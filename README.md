@@ -9,7 +9,7 @@ Full product spec: [`project-docs/PRD.md`](./project-docs/PRD.md).
 ## Stack
 
 - **Expo (React Native) + TypeScript** — cross-platform mobile from one codebase.
-- **React Navigation** — a native-stack root (`Welcome` → paged `Onboarding` stack → `Main`, plus `MacroDetail`/`Settings` modals) wrapping a persistent bottom-tab shell (`@react-navigation/bottom-tabs`: Targets / Recipes / Science / Profile).
+- **React Navigation** — a native-stack root (`Welcome` → paged `Onboarding` stack → `Main`, plus `MacroDetail`/`Settings` modals) wrapping a persistent bottom-tab shell (`@react-navigation/bottom-tabs`: Home / Targets / Recipes / Science / Profile).
 - **`react-native-svg`** — the `CircularProgress` progress ring and the `Mascot` illustration.
 - **`@react-native-community/slider`** — height/weight/age sliders on the Profile tab's recalibrate form. First-time onboarding uses a height wheel and a weight number pad instead.
 - **`@expo-google-fonts/plus-jakarta-sans` + `expo-font`** — the app's display typeface, matching the Stitch design system.
@@ -60,6 +60,7 @@ project-docs/
 
 The app used to be one straight-line flow: a 6-step onboarding wizard ending on a single Results screen. It's now a persistent bottom-tab shell (max five tabs):
 
+- **Home** (`HomeScreen`) — the default tab: a daily overview with the calorie gauge, macro tiles, a locked micronutrient teaser, and shortcuts into the other tabs.
 - **Targets** (`ResultsScreen`) — "Your Science Targets": a Macronutrients / Micros & Minerals toggle. Macros shows the calorie target on a BMR / movement / digestion arc, per-macro cards, and the energy-budget math. Micros lists every vitamin/mineral by name, locked (no values/percentages) for free users — the freemium boundary (PRD §7, §8.4) is unchanged even though the mockup showed real values to everyone.
 - **Recipes** (`RecipesScreen`) — placeholder for future meal ideas / recommendations. No recipes or food APIs yet (PRD §6 lists meal planning as a v1 non-goal).
 - **Science** (`ScienceBreakdownScreen`) — plain-language explanation of the BMR/TDEE math behind the calorie number, a personalized-vs-crash-diet comparison, a self-check checklist, and a "Sources & references" list linking every study and guideline the engine is built on.
@@ -108,6 +109,7 @@ Following the milestones in PRD §17:
   - [x] New primitives: `CircularProgress` (an SVG progress ring, `react-native-svg`) and `Mascot` (a ported Stitch character illustration), both reduce-motion-aware like the app's existing animation primitives.
 - [ ] **v2 redesign — second set of Stitch mockups (Home, Targets, Recipes, Profile).** Implemented one page at a time; mockup elements without real data behind them (name/avatar, streaks, hydration/sleep, health-app sync, exports) are left out, and micronutrient values stay locked.
   - [x] **Targets.** "Your Science Targets" with a Macronutrients / Micros & Minerals toggle (the `Micros` tab is folded in), a BMR / movement / digestion `EnergyArcGauge`, per-macro cards with real g/kg and floor tips, and the energy-budget math. Shared `AppHeader` (logo, light/dark toggle, Settings) replaces the floating gear.
+  - [x] **Home.** New default tab (`HomeScreen`): time-of-day greeting with goal/activity chips, the fuel gauge with BMR/TDEE markers and partitions, quick macro tiles, a locked "Micro Focus" teaser linking to the Targets micros toggle, shortcut cards (Profile, Science, Recipes), and a mascot note showing how long ago targets were calibrated.
 - [ ] Subscription/entitlement integration (App Store / Play Store billing, likely via RevenueCat per PRD §12) — this remains the blocker for turning the Targets tab's locked micros teaser into real personalized values, and for writing micronutrient education copy (the macro equivalent of `src/data/education/macroExplanations.ts`)
 - [ ] Accessibility + edge-case testing pass
 - [ ] v1 release to a small test group

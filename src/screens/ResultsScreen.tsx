@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { CompositeNavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { splitActiveCalories } from '../components/activeCalorieSplit';
 import { AnimatedFillBar } from '../components/AnimatedFillBar';
@@ -85,7 +85,11 @@ export function ResultsScreen() {
   const { settings } = useAppSettings();
   const { visible: showChangeNudge, dismiss: dismissChangeNudge } = useChangeNudge(profile);
   const [showCelebration, setShowCelebration] = useState(!!params?.justCompleted);
-  const [view, setView] = useState<TargetsView>('macros');
+  const [view, setView] = useState<TargetsView>(params?.view ?? 'macros');
+
+  useEffect(() => {
+    if (params?.view) setView(params.view);
+  }, [params?.view]);
 
   if (!profile) {
     return (
