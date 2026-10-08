@@ -100,7 +100,7 @@ export function ResultsScreen() {
   }
 
   const targets = calculateNutrientTargets(profile);
-  const handleEditProfile = () => navigation.navigate('Profile');
+  const handleEditProfile = () => navigation.navigate('Profile', { edit: true });
 
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>

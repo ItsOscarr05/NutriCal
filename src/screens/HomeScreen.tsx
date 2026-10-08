@@ -248,7 +248,7 @@ export function HomeScreen() {
             iconFg={theme.onAccentFixed}
             title="Update my stats"
             body="Weight or activity changed? Recalibrate your targets."
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => navigation.navigate('Profile', { edit: true })}
           />
           <ActionCard
             theme={theme}

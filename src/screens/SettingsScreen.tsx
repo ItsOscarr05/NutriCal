@@ -46,7 +46,7 @@ export function SettingsScreen() {
   // params form rather than a plain sibling `navigate('Profile')`.
   const handleEditProfile = () => {
     if (!profile) return;
-    navigation.navigate('Main', { screen: 'Profile' });
+    navigation.navigate('Main', { screen: 'Profile', params: { edit: true } });
   };
 
   // Irreversible (no accounts/backend to recover from, PRD §13) — confirmed

@@ -18,7 +18,7 @@ export type MainTabParamList = {
   Targets: { justCompleted?: boolean; view?: 'macros' | 'micros' } | undefined;
   Recipes: undefined;
   Science: undefined;
-  Profile: undefined;
+  Profile: { edit?: boolean } | undefined;
 };
 
 /**
