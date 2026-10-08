@@ -310,7 +310,7 @@ function RecipeRow({ theme, recipe, fit, selected, expanded, onToggleSelected, o
           {'   '}
           <Text style={{ color: theme.tertiary }}>{recipe.protein}g</Text> <Text style={{ color: theme.textSecondary }}>protein</Text>
           {'   '}
-          <Text style={{ color: theme.secondary }}>{recipe.carbs}g</Text> <Text style={{ color: theme.textSecondary }}>carb</Text>
+          <Text style={{ color: theme.secondary }}>{recipe.carbs}g</Text> <Text style={{ color: theme.textSecondary }}>carbs</Text>
           {'   '}
           <Text style={{ color: theme.accent }}>{recipe.fat}g</Text> <Text style={{ color: theme.textSecondary }}>fat</Text>
         </Text>
