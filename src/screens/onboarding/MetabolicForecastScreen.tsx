@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FadeInView } from '../../components/FadeInView';
-import { Mascot } from '../../components/Mascot';
+import { Logo } from '../../components/Logo';
 import { calculateNutrientTargets } from '../../engine';
 import { OnboardingStackParamList, RootStackParamList } from '../../navigation/types';
 import { parseAgeInput } from '../../onboarding/ageInput';
@@ -81,8 +81,8 @@ export function MetabolicForecastScreen() {
       onBack={() => navigation.goBack()}
       secondaryAction={{ label: 'Go back and adjust', onPress: () => navigation.goBack(), disabled: saving }}
     >
-      <View style={styles.mascot}>
-        <Mascot size={72} />
+      <View style={styles.logo}>
+        <Logo size={72} />
       </View>
       {preview ? (
         <FadeInView delay={150}>
@@ -103,6 +103,6 @@ export function MetabolicForecastScreen() {
 }
 
 const styles = StyleSheet.create({
-  mascot: { alignItems: 'center', marginBottom: spacing.md },
+  logo: { alignItems: 'center', marginBottom: spacing.md },
   missing: { fontSize: 14, textAlign: 'center' },
 });

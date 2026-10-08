@@ -10,7 +10,7 @@ import { AppHeader } from '../components/AppHeader';
 import { EnergyArcGauge } from '../components/EnergyArcGauge';
 import { FadeInView } from '../components/FadeInView';
 import { LockedMicronutrientRow } from '../components/LockedMicronutrientRow';
-import { Mascot } from '../components/Mascot';
+import { Logo } from '../components/Logo';
 import { NutrientKey } from '../data/dri';
 import { MacroKey } from '../data/education/macroExplanations';
 import { calculateNutrientTargets } from '../engine';
@@ -272,11 +272,11 @@ export function HomeScreen() {
           />
         </View>
 
-        <View style={[styles.mascotBanner, { backgroundColor: theme.surfaceContainerLow }]}>
-          <Mascot size={56} />
+        <View style={[styles.noteBanner, { backgroundColor: theme.surfaceContainerLow }]}>
+          <Logo size={56} />
           <View style={styles.flexShrink}>
-            <Text style={[styles.mascotTitle, { color: theme.textPrimary }]}>NutriCal Sprout</Text>
-            <Text style={[styles.mascotBody, { color: theme.textSecondary }]}>
+            <Text style={[styles.noteTitle, { color: theme.textPrimary }]}>NutriCal</Text>
+            <Text style={[styles.noteBody, { color: theme.textSecondary }]}>
               {calibratedDays === 0
                 ? 'Your targets were calibrated today. Steady rhythm — small, consistent days add up.'
                 : `Your targets were calibrated ${calibratedDays} day${calibratedDays === 1 ? '' : 's'} ago. If your weight or routine has changed, a quick recalibration keeps them honest.`}
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   actionTitle: { fontSize: 16, fontWeight: '800' },
   actionBody: { fontSize: 12, lineHeight: 17 },
 
-  mascotBanner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 4, borderRadius: radii.lg, padding: spacing.md },
-  mascotTitle: { fontSize: 14, fontWeight: '800' },
-  mascotBody: { fontSize: 12, lineHeight: 17, marginTop: 2 },
+  noteBanner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 4, borderRadius: radii.lg, padding: spacing.md },
+  noteTitle: { fontSize: 14, fontWeight: '800' },
+  noteBody: { fontSize: 12, lineHeight: 17, marginTop: 2 },
 });

@@ -9,7 +9,8 @@ interface LogoProps {
 
 /**
  * The NutriCal brand mark (isometric calculator with sprouting leaves).
- * Used on Welcome and Settings; the same artwork is also the Expo app
+ * The app's only brand character — used on Welcome, Settings, `AppHeader`,
+ * and the Home/Science/Profile/Metabolic Forecast cards. The same artwork is also the Expo app
  * icon / splash / favicon under `assets/`.
  */
 export function Logo({ size = 120, style }: LogoProps) {

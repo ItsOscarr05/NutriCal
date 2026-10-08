@@ -7,7 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import appJson from '../../app.json';
 import { AppHeader } from '../components/AppHeader';
 import { FadeInView } from '../components/FadeInView';
-import { Mascot } from '../components/Mascot';
+import { Logo } from '../components/Logo';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { UnitToggle } from '../components/UnitToggle';
 import { calculateNutrientTargets } from '../engine';
@@ -132,7 +132,7 @@ export function ProfileScreen() {
           <View style={[styles.hero, { backgroundColor: theme.surface }]}>
             <View style={[styles.heroGlow, { backgroundColor: theme.accentFixed }]} />
             <View style={[styles.avatarRing, { borderColor: theme.accentFixed, backgroundColor: theme.surfaceContainer }]}>
-              <Mascot size={64} />
+              <Logo size={64} />
             </View>
             <Text style={[styles.heroTitle, { color: theme.textPrimary }]}>Your profile</Text>
             <Text style={[styles.heroSubtitle, { color: theme.textSecondary }]}>

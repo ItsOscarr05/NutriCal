@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { splitActiveCalories } from '../components/activeCalorieSplit';
-import { Mascot } from '../components/Mascot';
+import { Logo } from '../components/Logo';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { REFERENCES } from '../data/references';
 import { calculateNutrientTargets } from '../engine';
@@ -93,7 +93,7 @@ export function ScienceBreakdownScreen() {
       </View>
 
       <View style={[styles.botCard, { backgroundColor: theme.surfaceContainerLow }]}>
-        <Mascot size={56} />
+        <Logo size={56} />
         <View style={styles.botTextBlock}>
           <View style={styles.botHeaderRow}>
             <Text style={[styles.botName, { color: theme.accent }]}>NutriCal Science Bot</Text>
